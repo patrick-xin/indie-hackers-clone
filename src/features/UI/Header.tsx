@@ -37,7 +37,9 @@ export const Header = () => {
 
       <div className='hidden sm:flex gap-2 sm:gap-4 items-center text-white font-black'>
         <LogoImage />
-        INDIE HACKERS
+        <Link href='/'>
+          <a>INDIE HACKERS</a>
+        </Link>
       </div>
 
       {renderUserStatus()}

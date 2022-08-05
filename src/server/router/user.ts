@@ -13,10 +13,19 @@ export const userRouter = createRouter()
         where: {
           username,
         },
-        select: {
-          _count: { select: { comment: true } },
-          username: true,
-          image: true,
+        include: {
+          _count: { select: { comment: true, likes: true } },
+
+          posts: {
+            select: {
+              title: true,
+              slug: true,
+              _count: true,
+              publishedAt: true,
+              content: true,
+              id: true,
+            },
+          },
           followers: true,
           following: true,
           profile: {

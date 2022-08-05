@@ -3,6 +3,7 @@ import { Post } from '@prisma/client';
 import { format, formatDistance } from 'date-fns';
 import { motion } from 'framer-motion';
 import Image from 'next/future/image';
+import Link from 'next/link';
 import React, { useState } from 'react';
 import { BiChevronUp, BiComment } from 'react-icons/bi';
 import { usePopper } from 'react-popper';
@@ -57,16 +58,20 @@ export const FeedItem = ({ post }: Props) => {
           >
             <div className='min-h-56 w-72 mx-6 bg-[#274059] space-y-4 rounded-sm'>
               <header className='bg-[#2F4D6A] p-4'>
-                <div className='flex gap-6 items-center'>
-                  <Image
-                    src='/avatar.webp'
-                    className='rounded-full'
-                    width={60}
-                    height={60}
-                    alt='user-avatar'
-                  />
-                  <div>Username</div>
-                </div>
+                <Link href={`/@${post.author.username}`}>
+                  <a>
+                    <div className='flex gap-6 items-center'>
+                      <Image
+                        src={post.author.image ?? '/avatat.webp'}
+                        className='rounded-full'
+                        width={60}
+                        height={60}
+                        alt='user-avatar'
+                      />
+                      <div>{post.author.username}</div>
+                    </div>
+                  </a>
+                </Link>
               </header>
 
               <div className='space-y-4 px-6'>
