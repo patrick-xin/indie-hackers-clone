@@ -30,6 +30,9 @@ module.exports = {
         'brand-blue': 'var(--brand-blue)',
         'brand-indigo-bg': 'var(--brand-indigo-bg)',
       },
+      zIndex: {
+        100: '100',
+      },
     },
   },
   plugins: [require('@tailwindcss/forms'), require('tailwind-scrollbar-hide')],

@@ -35,3 +35,24 @@ export const MENU_LINKS = [
   { title: 'Sign out', icon: <IoLogOut className='w-6 h-6' />, href: '/' },
 ];
 export type MenuLink = typeof MENU_LINKS[0];
+
+export const TABLINKS = [
+  {
+    href: '/',
+    label: 'Popular',
+  },
+  {
+    href: '/newest',
+    label: 'Newest',
+  },
+  {
+    href: '/following',
+    label: 'Following',
+  },
+  {
+    href: '/groups',
+    label: 'Groups',
+  },
+];
+
+export type TabLink = typeof TABLINKS[0];

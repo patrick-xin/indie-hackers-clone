@@ -4,7 +4,7 @@ export const Container: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   return (
-    <div className='grid grid-cols-1 gap-6 md:grid-cols-6 md:grid-rows-[300px_minmax(900px,_1fr)] lg:grid-cols-12'>
+    <div className='grid-container min-h-[100vh] md:px-4 py-2 lg:px-6 lg:py-4'>
       {children}
     </div>
   );

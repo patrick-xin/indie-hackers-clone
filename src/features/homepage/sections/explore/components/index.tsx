@@ -35,10 +35,12 @@ export const ExploreSection = () => {
   if (!isShown) {
     return (
       <Wrapper>
-        <div className='lg:px-4 lg:py-1'>
+        <div>
           <div className='flex justify-between items-center border-3 border-gray-100/5 p-2.5'>
             <Link href='/'>
-              <SectionTitle title='Explore' />
+              <a>
+                <SectionTitle title='Explore' />
+              </a>
             </Link>
 
             <div>
@@ -63,17 +65,21 @@ export const ExploreSection = () => {
   return (
     <Wrapper>
       <div
-        className='space-y-6 lg:px-4 lg:py-1'
+        className='space-y-6'
         onMouseEnter={() => setMouseEnter(true)}
         onMouseLeave={() => setMouseEnter(false)}
       >
-        <div className='flex justify-between items-center'>
+        <div className='flex justify-between items-center w-full'>
           <div className='group flex gap-2 items-center'>
             <div className='space-y-2'>
               <div className='flex gap-4 items-center'>
-                <SectionTitle
-                  title={`Explore: ${TOPICKS[activeIndex].title}`}
-                />
+                <Link href='/'>
+                  <a>
+                    <SectionTitle
+                      title={`Explore: ${TOPICKS[activeIndex].title}`}
+                    />
+                  </a>
+                </Link>
 
                 <div className='flex gap-2'>
                   <button
@@ -123,9 +129,5 @@ export const ExploreSection = () => {
 };
 
 const Wrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  return (
-    <section className='md:col-start-5 lg:col-start-1 lg:col-span-3 lg:row-start-1'>
-      {children}
-    </section>
-  );
+  return <section className='left-col'>{children}</section>;
 };

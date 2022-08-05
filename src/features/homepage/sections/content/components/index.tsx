@@ -1,60 +1,182 @@
-import cn from 'clsx';
-import Link from 'next/link';
+import { Comment, Post, User } from '@prisma/client';
+import {
+  addMonths,
+  addWeeks,
+  format,
+  isToday,
+  parseISO,
+  subMonths,
+  subWeeks,
+} from 'date-fns';
+import { motion } from 'framer-motion';
+import { useRouter } from 'next/router';
 import React from 'react';
-import { FaArrowRight } from 'react-icons/fa';
+import InfiniteScroll from 'react-infinite-scroller';
+
+import { FeedItemLoaders } from '@/features/homepage/sections/common/components/FeedItemLoader';
+import { FilterLinks } from '@/features/homepage/sections/content/components/FilterLinks';
+import { FliterNav } from '@/features/homepage/sections/content/components/FliterNav';
+import { NewPostButton } from '@/features/homepage/sections/content/components/NewPostButton';
+import { TabLinks } from '@/features/homepage/sections/content/components/TabLinks';
+import { Alert } from '@/features/UI';
 
 import { FeedItem } from './FeedItem';
 
-export const ContentSection = () => {
+type IPost = Post & {
+  comments: Comment[];
+  author: User;
+  _count: {
+    comments: number;
+    likes: number;
+  };
+};
+
+type Props = {
+  posts: IPost[] | undefined;
+  fetchNextPage: () => void;
+  isLoading: boolean;
+  hasNextPage: boolean | undefined;
+  isError: boolean;
+  type: string;
+};
+
+const container = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.15,
+      ease: 'easeIn',
+    },
+  },
+};
+
+export const ContentSection = ({
+  posts,
+  isLoading,
+  isError,
+  fetchNextPage,
+  hasNextPage,
+  type,
+}: Props) => {
   return (
-    <section className='md:col-span-4 lg:col-start-4 lg:col-span-6'>
-      <header className='flex justify-between items-center mb-6'>
-        <div className='flex gap-3 h-auto'>
-          <Link href='/'>
-            <a
-              className={cn(
-                'py-1.5 px-0.5 h-10 text-lg hover:border-b-3 hover:text-white border-[#385c80]',
-                { 'border-[#4799eb] border-b-3 text-white': true }
-              )}
+    <section className='main-col'>
+      <Header type={type} />
+      <div className='grid grid-cols-1 gap-2 min-h-[50vh] lg:min-h-[80vh]'>
+        {isLoading || !posts ? (
+          <FeedItemLoaders count={6} />
+        ) : isError ? (
+          <Alert type='error' message='Error occured fetching resource.' />
+        ) : posts ? (
+          <InfiniteScroll
+            pageStart={0}
+            loadMore={() => fetchNextPage()}
+            hasMore={hasNextPage}
+            loader={<FeedItemLoaders count={5} key={0} />}
+          >
+            <motion.div
+              variants={container}
+              initial='hidden'
+              animate='show'
+              className='space-y-4'
             >
-              Popular
-            </a>
-          </Link>
-          <Link href='/'>
-            <a className='py-1.5 text-lg px-0.5 h-10 hover:border-b-3 hover:text-white border-[#385c80]'>
-              Newest
-            </a>
-          </Link>
-          <Link href='/'>
-            <a className='py-1.5 px-0.5 text-lg h-10 hover:border-b-3 hover:text-white border-[#385c80]'>
-              Following
-            </a>
-          </Link>
-          <Link href='/'>
-            <a className='py-1.5 px-0.5 text-lg h-10 hover:border-b-3 hover:text-white border-[#385c80]'>
-              Groups
-            </a>
-          </Link>
-        </div>
-        <div>
-          <button className='px-2.5 py-2 text-sm uppercase bg-gradient-to-r from-[#e052a0] to-[#f15c41] text-white rounded-sm hover:from-cyan-500 hover:to-blue-500'>
-            New Post
-          </button>
-        </div>
-      </header>
-      <div className='grid grid-cols-1 gap-2'>
-        {Array.from([1, 2, 3, 4, 5, 6, 7, 8, 9]).map((i) => (
-          <FeedItem key={i} />
-        ))}
-        <div>
-          <button className='w-full inline-flex items-center text-center justify-center gap-4 group text-white border-3 border-gray-100/5 p-2.5 hover:text-[#4799eb]'>
-            <span>Next Page</span>
-            <span className='group-hover:animate-bounce-front-back'>
-              <FaArrowRight />
-            </span>
-          </button>
-        </div>
+              {posts.map((post) => (
+                <FeedItem key={post.id} post={post} />
+              ))}
+            </motion.div>
+          </InfiniteScroll>
+        ) : null}
       </div>
     </section>
+  );
+};
+
+const Header = ({ type }: { type: string }) => {
+  const { route, query, push } = useRouter();
+  const path = query.slug as string;
+  const dateQuery = path && path.split('-').slice(2).join('-');
+  const dateQueryToDate = parseISO(dateQuery);
+  const istoday = isToday(dateQueryToDate);
+
+  const renderContent = () => {
+    if (type === 'week') {
+      return (
+        <FliterNav
+          nextDisabled={istoday}
+          onNextClick={() =>
+            push(
+              `/top/week-of-${format(
+                addWeeks(dateQueryToDate, 1),
+                'yyyy-MM-dd'
+              )}`
+            )
+          }
+          onPrevClick={() =>
+            push(
+              `/top/week-of-${format(
+                subWeeks(dateQueryToDate, 1),
+                'yyyy-MM-dd'
+              )}`
+            )
+          }
+        >
+          <div className='flex-1 flex justify-center w-full gap-3'>
+            <div>
+              {dateQuery && format(parseISO(dateQuery), 'LLL dd, yyyy')}
+            </div>
+            <div>-</div>
+            <div>
+              {dateQuery &&
+                format(subWeeks(dateQueryToDate, 1), 'LLL dd, yyyy')}
+            </div>
+          </div>
+        </FliterNav>
+      );
+    }
+    if (type === 'month') {
+      return (
+        <FliterNav
+          onNextClick={() =>
+            push(
+              `/top/month-of-${format(
+                addMonths(dateQueryToDate, 1),
+                'yyyy-MM'
+              )}`
+            )
+          }
+          onPrevClick={() =>
+            push(
+              `/top/month-of-${format(
+                subMonths(dateQueryToDate, 1),
+                'yyyy-MM'
+              )}`
+            )
+          }
+        >
+          <div className='flex-1 flex justify-center w-full gap-3'>
+            <div>{dateQuery && format(parseISO(dateQuery), 'LLL, yyyy')}</div>
+          </div>
+        </FliterNav>
+      );
+    }
+    return null;
+  };
+
+  return (
+    <header className='flex flex-col items-start gap-4 sm:gap-0 sm:flex-row sm:justify-between sm:items-center lg:items-start mb-6'>
+      <div className='space-y-4 w-full'>
+        <div className='flex justify-between items-center'>
+          <TabLinks path={route} />
+          <NewPostButton />
+        </div>
+
+        {(route === '/' || route.startsWith('/top')) && (
+          <div className='space-y-4 w-full'>
+            <FilterLinks path={path ?? ''} />
+            {route.startsWith('/top') && renderContent()}
+          </div>
+        )}
+      </div>
+    </header>
   );
 };

@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react';
+import React from 'react';
 
 import {
   Container,
@@ -10,11 +10,11 @@ import {
 import { BasicLayout } from '@/features/layout/Basic';
 import { trpc } from '@/utils/trpc';
 
-const Home = () => {
+const Newest = () => {
   const { data, fetchNextPage, isLoading, isError, hasNextPage } =
     trpc.useInfiniteQuery(
       [
-        'public-posts.infinitePosts-popular-today',
+        'public-posts.infinitePosts-newest',
         {
           limit: 20,
         },
@@ -29,14 +29,12 @@ const Home = () => {
       <Onboard />
       <Container>
         <Content
-          type='/'
           posts={data?.pages.flatMap((p) => p.posts)}
           fetchNextPage={fetchNextPage}
           isLoading={isLoading}
-          isError={isLoading}
+          isError={isError}
           hasNextPage={hasNextPage}
         />
-
         <Group />
         <Explore />
       </Container>
@@ -44,6 +42,8 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Newest;
 
-Home.getLayout = (page: ReactElement) => <BasicLayout>{page}</BasicLayout>;
+Newest.getLayout = (page: React.ReactElement) => (
+  <BasicLayout>{page}</BasicLayout>
+);

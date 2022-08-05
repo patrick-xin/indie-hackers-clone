@@ -5,7 +5,7 @@ const nextConfig = {
   },
   experimental: { images: { allowFutureImage: true } },
   images: {
-    domains: ['avatars.githubusercontent.com'],
+    domains: ['avatars.githubusercontent.com', 'cloudflare-ipfs.com'],
   },
   reactStrictMode: true,
 };

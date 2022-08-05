@@ -1,7 +1,9 @@
 // src/pages/_app.tsx
 import { withTRPC } from '@trpc/next';
-import type { AppType } from 'next/dist/shared/lib/utils';
+import { NextPage } from 'next';
+import { AppProps } from 'next/app';
 import { SessionProvider } from 'next-auth/react';
+import { ReactElement, ReactNode } from 'react';
 import superjson from 'superjson';
 import '@fontsource/poppins';
 import '@fontsource/source-sans-pro';
@@ -10,13 +12,22 @@ import '@/styles/globals.css';
 
 import type { AppRouter } from '../server/router';
 
-const MyApp: AppType = ({
+type NextPageWithLayout = NextPage & {
+  getLayout?: (page: ReactElement) => ReactNode;
+};
+
+type AppPropsWithLayout = AppProps & {
+  Component: NextPageWithLayout;
+};
+
+const MyApp = ({
   Component,
   pageProps: { session, ...pageProps },
-}) => {
+}: AppPropsWithLayout) => {
+  const getLayout = Component.getLayout ?? ((page) => page);
   return (
     <SessionProvider session={session}>
-      <Component {...pageProps} />
+      {getLayout(<Component {...pageProps} />)}
     </SessionProvider>
   );
 };

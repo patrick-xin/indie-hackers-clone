@@ -4,19 +4,19 @@ import React, { useState } from 'react';
 import { FaArrowRight } from 'react-icons/fa';
 import { IoClose } from 'react-icons/io5';
 
+import { SectionTitle } from '@/features/homepage/sections/common/components/SectionTitle';
+
 export const GroupSection = () => {
   const [isMouseEntered, setMouseEnter] = useState(false);
   const [isShown, setShow] = useState(true);
   if (!isShown) {
     return (
       <Wrapper>
-        <div className='lg:px-4 lg:py-1'>
+        <div>
           <div className='flex justify-between items-center border-3 border-gray-100/5 p-2.5'>
             <Link href='/'>
               <a>
-                <h3 className='text-white capitalize text-lg font-bold hover:text-[#4799eb]'>
-                  Treading groups
-                </h3>
+                <SectionTitle title='Trending groups' />
               </a>
             </Link>
 
@@ -42,15 +42,18 @@ export const GroupSection = () => {
   return (
     <Wrapper>
       <div
-        className='space-y-6 lg:px-4 lg:py-1'
+        className='space-y-6'
         onMouseEnter={() => setMouseEnter(true)}
         onMouseLeave={() => setMouseEnter(false)}
       >
         <div className='flex justify-between items-center'>
           <div className='group flex gap-2 items-center'>
-            <h3 className='text-white text-lg decoration-[#385c80] decoration-2 underline underline-offset-8 capitalize font-bold hover:text-[#4799eb]'>
-              Treading groups
-            </h3>
+            <Link href='/'>
+              <a>
+                <SectionTitle title='Trending groups' />
+              </a>
+            </Link>
+
             <FaArrowRight className='group-hover:animate-bounce-front-back' />
           </div>
 
@@ -92,9 +95,5 @@ export const GroupSection = () => {
 };
 
 const Wrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  return (
-    <section className='md:col-start-5 md:col-span-full lg:col-start-10 lg:col-span-full'>
-      {children}
-    </section>
-  );
+  return <section className='right-col'>{children}</section>;
 };

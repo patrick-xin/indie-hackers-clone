@@ -3,7 +3,7 @@ import React from 'react';
 
 export const Footer = () => {
   return (
-    <div className='border-t border-gray-300 px-6 mt-12'>
+    <footer className='border-t border-gray-300 px-6 mt-12'>
       <div className='py-12 text-center'>
         <h2>Stay informed as an indie hacker.</h2>
         <p>Market insights that help you start and grow your business.</p>
@@ -50,6 +50,6 @@ export const Footer = () => {
           </p>
         </div>
       </div>
-    </div>
+    </footer>
   );
 };
