@@ -10,7 +10,7 @@ import {
 } from 'date-fns';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/router';
-import React from 'react';
+import React, { useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
 
 import { FeedItemLoaders } from '@/features/homepage/sections/common/components/FeedItemLoader';
@@ -18,6 +18,7 @@ import { FilterLinks } from '@/features/homepage/sections/content/components/Fil
 import { FliterNav } from '@/features/homepage/sections/content/components/FliterNav';
 import { NewPostButton } from '@/features/homepage/sections/content/components/NewPostButton';
 import { TabLinks } from '@/features/homepage/sections/content/components/TabLinks';
+import { NewPostModal } from '@/features/post/components';
 import { Alert } from '@/features/UI';
 
 import { FeedItem } from './FeedItem';
@@ -59,39 +60,49 @@ export const ContentSection = ({
   hasNextPage,
   type,
 }: Props) => {
+  const [openModal, setOpenModal] = useState(false);
   return (
-    <section className='main-col'>
-      <Header type={type} />
-      <div className='grid grid-cols-1 gap-2 min-h-[50vh] lg:min-h-[80vh]'>
-        {isLoading || !posts ? (
-          <FeedItemLoaders count={6} />
-        ) : isError ? (
-          <Alert type='error' message='Error occured fetching resource.' />
-        ) : posts ? (
-          <InfiniteScroll
-            pageStart={0}
-            loadMore={() => fetchNextPage()}
-            hasMore={hasNextPage}
-            loader={<FeedItemLoaders count={5} key={0} />}
-          >
-            <motion.div
-              variants={container}
-              initial='hidden'
-              animate='show'
-              className='space-y-4'
+    <>
+      <section className='main-col'>
+        <Header type={type} handleOpen={() => setOpenModal(true)} />
+        <div className='grid grid-cols-1 gap-2 min-h-[50vh] lg:min-h-[80vh]'>
+          {isLoading || !posts ? (
+            <FeedItemLoaders count={6} />
+          ) : isError ? (
+            <Alert type='error' message='Error occured fetching resource.' />
+          ) : posts ? (
+            <InfiniteScroll
+              pageStart={0}
+              loadMore={() => fetchNextPage()}
+              hasMore={hasNextPage}
+              loader={<FeedItemLoaders count={5} key={0} />}
             >
-              {posts.map((post) => (
-                <FeedItem key={post.id} post={post} />
-              ))}
-            </motion.div>
-          </InfiniteScroll>
-        ) : null}
-      </div>
-    </section>
+              <motion.div
+                variants={container}
+                initial='hidden'
+                animate='show'
+                className='space-y-4'
+              >
+                {posts.map((post) => (
+                  <FeedItem key={post.id} post={post} />
+                ))}
+              </motion.div>
+            </InfiniteScroll>
+          ) : null}
+        </div>
+      </section>
+      <NewPostModal open={openModal} setOpen={setOpenModal} />
+    </>
   );
 };
 
-const Header = ({ type }: { type: string }) => {
+const Header = ({
+  type,
+  handleOpen,
+}: {
+  type: string;
+  handleOpen: () => void;
+}) => {
   const { route, query, push } = useRouter();
   const path = query.slug as string;
   const dateQuery = path && path.split('-').slice(2).join('-');
@@ -167,7 +178,7 @@ const Header = ({ type }: { type: string }) => {
       <div className='space-y-4 w-full'>
         <div className='flex justify-between items-center'>
           <TabLinks path={route} />
-          <NewPostButton />
+          <NewPostButton onClick={handleOpen} />
         </div>
 
         {(route === '/' || route.startsWith('/top')) && (

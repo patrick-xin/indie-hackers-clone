@@ -13,6 +13,11 @@
     @apply relative bg-brand-bg font-body text-brand-text;
   }
 }
+@layer utilities {
+  .form-input {
+    @apply bg-transparent appearance-none relative block w-full text-base focus:ring-0 focus:outline-none focus:border-none;
+  }
+}
 
 .grid-container {
   display: grid;

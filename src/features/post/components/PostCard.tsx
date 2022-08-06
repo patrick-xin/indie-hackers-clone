@@ -12,6 +12,7 @@ type Props = {
   _count: Prisma.PostCountOutputType;
   slug: string;
   content: string;
+  username: string | null;
 };
 
 export const PostCard = ({
@@ -20,10 +21,11 @@ export const PostCard = ({
   publishedAt,
   content,
   slug,
+  username,
 }: Props) => {
   return (
     <article className='p-6 bg-[#1E364D] rounded hover:bg-[#274059] group transition-colors ease-linear'>
-      <Link href={`/post/${slug}`}>
+      <Link href={`/@${username}/${slug}`}>
         <a>
           <header className='relative'>
             <div className='flex gap-4 items-center'>
@@ -57,7 +59,7 @@ export const PostCard = ({
 
           <div>
             <h2 className='text-2xl text-white my-4'>{title}</h2>
-            <p>{content}</p>
+            <p className='line-clamp-3'>{content}</p>
           </div>
         </a>
       </Link>

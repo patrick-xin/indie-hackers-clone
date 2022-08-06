@@ -7,6 +7,7 @@ import Link from 'next/link';
 import React, { useState } from 'react';
 import { BiChevronUp, BiComment } from 'react-icons/bi';
 import { usePopper } from 'react-popper';
+
 type Props = {
   post: Post & {
     author: {

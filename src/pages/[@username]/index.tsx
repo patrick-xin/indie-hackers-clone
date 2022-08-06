@@ -15,7 +15,6 @@ const UserPage = () => {
     ['user.username', { username: username?.split('@')[1] }],
     { enabled: Boolean(username) }
   );
-  console.log(user);
 
   return (
     <div className='mt-16 space-y-6 max-w-3xl mx-auto'>
@@ -51,7 +50,7 @@ const UserPage = () => {
       <section>
         <ul className='space-y-6'>
           {user?.posts.map((post) => (
-            <PostCard {...post} key={post.id} />
+            <PostCard {...post} key={post.id} username={user.username} />
           ))}
         </ul>
       </section>
