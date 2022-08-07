@@ -1,4 +1,7 @@
-import React, { ReactElement, useState } from 'react';
+import { GetServerSideProps } from 'next';
+import { useRouter } from 'next/router';
+import { unstable_getServerSession } from 'next-auth';
+import React, { ReactElement, useEffect, useState } from 'react';
 import { IoMdImage } from 'react-icons/io';
 import ReactMarkdown from 'react-markdown';
 import {
@@ -30,9 +33,34 @@ import {
 import { BasicLayout } from '@/features/layout/Basic';
 import { Flex, Input } from '@/features/UI';
 import { Button } from '@/features/UI/Button';
+import { authOptions } from '@/pages/api/auth/[...nextauth]';
+import { trpc } from '@/utils/trpc';
 
 const PostCreatePage = () => {
+  const { query, push } = useRouter();
+  const id = query.id as string;
+
   const [title, setTitle] = useState('');
+  const [content, setContent] = React.useState('**Hello world!!!**');
+  const [selectedTab, setSelectedTab] = React.useState<'write' | 'preview'>(
+    'write'
+  );
+  const writingMode = selectedTab === 'write';
+  const previewMode = selectedTab === 'preview';
+  const { data: post } = trpc.useQuery(['private-posts.by-id', { id }], {
+    enabled: Boolean(id),
+  });
+  const { mutate: savePost } = trpc.useMutation('private-posts.save', {
+    onSuccess: () => {
+      push('/dashboard/post');
+    },
+  });
+  useEffect(() => {
+    if (post) {
+      setTitle(post.title);
+      setContent(post.content);
+    }
+  }, [post]);
   const { ref, commandController } = useTextAreaMarkdownEditor({
     commandMap: {
       bold: bold,
@@ -49,13 +77,6 @@ const PostCreatePage = () => {
     },
   });
 
-  const [value, setValue] = React.useState('**Hello world!!!**');
-  const [selectedTab, setSelectedTab] = React.useState<'write' | 'preview'>(
-    'write'
-  );
-  const writingMode = selectedTab === 'write';
-  const previewMode = selectedTab === 'preview';
-
   return (
     <div>
       <div className='max-w-4xl mx-auto'>
@@ -63,7 +84,11 @@ const PostCreatePage = () => {
           className='space-y-6'
           onSubmit={(e) => {
             e.preventDefault();
-            alert(value);
+            savePost({
+              title,
+              content,
+              id,
+            });
           }}
         >
           {/* Title */}
@@ -194,16 +219,18 @@ const PostCreatePage = () => {
             {/* Textarea */}
             {writingMode && (
               <Input
+                ref={ref}
                 placeholder='Write content here...'
                 textarea
-                onChange={(e) => setValue(e.target.value)}
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
                 className='w-full text-2xl p-2 shadow rounded min-h-[60vh]'
               />
             )}
             {previewMode && (
               <div className='w-full min-h-[60vh]'>
                 <div className='prose prose-brand prose-a:text-brand-blue prose-a:hover:underline xl:prose-xl 2xl:prose-2xl mx-auto prose-img:rounded prose-img:object-cover'>
-                  <ReactMarkdown>{value}</ReactMarkdown>
+                  <ReactMarkdown>{content}</ReactMarkdown>
                 </div>
               </div>
             )}
@@ -216,6 +243,40 @@ const PostCreatePage = () => {
 };
 
 export default PostCreatePage;
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const session = await unstable_getServerSession(
+    context.req,
+    context.res,
+    authOptions
+  );
+  if (!session) {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      },
+    };
+  }
+
+  const id = context.query.id as string;
+  const post = await prisma?.post.findFirst({ where: { id } });
+  const isOwner = session.user.userId === post?.authorId;
+  if (!isOwner) {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {
+      session,
+    },
+  };
+};
 
 PostCreatePage.getLayout = (page: ReactElement) => (
   <BasicLayout>{page}</BasicLayout>

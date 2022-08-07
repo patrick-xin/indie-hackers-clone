@@ -1,5 +1,7 @@
+import { faker } from '@faker-js/faker';
 import { Prisma } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
+import slugify from 'slugify';
 import z from 'zod';
 
 import { createRouter } from './context';
@@ -24,9 +26,10 @@ export const privatePostRouter = createRouter()
         //if (query === 'comments') return { title: 'asc' };
         return { title: order };
       };
+
       return ctx.prisma.post.findMany({
         where: {
-          authorId: ctx.session?.user.id,
+          authorId: ctx.session?.user.userId,
           AND: {
             status: query === 'published' ? 'PUBLISHED' : undefined,
           },
@@ -39,57 +42,59 @@ export const privatePostRouter = createRouter()
   .query('by-id', {
     input: z.object({ id: z.string() }),
     async resolve({ ctx, input: { id } }) {
-      const user = await ctx.prisma.user.findUnique({
+      const post = await ctx.prisma.post.findUnique({
         where: {
-          username: ctx.session?.user.username,
-        },
-        select: {
-          posts: {
-            where: { id },
-          },
+          id,
         },
       });
-      const post = user?.posts[0];
-      if (post) {
-        return post;
-      } else {
-        return false;
+
+      return post;
+    },
+  })
+  .mutation('create', {
+    input: z.object({
+      title: z.string(),
+    }),
+    async resolve({ ctx, input: { title } }) {
+      const slug = `${slugify(title, {
+        lower: true,
+        trim: true,
+      })}-${faker.random.alphaNumeric(5)}`;
+      try {
+        const post = await ctx.prisma.post.create({
+          data: {
+            title,
+            slug,
+            content: '',
+            author: {
+              connect: {
+                id: ctx.session?.user.userId as string,
+              },
+            },
+            status: 'DRAFT',
+          },
+        });
+        console.log(post);
+        return post.id;
+      } catch (error) {
+        console.log(error);
       }
     },
   })
   .mutation('save', {
     input: z.object({
-      title: z.string().optional(),
+      title: z.string(),
       content: z.string(),
       id: z.string(),
-      slug: z.string(),
-      categories: z.array(z.string()),
     }),
-    async resolve({ ctx, input: { title, content, id, slug, categories } }) {
-      const postTitle =
-        title && title?.trim().length !== 0 ? title : 'Untitled';
-
-      const savedPost = await ctx.prisma.post.upsert({
+    async resolve({ ctx, input: { title, content, id } }) {
+      const slug = `${slugify(title)}-${faker.random.alphaNumeric(5)}`;
+      const savedPost = await ctx.prisma.post.update({
         where: {
           id,
         },
-        create: {
-          id,
-          title: postTitle,
-          content,
-          author: { connect: { username: ctx.session?.user.username } },
-          slug,
-          status: 'DRAFT',
-          category: {
-            connectOrCreate: categories.map((tag) => {
-              return {
-                where: { name: tag },
-                create: { name: tag },
-              };
-            }),
-          },
-        },
-        update: {
+
+        data: {
           content,
           title,
           slug,

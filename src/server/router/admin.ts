@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker';
-import { Post } from '@prisma/client';
+import { Post, User } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 import cuid from 'cuid';
 
@@ -58,12 +58,34 @@ export const adminRouter = createRouter()
   })
   .mutation('generate-posts', {
     async resolve({ ctx }) {
+      await ctx.prisma.like.deleteMany();
+      await ctx.prisma.post.deleteMany();
+      await ctx.prisma.user.deleteMany();
+      const createUser = () => {
+        const user: User = {
+          createdAt: new Date(),
+          email: faker.internet.email(),
+          username: faker.internet.userName(),
+          emailVerified: new Date(),
+          id: cuid(),
+          image: faker.internet.avatar(),
+          name: faker.name.firstName(),
+        };
+        return user;
+      };
+
+      const createUsers = (numPosts = 60) => {
+        return Array.from({ length: numPosts }, createUser);
+      };
+      await ctx.prisma.user.createMany({
+        data: createUsers(),
+      });
       const users = await ctx.prisma.user.findMany();
 
       const createPost = () => {
         const date = faker.date.between(
           '2020-01-01T00:00:00.000Z',
-          '2022-08-04T00:00:00.000Z'
+          '2022-08-06T00:00:00.000Z'
         );
 
         const post: Post = {

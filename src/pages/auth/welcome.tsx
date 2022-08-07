@@ -1,45 +1,107 @@
+import { Category } from '@prisma/client';
+import cn from 'clsx';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useSession } from 'next-auth/react';
+import { ReactElement, useState } from 'react';
 
+import { BasicLayout } from '@/features/layout/Basic';
+import { Button, Flex, Input } from '@/features/UI';
 import { trpc } from '@/utils/trpc';
+
+const categories = [
+  { id: 'Tech', name: 'Tech' },
+  { id: 'Food', name: 'Food' },
+  { id: 'Art', name: 'Art' },
+  { id: 'Startup', name: 'Startup' },
+  { id: 'Programming', name: 'Programming' },
+  { id: 'Science', name: 'science' },
+];
 
 const WelcomePage = () => {
   const router = useRouter();
-  const { data } = trpc.useQuery(['auth.getSession']);
-  const mutation = trpc.useMutation(['user.edit-bio'], {
-    onSuccess: () => {
-      router.push('/');
-    },
-  });
+  const { data } = useSession();
+  console.log(data);
 
+  const { mutate: saveProfile, isLoading } = trpc.useMutation(
+    ['user.edit-bio'],
+    {
+      onSuccess: () => {
+        router.push('/');
+      },
+    }
+  );
+  const [selectedCategories, setSelectedCategories] = useState<
+    Omit<Category, 'userId'>[]
+  >([]);
   const [username, setUsername] = useState('');
   return (
-    <div>
-      <div>
-        Welcome <span>{data?.user?.name}</span>
-      </div>
+    <div className='max-w-2xl mx-auto'>
+      <h1 className='text-3xl my-4 lg:my-8 text-white'>Welcome onboard!</h1>
+      <p className='my-4'>
+        You will be able to share your thoughts, ideas, projects or products
+        with others.
+      </p>
+      <div className='space-y-6'>
+        <div className='space-y-2'>
+          <p className='text-gray-300'>
+            Let&#39;s get started with an unique username.
+          </p>
+          <Input
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            placeholder='username'
+            required
+          />
+        </div>
 
-      <div>
-        <input
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          placeholder='username'
-          required
-        />
-
-        <button
-          onClick={() => {
-            if (data) {
-              const userId = data.user.id as string;
-              mutation.mutate({ username, userId });
-            }
-          }}
-        >
-          Next
-        </button>
+        <div className='space-y-2'>
+          <p className='text-gray-300'>What fields are you interested in?</p>
+          <Flex className='gap-2 flex-wrap'>
+            {categories.map((ca) => (
+              <Button
+                size='small'
+                className={cn('hover:text-white capitalize', {
+                  'bg-[#4799eb] text-white': selectedCategories.find(
+                    (p) => p.name === ca.name
+                  ),
+                  'text-brand-text': !selectedCategories.find(
+                    (p) => p.name === ca.name
+                  ),
+                })}
+                onClick={() =>
+                  setSelectedCategories((prev) => {
+                    if (prev.find((p) => p.name === ca.name)) {
+                      return [...prev].filter((p) => p.name !== ca.name);
+                    }
+                    return [...prev, { name: ca.name, id: ca.id }];
+                  })
+                }
+                variant='outline'
+                key={ca.id}
+              >
+                {ca.name}
+              </Button>
+            ))}
+          </Flex>
+        </div>
+        <Flex className='justify-end w-full'>
+          <Button
+            loading={isLoading}
+            variant='gradient'
+            onClick={() => {
+              saveProfile({ username });
+            }}
+          >
+            Next
+          </Button>
+        </Flex>
       </div>
     </div>
   );
 };
 
 export default WelcomePage;
+
+WelcomePage.getLayout = (page: ReactElement) => (
+  <BasicLayout>{page}</BasicLayout>
+);

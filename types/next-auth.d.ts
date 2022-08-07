@@ -17,7 +17,7 @@ declare module 'next-auth' {
     username: string;
     image: string;
     impersonatedByUID?: number;
-    id?: string;
+    userId?: string;
   };
   interface Session {
     user: CalendsoSessionUser;

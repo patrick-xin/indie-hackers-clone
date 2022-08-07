@@ -1,7 +1,9 @@
 import { useRouter } from 'next/router';
 import { ReactElement } from 'react';
+import ReactMarkdown from 'react-markdown';
 
 import { BasicLayout } from '@/features/layout/Basic';
+import { ButtonLink } from '@/features/UI';
 import { trpc } from '@/utils/trpc';
 const UserPostPage = () => {
   const { query } = useRouter();
@@ -15,7 +17,7 @@ const UserPostPage = () => {
   );
 
   return (
-    <div>
+    <div className='prose prose-brand mx-auto lg:prose-lg xl:prose-xl 2xl:prose-2xl'>
       {/* {post && (
         <Blocks
           data={post.content}
@@ -58,6 +60,15 @@ const UserPostPage = () => {
           }}
         />
       )} */}
+      {post && (
+        <>
+          <h1>{post.title}</h1>
+          <div className='prose prose-brand prose-a:text-brand-blue prose-a:hover:underline xl:prose-xl 2xl:prose-2xl mx-auto prose-img:rounded prose-img:object-cover'>
+            <ReactMarkdown>{post.content}</ReactMarkdown>
+          </div>
+          <ButtonLink href={`/dashboard/post/${post.id}`}>edit</ButtonLink>
+        </>
+      )}
     </div>
   );
 };

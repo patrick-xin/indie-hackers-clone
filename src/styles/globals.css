@@ -19,6 +19,14 @@
   }
 }
 
+.triangle {
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 8px 10px 8px;
+  border-color: transparent transparent #274059 transparent;
+}
+
 .grid-container {
   display: grid;
   align-items: start;
@@ -70,4 +78,21 @@
 }
 .right-col {
   grid-area: rightCol;
+}
+
+.arrow::after {
+  content: '';
+  width: 0px;
+  height: 0px;
+  border-style: solid;
+  border-width: 0 8px 10px 8px;
+  border-color: transparent transparent #274059 transparent;
+  display: inline-block;
+  vertical-align: middle;
+  position: absolute;
+  bottom: 0;
+  top: 100;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
 }

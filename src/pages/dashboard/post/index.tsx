@@ -1,32 +1,11 @@
-import {
-  ActionIcon,
-  Anchor,
-  Badge,
-  Box,
-  Button,
-  Group,
-  List,
-  Loader,
-  Paper,
-  Popover,
-  Select,
-  SimpleGrid,
-  Stack,
-  Text,
-  Title,
-} from '@mantine/core';
 import { format } from 'date-fns';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
-import { Dots } from 'tabler-icons-react';
+import { Loader } from 'tabler-icons-react';
 import z from 'zod';
 
-import { POST_ORDER } from '@/lib/constants';
-
-import Flex from '@/components/common/Flex';
-import { DashboardLayout } from '@/components/layout/dashboard';
-
+import { Flex } from '@/features/UI';
 import { trpc } from '@/utils/trpc';
 
 const DashboardPage = () => {
@@ -41,10 +20,10 @@ const DashboardPage = () => {
   ]);
 
   return (
-    <DashboardLayout>
-      <Stack mb={12}>
-        <Title mb={32}>My Posts ({posts?.length})</Title>
-        <Group position='right'>
+    <div>
+      <div>
+        <h2>My Posts ({posts?.length})</h2>
+        {/* <Group position='right'>
           <Select
             placeholder='Recently Created'
             value={order}
@@ -54,79 +33,61 @@ const DashboardPage = () => {
             }}
             data={POST_ORDER}
           />
-        </Group>
-      </Stack>
+        </Group> */}
+      </div>
 
       {isLoading || !posts ? (
-        <Flex height={500}>
-          <Loader size='sm' />
+        <Flex>
+          <Loader />
         </Flex>
       ) : (
-        <Box>
-          <List listStyleType='none' spacing='lg'>
+        <div>
+          <ul>
             {posts?.map((post) => (
-              <List.Item key={post.id}>
-                <Paper p='lg'>
-                  <SimpleGrid
-                    breakpoints={[
-                      { maxWidth: 980, cols: 3, spacing: 'md' },
-                      { maxWidth: 755, cols: 2, spacing: 'sm' },
-                      { maxWidth: 600, cols: 1, spacing: 'sm' },
-                    ]}
-                    cols={3}
-                    style={{ alignItems: 'center' }}
-                  >
+              <li key={post.id}>
+                <div>
+                  <div>
                     <div>
-                      <Text color='dimmed' size='xs'>
-                        {format(post.createdAt, 'HH:mm, LLLL dd, yyyy')}
-                      </Text>
+                      <h1>{format(post.createdAt, 'HH:mm, LLLL dd, yyyy')}</h1>
 
                       {post.status === 'PUBLISHED' ? (
-                        <Group direction='column'>
-                          <Anchor
-                            component={Link}
-                            href={`/@${post.author.username}/${post.slug}`}
-                          >
-                            <Title style={{ cursor: 'pointer' }} order={3}>
-                              {post.title}
-                            </Title>
-                          </Anchor>
-                          <Text color='dimmed' size='xs'>
+                        <div>
+                          <Link href={`/@${post.author.username}/${post.slug}`}>
+                            <a>
+                              <h1>{post.title}</h1>
+                            </a>
+                          </Link>
+
+                          <h2>
                             Published at{' '}
                             {format(post.publishedAt, 'LLLL dd, yyyy')}
-                          </Text>
-                        </Group>
+                          </h2>
+                        </div>
                       ) : (
-                        <Title order={3}>{post.title}</Title>
+                        <Link href={`/@${post.author.username}/${post.slug}`}>
+                          <a>
+                            <h1>{post.title}</h1>
+                          </a>
+                        </Link>
                       )}
                     </div>
 
                     <Flex>
-                      <Badge
-                        color={
-                          post.status === 'DRAFT'
-                            ? 'yellow'
-                            : post.status === 'PUBLISHED'
-                            ? 'green'
-                            : 'blue'
-                        }
-                      >
-                        {post.status}
-                      </Badge>
+                      <div>{post.status}</div>
                     </Flex>
                     <div>
-                      <Group position='right'>
+                      <div>
                         <Link
                           href={`/dashboard/post/${post.id}/manage`}
                           passHref
                         >
-                          <Button variant='subtle'>Manage</Button>
+                          <button>Manage</button>
                         </Link>
-                        <Link href={`/dashboard/post/${post.id}/edit`} passHref>
-                          <Button variant='subtle'>Edit</Button>
+                        <Link href={`/dashboard/post/${post.id}`} passHref>
+                          <button>Edit</button>
                         </Link>
 
-                        <Popover
+                        {/* <Popover
                           opened={opened === post.id}
                           onClose={() => setOpened(null)}
                           position='bottom'
@@ -151,17 +112,17 @@ const DashboardPage = () => {
 
                             <div>Archive</div>
                           </Stack>
-                        </Popover>
-                      </Group>
+                        </Popover> */}
+                      </div>
                     </div>
-                  </SimpleGrid>
-                </Paper>
-              </List.Item>
+                  </div>
+                </div>
+              </li>
             ))}
-          </List>
-        </Box>
+          </ul>
+        </div>
       )}
-    </DashboardLayout>
+    </div>
   );
 };
 

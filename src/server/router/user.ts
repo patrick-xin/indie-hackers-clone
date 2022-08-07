@@ -15,7 +15,6 @@ export const userRouter = createRouter()
         },
         include: {
           _count: { select: { comment: true, likes: true } },
-
           posts: {
             select: {
               title: true,
@@ -47,12 +46,11 @@ export const userRouter = createRouter()
   .mutation('edit-bio', {
     input: z.object({
       username: z.string().min(3),
-      userId: z.string(),
     }),
-    async resolve({ ctx, input: { username, userId } }) {
+    async resolve({ ctx, input: { username } }) {
       return await ctx.prisma.user.update({
         where: {
-          id: userId,
+          id: ctx.session?.user.userId,
         },
         data: {
           username,

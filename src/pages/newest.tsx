@@ -29,6 +29,7 @@ const Newest = () => {
       <Onboard />
       <Container>
         <Content
+          type='/'
           posts={data?.pages.flatMap((p) => p.posts)}
           fetchNextPage={fetchNextPage}
           isLoading={isLoading}

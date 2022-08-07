@@ -6,15 +6,18 @@ import React, { useState } from 'react';
 import { BiCheckCircle } from 'react-icons/bi';
 import { X } from 'tabler-icons-react';
 
-import { NewPostButton } from '@/features/homepage/sections/content/components/NewPostButton';
+import { Button, Input } from '@/features/UI';
+import { trpc } from '@/utils/trpc';
 const editorTypes = [
   {
+    id: 'BLOCK_EDITOR',
     type: 'BLOCK_EDITOR',
     title: 'Block Editor',
     description: 'Use block Editor',
   },
   {
     id: 'MARKDOWN',
+    type: 'MARKDOWN',
     title: 'Markdown',
     description: 'Use markdown',
   },
@@ -27,8 +30,18 @@ type Props = {
 
 export const NewPostModal = ({ open, setOpen }: Props) => {
   const router = useRouter();
-  const [name, setName] = useState('');
+  const [title, setTitle] = useState('');
   const [editorType, setEditorType] = useState(editorTypes[0]);
+  const { mutate, isLoading } = trpc.useMutation('private-posts.create', {
+    onSuccess: (id) => {
+      router.push(`/dashboard/post/${id}`);
+    },
+  });
+  const handleCreatePost = () => {
+    mutate({
+      title,
+    });
+  };
   return (
     <div>
       <Dialog as='div' className='relative z-10' onClose={setOpen} open={open}>
@@ -74,17 +87,11 @@ export const NewPostModal = ({ open, setOpen }: Props) => {
                       <label htmlFor='title' className='text-white'>
                         Title
                       </label>
-                      <div className='mt-2'>
-                        <input
-                          type='text'
-                          name='title'
-                          className='w-full border-[1px] border-[#63809c]/50 text-4xl bg-[#1E364D] p-3 mb-6 rounded sm:text-sm focus:bg-transparent focus:border-gray-400 focus:ring-0 appearance-none focus:outline-none'
-                          placeholder='Awesome post...'
-                          value={name}
-                          onChange={(e) => setName(e.target.value)}
-                          required
-                        />
-                      </div>
+                      <Input
+                        value={title}
+                        className='border-[1px] border-[#63809c]/50 focus:bg-transparent focus:border-gray-400 focus:ring-0 p-3'
+                        onChange={(e) => setTitle(e.target.value)}
+                      />
                     </div>
                     {/* Radio group choice */}
                     <RadioGroup value={editorType} onChange={setEditorType}>
@@ -157,7 +164,14 @@ export const NewPostModal = ({ open, setOpen }: Props) => {
                     </div>
                     {/* Submit button */}
                     <div className='mt-5 sm:mt-6 flex justify-end'>
-                      <NewPostButton onClick={() => {}} />
+                      <Button
+                        variant='gradient'
+                        onClick={handleCreatePost}
+                        loading={isLoading}
+                        loadingText='creating'
+                      >
+                        create
+                      </Button>
                     </div>
                   </form>
                 </Dialog.Panel>

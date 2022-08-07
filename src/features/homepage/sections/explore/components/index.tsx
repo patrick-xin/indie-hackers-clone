@@ -1,10 +1,9 @@
-import Link from 'next/link';
 import React, { useCallback, useEffect, useState } from 'react';
 import { BsCaretLeftFill, BsCaretRightFill } from 'react-icons/bs';
 import { IoClose } from 'react-icons/io5';
 
 import { TOPICKS } from '@/_mocks_/data';
-import { SectionTitle } from '@/features/homepage/sections';
+import { ButtonLink } from '@/features/UI';
 
 export const ExploreSection = () => {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -37,12 +36,9 @@ export const ExploreSection = () => {
       <Wrapper>
         <div>
           <div className='flex justify-between items-center border-3 border-gray-100/5 p-2.5'>
-            <Link href='/'>
-              <a>
-                <SectionTitle title='Explore' />
-              </a>
-            </Link>
-
+            <ButtonLink className='capitalize' variant='ghost' href='/'>
+              Explore
+            </ButtonLink>
             <div>
               <button
                 onClick={() => setShow(true)}
@@ -73,13 +69,9 @@ export const ExploreSection = () => {
           <div className='group flex gap-2 items-center'>
             <div className='space-y-2'>
               <div className='flex gap-4 items-center'>
-                <Link href='/'>
-                  <a>
-                    <SectionTitle
-                      title={`Explore: ${TOPICKS[activeIndex].title}`}
-                    />
-                  </a>
-                </Link>
+                <ButtonLink className='capitalize' variant='ghost' href='/'>
+                  Explore: {TOPICKS[activeIndex].title}
+                </ButtonLink>
 
                 <div className='flex gap-2'>
                   <button

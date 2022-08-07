@@ -1,10 +1,9 @@
 import Image from 'next/future/image';
-import Link from 'next/link';
 import React, { useState } from 'react';
 import { FaArrowRight } from 'react-icons/fa';
 import { IoClose } from 'react-icons/io5';
 
-import { SectionTitle } from '@/features/homepage/sections/common/components/SectionTitle';
+import { ButtonLink } from '@/features/UI';
 
 export const GroupSection = () => {
   const [isMouseEntered, setMouseEnter] = useState(false);
@@ -14,11 +13,9 @@ export const GroupSection = () => {
       <Wrapper>
         <div>
           <div className='flex justify-between items-center border-3 border-gray-100/5 p-2.5'>
-            <Link href='/'>
-              <a>
-                <SectionTitle title='Trending groups' />
-              </a>
-            </Link>
+            <ButtonLink className='capitalize' variant='ghost' href='/'>
+              Trending groups
+            </ButtonLink>
 
             <div>
               <button
@@ -47,15 +44,16 @@ export const GroupSection = () => {
         onMouseLeave={() => setMouseEnter(false)}
       >
         <div className='flex justify-between items-center'>
-          <div className='group flex gap-2 items-center'>
-            <Link href='/'>
-              <a>
-                <SectionTitle title='Trending groups' />
-              </a>
-            </Link>
-
-            <FaArrowRight className='group-hover:animate-bounce-front-back' />
-          </div>
+          <ButtonLink
+            className='capitalize'
+            variant='ghost'
+            href='/'
+            icon={
+              <FaArrowRight className='group-hover:animate-bounce-front-back ml-2' />
+            }
+          >
+            Trending groups
+          </ButtonLink>
 
           {isMouseEntered && (
             <button onClick={() => setShow(false)}>

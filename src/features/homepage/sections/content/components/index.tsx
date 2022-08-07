@@ -14,14 +14,13 @@ import React, { useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
 
 import { FeedItemLoaders } from '@/features/homepage/sections/common/components/FeedItemLoader';
-import { FilterLinks } from '@/features/homepage/sections/content/components/FilterLinks';
-import { FliterNav } from '@/features/homepage/sections/content/components/FliterNav';
-import { NewPostButton } from '@/features/homepage/sections/content/components/NewPostButton';
-import { TabLinks } from '@/features/homepage/sections/content/components/TabLinks';
 import { NewPostModal } from '@/features/post/components';
-import { Alert } from '@/features/UI';
+import { Alert, Button, Flex } from '@/features/UI';
 
 import { FeedItem } from './FeedItem';
+import { FilterLinks } from './FilterLinks';
+import { FliterNav } from './FliterNav';
+import { TabLinks } from './TabLinks';
 
 type IPost = Post & {
   comments: Comment[];
@@ -176,10 +175,12 @@ const Header = ({
   return (
     <header className='flex flex-col items-start gap-4 sm:gap-0 sm:flex-row sm:justify-between sm:items-center lg:items-start mb-6'>
       <div className='space-y-4 w-full'>
-        <div className='flex justify-between items-center'>
+        <Flex className='justify-between items-center'>
           <TabLinks path={route} />
-          <NewPostButton onClick={handleOpen} />
-        </div>
+          <Button variant='gradient' onClick={handleOpen} transition>
+            New Post
+          </Button>
+        </Flex>
 
         {(route === '/' || route.startsWith('/top')) && (
           <div className='space-y-4 w-full'>
