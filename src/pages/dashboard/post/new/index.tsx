@@ -178,13 +178,13 @@ const PostCreatePage = () => {
 
               <Flex>
                 <Button
-                  color={writingMode ? 'gradient' : 'transparent'}
+                  variant={writingMode ? 'primary' : 'transparent'}
                   onClick={() => setSelectedTab('write')}
                 >
                   Write
                 </Button>
                 <Button
-                  color={!writingMode ? 'gradient' : 'transparent'}
+                  variant={!writingMode ? 'primary' : 'transparent'}
                   onClick={() => setSelectedTab('preview')}
                 >
                   Preview
@@ -208,7 +208,14 @@ const PostCreatePage = () => {
               </div>
             )}
           </div>
-          <Button type='submit'>save</Button>
+          <Flex className='gap-4 justify-end'>
+            <Button type='submit' variant='gradient-inverse'>
+              Save draft
+            </Button>
+            <Button type='submit' variant='gradient'>
+              Publish
+            </Button>
+          </Flex>
         </form>
       </div>
     </div>

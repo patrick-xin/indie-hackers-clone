@@ -74,7 +74,6 @@ export const privatePostRouter = createRouter()
             status: 'DRAFT',
           },
         });
-        console.log(post);
         return post.id;
       } catch (error) {
         console.log(error);

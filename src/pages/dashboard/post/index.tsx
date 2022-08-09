@@ -1,10 +1,11 @@
 import { format } from 'date-fns';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import React, { useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 import { Loader } from 'tabler-icons-react';
 import z from 'zod';
 
+import { DashboardLayout } from '@/features/layout/Dashboard';
 import { Flex } from '@/features/UI';
 import { trpc } from '@/utils/trpc';
 
@@ -127,3 +128,7 @@ const DashboardPage = () => {
 };
 
 export default DashboardPage;
+
+DashboardPage.getLayout = (page: ReactElement) => (
+  <DashboardLayout>{page}</DashboardLayout>
+);

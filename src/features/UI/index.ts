@@ -5,4 +5,5 @@ export { Footer } from './Footer';
 export { Header } from './Header';
 export { Input } from './Input';
 export { ButtonLink } from './links/ButtonLink';
+export { Logo } from './Logo';
 export { Tooltip } from './Tooltip';

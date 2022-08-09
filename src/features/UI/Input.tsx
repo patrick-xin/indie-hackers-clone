@@ -5,20 +5,29 @@ export interface InputProps extends React.ComponentPropsWithoutRef<'input'> {
   rows?: number;
   error?: string;
   transparent?: boolean;
+  label?: string;
 }
 
 export const Input = forwardRef<
   HTMLInputElement | HTMLTextAreaElement,
   InputProps
->(({ className, textarea, error, transparent, ...props }, ref) => {
-  const bg = transparent ? `bg-transparent` : `bg-[#152C41]`;
+>(({ className, textarea, error, transparent, label, ...props }, ref) => {
+  const bg = transparent ? `bg-transparent` : `bg-[#1E364D]`;
   const ring = error ? `ring-1 ring-red-400` : '';
-  const cn = `w-full p-2 rounded-8 text-gray-300 placeholder:text-gray-500 placeholder-red-300  outline-none appearance-none focus:outline-none focus:border-none ${bg} ${ring} ${className} `;
+  const cn = `w-full p-2 rounded text-gray-300 placeholder:text-gray-500 placeholder-red-300  outline-none appearance-none focus:outline-none  ${bg} ${ring} ${className} `;
 
   return textarea ? (
     <textarea ref={ref} className={cn} {...(props as any)} />
   ) : (
-    <input ref={ref} className={cn} {...(props as any)} />
+    <div>
+      <label
+        htmlFor={label}
+        className='text-white my-2 inline-block capitalize text-lg'
+      >
+        {label}
+      </label>
+      <input ref={ref} className={cn} {...(props as any)} />
+    </div>
   );
 });
 

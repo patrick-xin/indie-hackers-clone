@@ -22,12 +22,14 @@ const roundedClassnames = {
 
 // TODO extract more buttons
 const variantClassnames = {
-  primary: '',
+  primary: 'bg-brand-blue',
   secondary: '',
   transparent: 'bg-transparent',
   outline: 'border-2 border-gray-100/5 p-2.5 hover:text-[#4799eb]',
   gradient:
     'bg-gradient-to-r from-[#e052a0] to-[#f15c41] rounded-sm hover:from-cyan-500 hover:to-blue-500',
+  'gradient-inverse disabled:bg-opacity-50 disabled:hover:bg-gray-400':
+    'bg-gradient-to-r hover:from-[#e052a0] hover:to-[#f15c41] rounded-sm from-cyan-500 to-blue-500 disabled:bg-opacity-50',
 };
 
 export type ButtonProps = DetailedHTMLProps<
@@ -63,7 +65,7 @@ export const Button: React.FC<ButtonProps> = ({
       type={type}
       disabled={disabled || loading}
       className={cn(
-        `flex outline-none text-base text-gray-100 disabled:cursor-not-allowed items-center justify-center focus:ring-0 group ${sizeClassnames[size]} ${variantClassnames[variant]} ${roundedClassnames[rounded]}`,
+        `flex outline-none text-base text-gray-100 disabled:cursor-not-allowed  disabled:bg-gray-500 items-center justify-center focus:ring-0 group ${sizeClassnames[size]} ${variantClassnames[variant]} ${roundedClassnames[rounded]}`,
         className && ` ${className}`,
         {
           'transition-colors ease-linear': transition,

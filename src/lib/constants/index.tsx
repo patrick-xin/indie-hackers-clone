@@ -1,6 +1,20 @@
 import { FaUserCircle } from 'react-icons/fa';
 import { IoIosSettings } from 'react-icons/io';
 import { IoBookmark, IoNotifications } from 'react-icons/io5';
+import {
+  Bell,
+  BellRinging,
+  Book,
+  Book2,
+  DoorExit,
+  Heart,
+  Heartbeat,
+  Logout,
+  Message,
+  Message2,
+  Tool,
+  Tools,
+} from 'tabler-icons-react';
 
 export const POST_ORDER = [
   { value: 'creation', label: 'Recently Created', key: 'creation-desc' },
@@ -55,3 +69,71 @@ export const TABLINKS = [
 ];
 
 export type TabLink = typeof TABLINKS[0];
+
+export const DASHBOARD_NAV_LINKS = {
+  top: [
+    {
+      label: 'my post',
+      icons: (
+        <>
+          <>
+            <Book className='w-6 h-6 text-yellow-400 block group-hover:hidden group-hover:animate-fade-out' />
+            <Book2 className='w-6 h-6 hidden group-hover:block group-hover:animate-fade-in text-yellow-400' />
+          </>
+        </>
+      ),
+      href: 'dashboad/post',
+    },
+    {
+      label: 'my likes',
+      icons: (
+        <>
+          <Heart className='w-6 h-6 text-red-400 block group-hover:hidden group-hover:animate-fade-out' />
+          <Heartbeat className='w-6 h-6 hidden group-hover:block group-hover:animate-fade-in text-red-400' />
+        </>
+      ),
+      href: 'dashboad/post/likes',
+    },
+    {
+      label: 'my comments',
+      icons: (
+        <>
+          <Message className='w-6 h-6 text-purple-400 block group-hover:hidden group-hover:animate-fade-out' />
+          <Message2 className='w-6 h-6 hidden group-hover:block group-hover:animate-fade-in text-purple-400' />
+        </>
+      ),
+      href: 'dashboad/post/likes',
+    },
+    {
+      label: 'notification',
+      icons: (
+        <>
+          <Bell className='text-green-400 block group-hover:hidden group-hover:animate-fade-out' />
+          <BellRinging className='hidden group-hover:block group-hover:animate-fade-in text-green-400' />
+        </>
+      ),
+      href: 'dashboad/post/notification',
+    },
+  ],
+  bottom: [
+    {
+      label: 'settings',
+      icons: (
+        <>
+          <Tool className='text-pink-400 block group-hover:hidden group-hover:animate-fade-out' />
+          <Tools className='hidden group-hover:block group-hover:animate-fade-in text-pink-400' />
+        </>
+      ),
+      href: 'dashboad/settings',
+    },
+    {
+      label: 'logout',
+      icons: (
+        <>
+          <Logout className='text-cyan-400 block group-hover:hidden group-hover:animate-fade-out' />
+          <DoorExit className='hidden group-hover:block group-hover:animate-fade-in text-cyan-400' />
+        </>
+      ),
+    },
+  ],
+};

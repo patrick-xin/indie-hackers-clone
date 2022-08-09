@@ -1,10 +1,9 @@
-import Image from 'next/future/image';
-import Link from 'next/link';
 import { signIn, useSession } from 'next-auth/react';
 import React from 'react';
 import { ImSpinner8 } from 'react-icons/im';
 import { IoIosMenu, IoIosSearch } from 'react-icons/io';
 
+import { Logo } from '@/features/UI/Logo';
 import { ProfileMenuDropdown } from '@/features/user/components';
 
 export const Header = () => {
@@ -22,7 +21,7 @@ export const Header = () => {
     <div className='flex justify-between px-4 h-14 my-1 bg-[#1E364D] items-center lg:px-12'>
       <div className='flex gap-2 items-center'>
         <div className='sm:hidden'>
-          <LogoImage />
+          <Logo hasName={false} />
         </div>
         <div>
           <IoIosMenu className='h-6 w-6' />
@@ -33,10 +32,7 @@ export const Header = () => {
       </div>
 
       <div className='hidden sm:flex gap-2 sm:gap-4 items-center text-white font-black'>
-        <LogoImage />
-        <Link href='/'>
-          <a>INDIE HACKERS</a>
-        </Link>
+        <Logo />
       </div>
 
       {renderUserStatus()}
@@ -52,8 +48,4 @@ const LoginRegister = () => {
       </button>
     </div>
   );
-};
-
-const LogoImage = () => {
-  return <Image alt='logo' width={24} height={24} src='/logo.svg' />;
 };

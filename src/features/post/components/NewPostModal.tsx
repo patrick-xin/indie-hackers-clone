@@ -34,6 +34,7 @@ export const NewPostModal = ({ open, setOpen }: Props) => {
   const [editorType, setEditorType] = useState(editorTypes[0]);
   const { mutate, isLoading } = trpc.useMutation('private-posts.create', {
     onSuccess: (id) => {
+      setOpen(false);
       router.push(`/dashboard/post/${id}`);
     },
   });
@@ -83,16 +84,14 @@ export const NewPostModal = ({ open, setOpen }: Props) => {
                     className='inline-block w-full p-2 overflow-hidden text-left align-bottom transition-all transform sm:align-middle space-y-6'
                   >
                     {/* Title */}
-                    <div>
-                      <label htmlFor='title' className='text-white'>
-                        Title
-                      </label>
-                      <Input
-                        value={title}
-                        className='border-[1px] border-[#63809c]/50 focus:bg-transparent focus:border-gray-400 focus:ring-0 p-3'
-                        onChange={(e) => setTitle(e.target.value)}
-                      />
-                    </div>
+
+                    <Input
+                      label='title'
+                      value={title}
+                      className='border-[1px] border-[#63809c]/50 focus:bg-transparent focus:border-gray-400 focus:ring-0 p-3'
+                      onChange={(e) => setTitle(e.target.value)}
+                    />
+
                     {/* Radio group choice */}
                     <RadioGroup value={editorType} onChange={setEditorType}>
                       <RadioGroup.Label className='text-white'>
@@ -165,7 +164,8 @@ export const NewPostModal = ({ open, setOpen }: Props) => {
                     {/* Submit button */}
                     <div className='mt-5 sm:mt-6 flex justify-end'>
                       <Button
-                        variant='gradient'
+                        disabled={title.length < 5}
+                        variant='primary'
                         onClick={handleCreatePost}
                         loading={isLoading}
                         loadingText='creating'

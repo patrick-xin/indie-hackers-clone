@@ -14,6 +14,8 @@ module.exports = {
       },
       animation: {
         'bounce-front-back': 'wiggle 1s linear infinite',
+        'fade-in': 'fadeIn 240ms linear',
+        'fade-out': 'fadeOut 240ms linear',
       },
       keyframes: {
         wiggle: {
@@ -22,6 +24,16 @@ module.exports = {
             'animation-timing-function': 'cubic-bezier(0.8,0,1,1)',
           },
           '50%': { transform: 'none' },
+        },
+        fadeIn: {
+          '0%': { opacity: 0 },
+          '50%': { opacity: 0.5 },
+          '100%': { opacity: 1 },
+        },
+        fadeOut: {
+          '0%': { opacity: 1 },
+          '50%': { opacity: 0.5 },
+          '100%': { opacity: 100 },
         },
       },
       colors: {
