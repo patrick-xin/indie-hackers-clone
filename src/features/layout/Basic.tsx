@@ -8,7 +8,7 @@ export const BasicLayout: React.FC<{ children: React.ReactNode }> = ({
   return (
     <>
       <Header />
-      <main className='px-4 xl:px-12 2xl:px-36 mx-auto'>{children}</main>
+      <main className='p-4 xl:p-12 2xl:p-36 mx-auto'>{children}</main>
       <Footer />
     </>
   );

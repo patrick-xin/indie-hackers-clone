@@ -28,8 +28,8 @@ const variantClassnames = {
   outline: 'border-2 border-gray-100/5 p-2.5 hover:text-[#4799eb]',
   gradient:
     'bg-gradient-to-r from-[#e052a0] to-[#f15c41] rounded-sm hover:from-cyan-500 hover:to-blue-500',
-  'gradient-inverse disabled:bg-opacity-50 disabled:hover:bg-gray-400':
-    'bg-gradient-to-r hover:from-[#e052a0] hover:to-[#f15c41] rounded-sm from-cyan-500 to-blue-500 disabled:bg-opacity-50',
+  'gradient-inverse':
+    'disabled:bg-opacity-50 disabled:hover:bg-gray-400 bg-gradient-to-r hover:from-[#e052a0] hover:to-[#f15c41] rounded-sm from-cyan-500 to-blue-500 disabled:bg-opacity-50',
 };
 
 export type ButtonProps = DetailedHTMLProps<

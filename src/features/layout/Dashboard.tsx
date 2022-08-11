@@ -4,12 +4,14 @@ import { CollapsedNav, MainNav } from '@/features/dashboad/components';
 
 type Props = {
   children: React.ReactNode;
+  loading?: boolean;
 };
 
-export const DashboardLayout: React.FC<Props> = ({ children }) => {
+export const DashboardLayout: React.FC<Props> = ({ children, loading }) => {
   const [collapse, setCollapse] = useState(false);
+
   return (
-    <div className='h-screen w-screen overflow-y-auto'>
+    <div className='h-screen w-screen overflow-y-auto relative'>
       <MainNav onClose={() => setCollapse(true)} shown={!collapse} />
 
       <CollapsedNav onClose={() => setCollapse(false)} shown={collapse} />

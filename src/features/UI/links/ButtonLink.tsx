@@ -52,16 +52,18 @@ export const ButtonLink = React.forwardRef<HTMLAnchorElement, ButtonLinkProps>(
               'disabled:bg-primary-400 disabled:hover:bg-primary-400',
             ],
             variant === 'outline' && [
-              'text-primary-500',
-              'border border-primary-500',
-              'hover:bg-primary-50 active:bg-primary-100 disabled:bg-primary-100',
+              'border-[1px] px-2 py-1 rounded-md hover:text-gray-200 border-indigo-400/30',
+
               isActive &&
                 'hover:bg-gray-900 active:bg-gray-800 disabled:bg-gray-800',
             ],
 
             variant === 'blue' && [
-              'bg-[#1E364D] text-white px-4 py-2',
-              isActive && 'bg-brand-blue',
+              ' text-white px-4 py-2',
+              {
+                'bg-brand-blue': isActive,
+                'bg-[#1E364D]': !isActive,
+              },
             ],
           ],
           className

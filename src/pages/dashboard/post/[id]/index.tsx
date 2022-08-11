@@ -30,6 +30,8 @@ import {
   Quote,
 } from 'tabler-icons-react';
 
+import { prisma } from '@/lib/prisma';
+
 import { BasicLayout } from '@/features/layout/Basic';
 import { Flex, Input } from '@/features/UI';
 import { Button } from '@/features/UI/Button';
@@ -260,7 +262,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 
   const id = context.query.id as string;
-  const post = await prisma?.post.findFirst({ where: { id } });
+  const post = await prisma.post.findFirst({ where: { id } });
   const isOwner = session.user.userId === post?.authorId;
   if (!isOwner) {
     return {

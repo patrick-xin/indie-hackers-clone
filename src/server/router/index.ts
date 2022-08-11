@@ -2,6 +2,7 @@
 import superjson from 'superjson';
 
 import { adminRouter } from '@/server/router/admin';
+import { commentRouter } from '@/server/router/comment';
 import { privatePostRouter } from '@/server/router/post-private';
 import { publicPostRouter } from '@/server/router/post-public';
 import { userRouter } from '@/server/router/user';
@@ -15,7 +16,8 @@ export const appRouter = createRouter()
   .merge('private-posts.', privatePostRouter)
   .merge('public-posts.', publicPostRouter)
   .merge('user.', userRouter)
-  .merge('admin.', adminRouter);
+  .merge('admin.', adminRouter)
+  .merge('comment.', commentRouter);
 
 // export type definition of API
 export type AppRouter = typeof appRouter;

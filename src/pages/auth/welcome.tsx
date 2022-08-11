@@ -1,7 +1,6 @@
 import { Category } from '@prisma/client';
 import cn from 'clsx';
 import { useRouter } from 'next/router';
-import { useSession } from 'next-auth/react';
 import { ReactElement, useState } from 'react';
 
 import { BasicLayout } from '@/features/layout/Basic';
@@ -19,8 +18,6 @@ const categories = [
 
 const WelcomePage = () => {
   const router = useRouter();
-  const { data } = useSession();
-  console.log(data);
 
   const { mutate: saveProfile, isLoading } = trpc.useMutation(
     ['user.edit-bio'],

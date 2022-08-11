@@ -16,7 +16,6 @@ const TopPage = () => {
   const path = query.slug as string;
   const dateQuery = path && path.split('-').slice(2).join('-');
   const type = path && path.split('-')[0];
-  console.log(type);
 
   const { data, fetchNextPage, isLoading, isError, hasNextPage } =
     trpc.useInfiniteQuery(

@@ -1,12 +1,12 @@
+import cn from 'clsx';
 import { format } from 'date-fns';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { ReactElement, useState } from 'react';
-import { Loader } from 'tabler-icons-react';
 import z from 'zod';
 
 import { DashboardLayout } from '@/features/layout/Dashboard';
-import { Flex } from '@/features/UI';
+import { ButtonLink, Flex, FullScreenLoader } from '@/features/UI';
 import { trpc } from '@/utils/trpc';
 
 const DashboardPage = () => {
@@ -20,10 +20,14 @@ const DashboardPage = () => {
     { query: query ?? 'creation' },
   ]);
 
+  if (isLoading || !posts) {
+    return <FullScreenLoader />;
+  }
+
   return (
     <div>
       <div>
-        <h2>My Posts ({posts?.length})</h2>
+        <h1 className='text-3xl text-white mb-12'>My Posts {posts.length}</h1>
         {/* <Group position='right'>
           <Select
             placeholder='Recently Created'
@@ -37,58 +41,54 @@ const DashboardPage = () => {
         </Group> */}
       </div>
 
-      {isLoading || !posts ? (
-        <Flex>
-          <Loader />
-        </Flex>
-      ) : (
-        <div>
-          <ul>
-            {posts?.map((post) => (
-              <li key={post.id}>
+      <div>
+        <ul className='space-y-4'>
+          {posts?.map((post) => (
+            <li key={post.id} className='bg-indigo-300/10 rounded-md px-4 py-3'>
+              <Flex className='justify-between items-center'>
                 <div>
-                  <div>
+                  <div className='text-sm mb-1 italic'>
+                    {format(post.createdAt, 'HH:mm, LLLL dd, yyyy')}
+                  </div>
+
+                  {post.status === 'DRAFT' ? (
                     <div>
-                      <h1>{format(post.createdAt, 'HH:mm, LLLL dd, yyyy')}</h1>
-
-                      {post.status === 'PUBLISHED' ? (
-                        <div>
-                          <Link href={`/@${post.author.username}/${post.slug}`}>
-                            <a>
-                              <h1>{post.title}</h1>
-                            </a>
-                          </Link>
-
-                          <h2>
-                            Published at{' '}
-                            {format(post.publishedAt, 'LLLL dd, yyyy')}
-                          </h2>
-                        </div>
-                      ) : (
-                        <Link href={`/@${post.author.username}/${post.slug}`}>
-                          <a>
-                            <h1>{post.title}</h1>
-                          </a>
-                        </Link>
-                      )}
+                      <Link href={`/@${post.author.username}/${post.slug}`}>
+                        <a>
+                          <h3 className='text-2xl text-white hover:underline'>
+                            {post.title}
+                          </h3>
+                        </a>
+                      </Link>
                     </div>
+                  ) : (
+                    <h3 className='text-2xl text-white'>{post.title}</h3>
+                  )}
+                </div>
 
-                    <Flex>
-                      <div>{post.status}</div>
-                    </Flex>
-                    <div>
-                      <div>
-                        <Link
-                          href={`/dashboard/post/${post.id}/manage`}
-                          passHref
-                        >
-                          <button>Manage</button>
-                        </Link>
-                        <Link href={`/dashboard/post/${post.id}`} passHref>
-                          <button>Edit</button>
-                        </Link>
+                <div
+                  className={cn(
+                    'bg-emerald-600/20 h-min text-xs tracking-wider font-bold text-emerald-400 py-1 px-2.5 rounded-xl'
+                  )}
+                >
+                  {post.status}
+                </div>
 
-                        {/* <Popover
+                <Flex className='gap-4'>
+                  <ButtonLink
+                    variant='outline'
+                    href={`/dashboard/post/${post.id}/manage`}
+                  >
+                    Manage
+                  </ButtonLink>
+                  <ButtonLink
+                    variant='outline'
+                    href={`/dashboard/post/${post.id}/manage`}
+                  >
+                    Edit
+                  </ButtonLink>
+
+                  {/* <Popover
                           opened={opened === post.id}
                           onClose={() => setOpened(null)}
                           position='bottom'
@@ -114,15 +114,12 @@ const DashboardPage = () => {
                             <div>Archive</div>
                           </Stack>
                         </Popover> */}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+                </Flex>
+              </Flex>
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 };

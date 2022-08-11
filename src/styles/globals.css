@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:ital,wght@0,300;0,400;0,600;0,700;0,900;1,400&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -80,27 +82,72 @@
   grid-area: rightCol;
 }
 
-.arrow::after {
-  content: '';
-  width: 0px;
-  height: 0px;
-  border-style: solid;
-  border-width: 0 8px 10px 8px;
-  border-color: transparent transparent #274059 transparent;
-  display: inline-block;
-  vertical-align: middle;
-  position: absolute;
-  bottom: 0;
-  top: 100;
-  left: 0;
-  right: 0;
-  margin: 0 auto;
-}
-
 .left-tran {
   width: 0;
   height: 0;
   border-style: solid;
   border-width: 4px 8px 4px 0;
   border-color: transparent var(--brand-blue) transparent transparent;
+}
+
+#nprogress {
+  @apply pointer-events-none;
+}
+#nprogress .bar {
+  @apply bg-brand-blue fixed z-100 inset-0 h-1;
+}
+#nprogress .peg {
+  @apply block absolute right-0 w-24 h-full opacity-100;
+  box-shadow: 0 0 10px var(--brand-blue), 0 0 5px var(--brand-blue);
+  -webkit-transform: rotate(3deg) translate(0px, -4px);
+  -ms-transform: rotate(3deg) translate(0px, -4px);
+  transform: rotate(3deg) translate(0px, -4px);
+}
+#nprogress .spinner {
+  @apply block fixed bottom-4 right-4;
+  z-index: 1031;
+}
+#nprogress .spinner-icon {
+  width: 18px;
+  height: 18px;
+  box-sizing: border-box;
+  border: solid 2px transparent;
+  border-top-color: var(--brand-blue);
+  border-left-color: var(--brand-blue);
+  border-radius: 50%;
+  -webkit-animation: nprogresss-spinner 400ms linear infinite;
+  animation: nprogress-spinner 400ms linear infinite;
+}
+
+.nprogress-custom-parent {
+  overflow: hidden;
+  position: relative;
+}
+.nprogress-custom-parent #nprogress .spinner,
+.nprogress-custom-parent #nprogress .bar {
+  position: absolute;
+}
+@-webkit-keyframes nprogress-spinner {
+  0% {
+    -webkit-transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+  }
+}
+@keyframes nprogress-spinner {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.comment-tree::before {
+  @apply border-brand-text border-l-[1px] border-dashed left-3 z-20;
+  content: '';
+  height: calc(100% - 4px - 7px);
+  position: absolute;
+  top: 4px;
 }

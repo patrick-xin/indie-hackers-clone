@@ -1,5 +1,6 @@
 import cn from 'clsx';
 import { AnimatePresence, motion } from 'framer-motion';
+import { useRouter } from 'next/router';
 import React from 'react';
 import { ChevronsLeft } from 'tabler-icons-react';
 
@@ -14,6 +15,9 @@ export const MainNav = ({
   onClose: () => void;
   shown: boolean;
 }) => {
+  const router = useRouter();
+  console.log(router.pathname.endsWith('likes'));
+
   return (
     <AnimatePresence>
       {shown && (
@@ -45,7 +49,7 @@ export const MainNav = ({
                     <MainNavLink
                       key={link.label}
                       {...link}
-                      active={link.label === 'my comments'}
+                      active={router.pathname.endsWith(link.path)}
                     />
                   ))}
                 </ul>
@@ -55,7 +59,9 @@ export const MainNav = ({
                     <MainNavLink
                       key={link.label}
                       {...link}
-                      active={link.label === 'settings'}
+                      active={
+                        link.path ? router.pathname.endsWith(link.path) : false
+                      }
                       isButton={link.label === 'logout'}
                     />
                   ))}

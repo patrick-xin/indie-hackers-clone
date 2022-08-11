@@ -45,7 +45,6 @@ export const publicPostRouter = createRouter()
         //   },
         // },
       });
-      console.log(posts);
 
       return { posts };
     },
@@ -60,7 +59,7 @@ export const publicPostRouter = createRouter()
         select: {
           posts: {
             where: { slug },
-            include: { author: true },
+            include: { author: true, comments: { include: { user: true } } },
           },
         },
       });

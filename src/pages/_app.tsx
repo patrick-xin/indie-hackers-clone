@@ -1,4 +1,3 @@
-// src/pages/_app.tsx
 import { withTRPC } from '@trpc/next';
 import { NextPage } from 'next';
 import { AppProps } from 'next/app';
@@ -6,9 +5,10 @@ import { SessionProvider } from 'next-auth/react';
 import { ReactElement, ReactNode } from 'react';
 import superjson from 'superjson';
 import '@fontsource/poppins';
-import '@fontsource/source-sans-pro';
 
 import '@/styles/globals.css';
+
+import { Progressbar } from '@/features/UI';
 
 import type { AppRouter } from '../server/router';
 
@@ -28,6 +28,7 @@ const MyApp = ({
   return (
     <SessionProvider session={session}>
       {getLayout(<Component {...pageProps} />)}
+      <Progressbar />
     </SessionProvider>
   );
 };

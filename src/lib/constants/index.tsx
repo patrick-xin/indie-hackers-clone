@@ -6,9 +6,11 @@ import {
   BellRinging,
   Book,
   Book2,
+  Dashboard,
   DoorExit,
   Heart,
   Heartbeat,
+  LayoutDashboard,
   Logout,
   Message,
   Message2,
@@ -73,16 +75,26 @@ export type TabLink = typeof TABLINKS[0];
 export const DASHBOARD_NAV_LINKS = {
   top: [
     {
+      label: 'dashboard',
+      icons: (
+        <>
+          <Dashboard className='w-6 h-6 text-violet-400 block group-hover:hidden group-hover:animate-fade-out' />
+          <LayoutDashboard className='w-6 h-6 hidden group-hover:block group-hover:animate-fade-in text-violet-400' />
+        </>
+      ),
+      href: '/dashboard',
+      path: 'dashboard',
+    },
+    {
       label: 'my post',
       icons: (
         <>
-          <>
-            <Book className='w-6 h-6 text-yellow-400 block group-hover:hidden group-hover:animate-fade-out' />
-            <Book2 className='w-6 h-6 hidden group-hover:block group-hover:animate-fade-in text-yellow-400' />
-          </>
+          <Book className='w-6 h-6 text-yellow-400 block group-hover:hidden group-hover:animate-fade-out' />
+          <Book2 className='w-6 h-6 hidden group-hover:block group-hover:animate-fade-in text-yellow-400' />
         </>
       ),
-      href: 'dashboad/post',
+      href: '/dashboard/post',
+      path: 'post',
     },
     {
       label: 'my likes',
@@ -92,7 +104,8 @@ export const DASHBOARD_NAV_LINKS = {
           <Heartbeat className='w-6 h-6 hidden group-hover:block group-hover:animate-fade-in text-red-400' />
         </>
       ),
-      href: 'dashboad/post/likes',
+      href: '/dashboard/post/likes',
+      path: 'likes',
     },
     {
       label: 'my comments',
@@ -102,7 +115,8 @@ export const DASHBOARD_NAV_LINKS = {
           <Message2 className='w-6 h-6 hidden group-hover:block group-hover:animate-fade-in text-purple-400' />
         </>
       ),
-      href: 'dashboad/post/likes',
+      href: '/dashboard/post/comments',
+      path: 'comments',
     },
     {
       label: 'notification',
@@ -112,7 +126,8 @@ export const DASHBOARD_NAV_LINKS = {
           <BellRinging className='hidden group-hover:block group-hover:animate-fade-in text-green-400' />
         </>
       ),
-      href: 'dashboad/post/notification',
+      href: '/dashboard/post/notifications',
+      path: 'notifications',
     },
   ],
   bottom: [
@@ -124,7 +139,8 @@ export const DASHBOARD_NAV_LINKS = {
           <Tools className='hidden group-hover:block group-hover:animate-fade-in text-pink-400' />
         </>
       ),
-      href: 'dashboad/settings',
+      href: '/dashboard/settings',
+      path: 'settings',
     },
     {
       label: 'logout',
