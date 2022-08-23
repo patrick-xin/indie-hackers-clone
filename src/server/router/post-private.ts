@@ -1,6 +1,8 @@
 import { faker } from '@faker-js/faker';
 import { Prisma } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
+import * as trpc from '@trpc/server';
+import ogs from 'open-graph-scraper';
 import slugify from 'slugify';
 import z from 'zod';
 
@@ -85,21 +87,61 @@ export const privatePostRouter = createRouter()
       title: z.string(),
       content: z.string(),
       id: z.string(),
+      type: z.string(),
     }),
-    async resolve({ ctx, input: { title, content, id } }) {
+    async resolve({ ctx, input: { title, content, id, type } }) {
       const slug = `${slugify(title)}-${faker.random.alphaNumeric(5)}`;
-      const savedPost = await ctx.prisma.post.update({
-        where: {
-          id,
-        },
 
-        data: {
-          content,
-          title,
-          slug,
-        },
-      });
-      return savedPost;
+      try {
+        if (type === 'ARTICLE') {
+          const savedPost = await ctx.prisma.post.update({
+            where: {
+              id,
+            },
+
+            data: {
+              content,
+              title,
+              slug,
+              postType: type,
+            },
+          });
+          return savedPost;
+        }
+        if (type === 'LINK') {
+          const options = {
+            url: content,
+          };
+          const data = await ogs(options);
+          const savedPost = await ctx.prisma.post.update({
+            where: {
+              id,
+            },
+
+            data: {
+              content: JSON.stringify(data.result),
+              title,
+              slug,
+              postType: type,
+            },
+          });
+          return savedPost;
+        }
+      } catch (error: any) {
+        if (error.error) {
+          throw new trpc.TRPCError({
+            code: 'INTERNAL_SERVER_ERROR',
+            message: 'Invalid URL',
+            // optional: pass the original error to retain stack trace
+          });
+        } else {
+          throw new trpc.TRPCError({
+            code: 'INTERNAL_SERVER_ERROR',
+            message: 'An unexpected error occurred, please try again later.',
+            // optional: pass the original error to retain stack trace
+          });
+        }
+      }
     },
   })
   .mutation('publish', {
@@ -120,5 +162,69 @@ export const privatePostRouter = createRouter()
         },
       });
       return savedPost;
+    },
+  })
+  .query('test', {
+    input: z.object({
+      query: z.object({ page: z.number(), pageCount: z.number() }),
+    }),
+    async resolve({
+      ctx,
+      input: {
+        query: { page, pageCount },
+      },
+    }) {
+      //page=1 take 3 skip 0
+      // page=2 tale 3 skip 3
+      // page=3 take 3 skip 6
+      //page=4 take 3 skip 9
+      const totalCount = await ctx.prisma.post.aggregate({
+        _count: true,
+        where: {
+          authorId: ctx.session?.user.userId,
+        },
+      });
+      const posts = await ctx.prisma.post.findMany({
+        skip: page * pageCount,
+        take: pageCount,
+
+        where: {
+          authorId: ctx.session?.user.userId,
+        },
+        orderBy: {
+          createdAt: 'desc',
+        },
+        include: { _count: { select: { comments: true } }, author: true },
+      });
+      return {
+        posts,
+        hasMore: posts.length !== 0,
+        totalCount: totalCount._count,
+      };
+    },
+  })
+  .mutation('upvote', {
+    input: z.object({
+      id: z.string(),
+    }),
+    async resolve({ ctx, input: { id } }) {
+      const updatedPost = ctx.prisma.post.update({
+        where: {
+          id,
+        },
+        data: {
+          likes: {
+            create: {
+              user: {
+                connect: {
+                  username: ctx.session?.user.username,
+                },
+              },
+            },
+          },
+        },
+      });
+
+      return updatedPost;
     },
   });

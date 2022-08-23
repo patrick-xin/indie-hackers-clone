@@ -97,12 +97,18 @@ model Post {
     categoryId  String?
     feed        Feed[]
     status      PostStatus
+    postType    PostType   @default(ARTICLE)
 }
 
 enum PostStatus {
     DRAFT
     PUBLISHED
     UNPUBLISHED
+}
+
+enum PostType {
+    ARTICLE
+    LINK
 }
 
 model Category {

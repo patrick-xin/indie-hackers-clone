@@ -7,6 +7,7 @@ import {
   Group,
   Onboard,
 } from '@/features/homepage/sections/';
+import { TabLinks } from '@/features/homepage/sections/content/components/TabLinks';
 import { BasicLayout } from '@/features/layout/Basic';
 import { trpc } from '@/utils/trpc';
 
@@ -29,12 +30,13 @@ const Home = () => {
       <Onboard />
       <Container>
         <Content
-          type='/'
           posts={data?.pages.flatMap((p) => p.posts)}
           fetchNextPage={fetchNextPage}
           isLoading={isLoading}
           isError={isLoading}
           hasNextPage={hasNextPage}
+          tablinks={<TabLinks />}
+          hasFliter
         />
 
         <Group />

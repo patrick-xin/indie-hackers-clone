@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react';
+import { ReactElement } from 'react';
 
 import { DashboardLayout } from '@/features/layout/Dashboard';
 

@@ -4,6 +4,11 @@
 @tailwind components;
 @tailwind utilities;
 
+@import './home.css';
+@import './post.css';
+@import './group.css';
+@import './nprogress.css';
+
 @layer base {
   :root {
     --bg-color: #0e2439;
@@ -29,119 +34,12 @@
   border-color: transparent transparent #274059 transparent;
 }
 
-.grid-container {
-  display: grid;
-  align-items: start;
-  width: '100%';
-  grid-gap: 28px;
-  grid-template-rows: min-content;
-  grid-template-areas:
-    'mainCol'
-    'rightCol'
-    'leftCol';
-  grid-template-columns: minmax(0, 1fr);
-}
-
-@media (min-width: 810px) and (max-width: 1147px) {
-  .grid-container {
-    grid-template-areas:
-      'mainCol rightCol'
-      'mainCol leftCol'
-      'mainCol .';
-    grid-template-columns: minmax(0, 1fr) 310px;
-  }
-}
-
-@media (min-width: 1148px) and (max-width: 1431px) {
-  .grid-container {
-    grid-template-areas:
-      'leftCol mainCol rightCol'
-      '. mainCol .';
-    grid-template-columns: 310px minmax(0, 1fr) 310px;
-  }
-}
-
-@media (min-width: 1432px) {
-  .grid-container {
-    grid-template-areas:
-      'leftCol mainCol rightCol'
-      '. mainCol .';
-    grid-template-columns: 310px minmax(0, 1fr) 310px;
-    width: 1400px;
-  }
-}
-
-.left-col {
-  grid-area: leftCol;
-}
-
-.main-col {
-  grid-area: mainCol;
-}
-.right-col {
-  grid-area: rightCol;
-}
-
 .left-tran {
   width: 0;
   height: 0;
   border-style: solid;
   border-width: 4px 8px 4px 0;
   border-color: transparent var(--brand-blue) transparent transparent;
-}
-
-#nprogress {
-  @apply pointer-events-none;
-}
-#nprogress .bar {
-  @apply bg-brand-blue fixed z-100 inset-0 h-1;
-}
-#nprogress .peg {
-  @apply block absolute right-0 w-24 h-full opacity-100;
-  box-shadow: 0 0 10px var(--brand-blue), 0 0 5px var(--brand-blue);
-  -webkit-transform: rotate(3deg) translate(0px, -4px);
-  -ms-transform: rotate(3deg) translate(0px, -4px);
-  transform: rotate(3deg) translate(0px, -4px);
-}
-#nprogress .spinner {
-  @apply block fixed bottom-4 right-4;
-  z-index: 1031;
-}
-#nprogress .spinner-icon {
-  width: 18px;
-  height: 18px;
-  box-sizing: border-box;
-  border: solid 2px transparent;
-  border-top-color: var(--brand-blue);
-  border-left-color: var(--brand-blue);
-  border-radius: 50%;
-  -webkit-animation: nprogresss-spinner 400ms linear infinite;
-  animation: nprogress-spinner 400ms linear infinite;
-}
-
-.nprogress-custom-parent {
-  overflow: hidden;
-  position: relative;
-}
-.nprogress-custom-parent #nprogress .spinner,
-.nprogress-custom-parent #nprogress .bar {
-  position: absolute;
-}
-@-webkit-keyframes nprogress-spinner {
-  0% {
-    -webkit-transform: rotate(0deg);
-  }
-  100% {
-    -webkit-transform: rotate(360deg);
-  }
-}
-@keyframes nprogress-spinner {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
 }
 
 .comment-tree::before {

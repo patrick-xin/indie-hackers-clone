@@ -16,6 +16,7 @@ const seed = async () => {
       data: {
         ...post,
         authorId: users[random].id,
+        postType: 'ARTICLE',
       },
     });
     await prisma.comment.create({
@@ -25,7 +26,7 @@ const seed = async () => {
         userId: users[random].id,
       },
     });
-    await prisma.like.create({
+    await prisma.postLike.create({
       data: {
         postId: post.id,
         userId: users[random].id,

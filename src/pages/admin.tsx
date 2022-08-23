@@ -18,7 +18,6 @@ const AdminPage = () => {
               <div className='flex gap-2'>
                 <div>{user.email}</div>
                 <div>{user.username}</div>
-                <div>{user._count.likes}</div>
               </div>
             </li>
           ))}

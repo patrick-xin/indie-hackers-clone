@@ -10,6 +10,21 @@ export const commentRouter = createRouter()
     }
     return next();
   })
+  .query('by-post-slug', {
+    input: z.object({ slug: z.string() }),
+    async resolve({ ctx, input: { slug } }) {
+      const comments = await ctx.prisma.comment.findMany({
+        where: {
+          post: { slug },
+        },
+        orderBy: {
+          createdAt: 'desc',
+        },
+        include: { user: true },
+      });
+      return comments;
+    },
+  })
   .mutation('create', {
     input: z.object({
       content: z.string(),

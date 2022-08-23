@@ -4,10 +4,10 @@ import { AppProps } from 'next/app';
 import { SessionProvider } from 'next-auth/react';
 import { ReactElement, ReactNode } from 'react';
 import superjson from 'superjson';
-import '@fontsource/poppins';
 
 import '@/styles/globals.css';
 
+import { NewPostModal } from '@/features/post/components';
 import { Progressbar } from '@/features/UI';
 
 import type { AppRouter } from '../server/router';
@@ -27,7 +27,12 @@ const MyApp = ({
   const getLayout = Component.getLayout ?? ((page) => page);
   return (
     <SessionProvider session={session}>
-      {getLayout(<Component {...pageProps} />)}
+      {getLayout(
+        <>
+          <Component {...pageProps} />
+          <NewPostModal />
+        </>
+      )}
       <Progressbar />
     </SessionProvider>
   );

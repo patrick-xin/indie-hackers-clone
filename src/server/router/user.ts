@@ -14,7 +14,7 @@ export const userRouter = createRouter()
           username,
         },
         include: {
-          _count: { select: { comment: true, likes: true } },
+          _count: { select: { comment: true, postLikes: true } },
           posts: {
             select: {
               title: true,

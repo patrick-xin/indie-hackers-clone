@@ -1,5 +1,6 @@
 import { formatDistance } from 'date-fns';
 import Image from 'next/future/image';
+import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 import { ChevronUp } from 'tabler-icons-react';
 
@@ -17,14 +18,17 @@ export const PostComment = ({
   postId: string;
   commentsByParentId: { [key: string]: CommentOnUser[] };
 }) => {
-  const utils = trpc.useContext();
+  const router = useRouter();
   const [areChildrenHidden, setAreChildrenHidden] = useState(false);
   const [showContent, setShowContent] = useState(true);
   const [showReplyForm, setShowReplyForm] = useState(false);
   const childComments = commentsByParentId[comment.id] ?? [];
   const { mutate: createComment } = trpc.useMutation('comment.create', {
     onSuccess: () => {
-      utils.invalidateQueries(['public-posts.by-slug']);
+      router.replace(router.asPath, undefined, {
+        scroll: false,
+      });
+      setShowReplyForm(false);
     },
   });
 
@@ -38,17 +42,18 @@ export const PostComment = ({
           <div className='text-sm'>23</div>
         </div>
 
-        <div className='w-full'>
-          {showContent && <div>{comment.content}</div>}
+        <div className='w-full text-sm'>
+          {showContent && <div className='text-lg'>{comment.content}</div>}
 
           <div className='flex items-center gap-2 my-2'>
             <Flex className='gap-2 max-h-fit items-center'>
               <div>
                 <Image
                   className='rounded-full'
-                  src='/avatar.webp'
+                  src={comment.user.image ?? '/avatar.webp'}
                   height={32}
                   width={32}
+                  alt={`${comment.user.username}-avatar`}
                 />
               </div>
 
@@ -56,7 +61,7 @@ export const PostComment = ({
             </Flex>
 
             <div>·</div>
-            <div>
+            <div className='text-sm font-normal'>
               {formatDistance(comment.createdAt, new Date(), {
                 addSuffix: true,
               })}
@@ -88,7 +93,7 @@ export const PostComment = ({
         </div>
       </div>
       {childComments && childComments?.length > 0 && (
-        <div className='pl-6 bg-red-200'>
+        <div className='pl-6'>
           <CommentList
             comments={childComments}
             commentsByParentId={commentsByParentId}
@@ -110,17 +115,15 @@ export const CommentList = ({
   commentsByParentId: { [key: string]: CommentOnUser[] };
 }) => {
   return (
-    <div>
-      <div className='space-y-10'>
-        {comments.map((comment) => (
-          <PostComment
-            postId={postId}
-            key={comment.id}
-            comment={comment}
-            commentsByParentId={commentsByParentId}
-          />
-        ))}
-      </div>
+    <div className='space-y-10'>
+      {comments.map((comment) => (
+        <PostComment
+          postId={postId}
+          key={comment.id}
+          comment={comment}
+          commentsByParentId={commentsByParentId}
+        />
+      ))}
     </div>
   );
 };

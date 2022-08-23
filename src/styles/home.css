@@ -1,0 +1,52 @@
+.grid-container {
+  display: grid;
+  align-items: start;
+  width: '100%';
+  grid-gap: 28px;
+  grid-template-rows: min-content;
+  grid-template-areas:
+    'mainCol'
+    'rightCol'
+    'leftCol';
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (min-width: 810px) and (max-width: 1147px) {
+  .grid-container {
+    grid-template-areas:
+      'mainCol rightCol'
+      'mainCol leftCol'
+      'mainCol .';
+    grid-template-columns: minmax(0, 1fr) 310px;
+  }
+}
+
+@media (min-width: 1148px) and (max-width: 1431px) {
+  .grid-container {
+    grid-template-areas:
+      'leftCol mainCol rightCol'
+      '. mainCol .';
+    grid-template-columns: 310px minmax(0, 1fr) 310px;
+  }
+}
+
+@media (min-width: 1432px) {
+  .grid-container {
+    grid-template-areas:
+      'leftCol mainCol rightCol'
+      '. mainCol .';
+    grid-template-columns: 310px minmax(0, 1fr) 310px;
+    width: 1400px;
+  }
+}
+
+.left-col {
+  grid-area: leftCol;
+}
+
+.main-col {
+  grid-area: mainCol;
+}
+.right-col {
+  grid-area: rightCol;
+}

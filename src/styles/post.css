@@ -1,0 +1,62 @@
+.post-page {
+  @apply mx-auto;
+  display: grid;
+}
+
+@media (max-width: 1419px) {
+  .post-page {
+    grid-template-areas:
+      'header'
+      'subheader'
+      'main'
+      'actions'
+      'recommendations';
+    width: 700px;
+  }
+}
+
+@media (min-width: 1420px) {
+  .post-page {
+    grid-template-areas:
+      '. header'
+      '. subheader'
+      'actions main'
+      '. recommendations';
+    grid-template-columns: 1fr 700px 1fr;
+    max-width: 1300px;
+    width: 100%;
+  }
+  .post-page-action {
+    align-self: start;
+    animation: 240ms fadeIn;
+    grid-area: actions;
+    left: calc((100% - 700px) / 4);
+    margin-top: 70px;
+    position: -webkit-sticky;
+    position: sticky;
+    top: 100px;
+    transform: translate(-50%, 0);
+    width: -moz-min-content;
+    width: min-content;
+  }
+}
+
+.post-page-action {
+  @apply bg-[#1f364d] px-3 py-4 shadow;
+  /* left: calc((100% - 700px) / 2); */
+  bottom: 0;
+  grid-area: actions;
+  margin-bottom: 70px;
+  margin-top: 40px;
+  position: sticky;
+  /* width: 100%; */
+  z-index: 129;
+}
+
+.post-page-header {
+  grid-area: header;
+}
+
+.post-page-main {
+  grid-area: main;
+}

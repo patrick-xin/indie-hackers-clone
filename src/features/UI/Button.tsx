@@ -9,11 +9,13 @@ import { Spinner } from './Spinner';
 
 const sizeClassnames = {
   big: 'py-2 px-6 text-sm',
-  small: 'px-2 py-1 text-sm',
+  small: 'px-2 py-1 text-sm lg:px-3 lg:py-2 text-base',
   tiny: 'px-1 text-sm',
+  noPadding: 'p-0',
 };
 
 const roundedClassnames = {
+  none: 'rounded-none',
   large: 'rounded-lg',
   medium: 'rounded',
   small: 'rounded-sm',
@@ -23,7 +25,9 @@ const roundedClassnames = {
 // TODO extract more buttons
 const variantClassnames = {
   primary: 'bg-brand-blue',
-  secondary: '',
+  link: 'text-base sm:text-lg border-b-3 hover:border-b-3 hover:text-white',
+  underline:
+    'border-b border-[#4799eb] rounded-none hover:bg-[#4799eb] hover:rounded',
   transparent: 'bg-transparent',
   outline: 'border-2 border-gray-100/5 p-2.5 hover:text-[#4799eb]',
   gradient:
@@ -44,6 +48,9 @@ export type ButtonProps = DetailedHTMLProps<
   transition?: boolean;
   type?: 'button' | 'submit';
   loadingText?: string;
+  iconPosition?: 'left' | 'right';
+  fullWidth?: boolean;
+  isActive?: boolean;
 };
 
 export const Button: React.FC<ButtonProps> = ({
@@ -58,6 +65,9 @@ export const Button: React.FC<ButtonProps> = ({
   transition,
   type = 'button',
   loadingText = 'loading',
+  iconPosition = 'left',
+  fullWidth = false,
+  isActive = false,
   ...props
 }) => {
   return (
@@ -69,6 +79,11 @@ export const Button: React.FC<ButtonProps> = ({
         className && ` ${className}`,
         {
           'transition-colors ease-linear': transition,
+          'w-full': fullWidth,
+          'border-[#4799eb] border-b-3 text-white':
+            isActive && variant === 'link',
+          'border-transparent hover:border-[#385c80] text-[#b6cce2]':
+            !isActive && variant === 'link',
         }
       )}
       data-testid='button'
@@ -80,8 +95,22 @@ export const Button: React.FC<ButtonProps> = ({
           <span>{loadingText}</span>
         </span>
       ) : (
-        <span className={loading ? 'opacity-0' : `flex items-center`}>
-          {icon ? <span className='mr-4 items-center'>{icon}</span> : null}
+        <span
+          className={cn('flex items-center', {
+            'opacity-0': loading,
+            'flex-row-reverse': iconPosition === 'right',
+          })}
+        >
+          {icon ? (
+            <span
+              className={cn('items-center', {
+                'mr-4': iconPosition === 'left',
+                'ml-4': iconPosition === 'right',
+              })}
+            >
+              {icon}
+            </span>
+          ) : null}
           {children}
         </span>
       )}

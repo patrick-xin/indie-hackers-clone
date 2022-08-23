@@ -12,7 +12,7 @@ export const adminRouter = createRouter()
     async resolve({ ctx }) {
       const users = await ctx.prisma.user.findMany({
         include: {
-          _count: { select: { comment: true, likes: true } },
+          _count: { select: { comment: true, postLikes: true } },
 
           // image: true,
           // followers: true,
@@ -58,7 +58,7 @@ export const adminRouter = createRouter()
   })
   .mutation('generate-posts', {
     async resolve({ ctx }) {
-      await ctx.prisma.like.deleteMany();
+      await ctx.prisma.postLike.deleteMany();
       await ctx.prisma.post.deleteMany();
       await ctx.prisma.user.deleteMany();
       const createUser = () => {
@@ -101,6 +101,7 @@ export const adminRouter = createRouter()
           updatedAt: date,
           status: 'PUBLISHED',
           categoryId: 'cl5l5fdvz1437ca0wnt355w2t',
+          postType: 'ARTICLE',
         };
 
         return post;

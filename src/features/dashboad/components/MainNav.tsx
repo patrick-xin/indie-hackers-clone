@@ -16,7 +16,6 @@ export const MainNav = ({
   shown: boolean;
 }) => {
   const router = useRouter();
-  console.log(router.pathname.endsWith('likes'));
 
   return (
     <AnimatePresence>

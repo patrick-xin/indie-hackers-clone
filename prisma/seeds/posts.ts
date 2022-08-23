@@ -85,6 +85,7 @@ const createPost = () => {
     updatedAt: date,
     status: 'PUBLISHED',
     categoryId: 'cl5l5fdvz1437ca0wnt355w2t',
+    postType: 'ARTICLE',
   };
 
   return post;

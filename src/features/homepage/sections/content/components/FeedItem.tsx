@@ -1,12 +1,12 @@
 import { Post, User } from '@prisma/client';
-import { format, formatDistance } from 'date-fns';
+import { format } from 'date-fns';
 import { motion } from 'framer-motion';
 import Image from 'next/future/image';
 import Link from 'next/link';
-import React from 'react';
 import { BiChevronUp, BiComment } from 'react-icons/bi';
 
 import { AvatarPopover } from '@/features/user/components';
+import { trpc } from '@/utils/trpc';
 
 type Props = {
   post: Post & {
@@ -33,7 +33,7 @@ export const FeedItem = ({ post }: Props) => {
         <AvatarPopover user={post.author} />
       </div>
       <div className='hidden sm:block'>
-        <Upvote count={post._count.likes} />
+        <Upvote count={post._count.likes} postId={post.id} />
       </div>
       <div className='flex flex-col flex-1'>
         <Title
@@ -44,21 +44,24 @@ export const FeedItem = ({ post }: Props) => {
         <div className='items-center hidden p-1 sm:flex'>
           <Comments count={post._count.comments} />
           <Group />
-          <span className='mx-1'>·</span>
-          <div className='text-sm text-[#63809c] rounded'>
-            {format(post.publishedAt, 'yyyy-MM-dd')}
+          <div className='hidden lg:block'>
+            <span className='mx-1'>·</span>
+            <div className='text-sm text-[#63809c] rounded '>
+              {format(post.publishedAt, 'yyyy-MM-dd')}
+            </div>
           </div>
-          <span className='mx-1'>·</span>
+
+          {/* <span className='mx-1'>·</span>
           <div className='text-sm text-[#63809c] rounded'>
             {formatDistance(post.publishedAt, new Date(), {
               addSuffix: true,
             })}
-          </div>
+          </div> */}
         </div>
       </div>
 
       <div className='flex gap-4 items-center justify-start w-full mt-1 sm:hidden'>
-        <Upvote count={post._count.likes} />
+        <Upvote count={post._count.likes} postId={post.id} />
         <MobileComments count={post._count.comments} />
         <Group />
       </div>
@@ -66,12 +69,23 @@ export const FeedItem = ({ post }: Props) => {
   );
 };
 
-const Upvote = ({ count }: { count: number }) => {
+const Upvote = ({ count, postId }: { count: number; postId: string }) => {
+  const utils = trpc.useContext();
+  const { mutate } = trpc.useMutation('private-posts.upvote', {
+    onSuccess: () => {
+      utils.invalidateQueries('public-posts.infinitePosts-newest');
+    },
+  });
   return (
-    <div className='flex items-center sm:flex-col sm:gap-4 sm:-mt-2  text-[#63809c] group cursor-pointer'>
+    <button
+      onClick={() => {
+        mutate({ id: postId });
+      }}
+      className='flex items-center sm:flex-col sm:gap-4 sm:-mt-2  text-[#63809c] group cursor-pointer'
+    >
       <BiChevronUp className='h-8 w-8 group-hover:text-red-500' />
       <div className='text-sm group-hover:text-white sm:-mt-6'>{count}</div>
-    </div>
+    </button>
   );
 };
 

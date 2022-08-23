@@ -52,19 +52,26 @@ export const publicPostRouter = createRouter()
   .query('by-slug', {
     input: z.object({ username: z.string(), slug: z.string() }),
     async resolve({ ctx, input: { username, slug } }) {
-      const user = await ctx.prisma.user.findUnique({
+      const comments = await ctx.prisma.comment.findMany({
         where: {
-          username,
+          post: { slug },
         },
-        select: {
-          posts: {
-            where: { slug },
-            include: { author: true, comments: { include: { user: true } } },
-          },
-        },
+        include: { user: true },
       });
-      const post = user?.posts[0];
-      return post;
+
+      // const user = await ctx.prisma.user.findUnique({
+      //   where: {
+      //     username,
+      //   },
+      //   select: {
+      //     posts: {
+      //       where: { slug },
+      //       include: { author: true, comments: { include: { user: true } } },
+      //     },
+      //   },
+      // });
+      // const post = user?.posts[0];
+      return comments;
     },
   })
   .query('infinitePosts-popular-today', {
@@ -134,7 +141,7 @@ export const publicPostRouter = createRouter()
         posts = await ctx.prisma.post.findMany({
           take: limit + 1,
           cursor: cursor ? { id: cursor } : undefined,
-          orderBy: { likes: { _count: 'desc' } },
+          orderBy: { comments: { _count: 'desc' } },
           where: {
             publishedAt: {
               gte: endDate.toISOString(),
@@ -173,7 +180,7 @@ export const publicPostRouter = createRouter()
         posts = await ctx.prisma.post.findMany({
           take: limit + 1,
           cursor: cursor ? { id: cursor } : undefined,
-          orderBy: { likes: { _count: 'desc' } },
+          orderBy: { comments: { _count: 'desc' } },
           include: {
             author: true,
             comments: true,

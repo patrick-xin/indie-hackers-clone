@@ -59,7 +59,7 @@ export const ButtonLink = React.forwardRef<HTMLAnchorElement, ButtonLinkProps>(
             ],
 
             variant === 'blue' && [
-              ' text-white px-4 py-2',
+              ' text-white px-2.5 py-1.5 md:px-4 md:py-2',
               {
                 'bg-brand-blue': isActive,
                 'bg-[#1E364D]': !isActive,
