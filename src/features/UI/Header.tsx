@@ -18,7 +18,7 @@ export const Header = () => {
     }
   };
   return (
-    <div className='flex justify-between px-4 h-14 my-1 bg-[#1E364D] items-center lg:px-12'>
+    <div className='flex justify-between px-4 h-14 mt-1 bg-[#1E364D] items-center lg:px-12'>
       <div className='flex gap-2 items-center'>
         <div className='sm:hidden'>
           <Logo hasName={false} />

@@ -1,57 +1,36 @@
-import { Post, User } from '@prisma/client';
 import { createSSGHelpers } from '@trpc/react/ssg';
-import { format, parseISO } from 'date-fns';
+import { TRPCError } from '@trpc/server';
 import { GetServerSidePropsContext } from 'next';
 import { ReactElement, useMemo } from 'react';
-import { IoWarning } from 'react-icons/io5';
-import ReactMarkdown from 'react-markdown';
 import superjson from 'superjson';
-import {
-  Bookmark,
-  Bookmarks,
-  ChevronUp,
-  ExternalLink,
-  Message,
-} from 'tabler-icons-react';
-
-import { prisma } from '@/lib/prisma';
 
 import { BasicLayout } from '@/features/layout/Basic';
-import {
-  CommentForm,
-  CommentList,
-  PostAuthor,
-} from '@/features/post/components';
 import { CommentOnUser } from '@/features/post/types';
-import { LinkContent } from '@/features/postpage';
-import { Button } from '@/features/UI';
+import {
+  PostPageAction,
+  PostPageComment,
+  PostPageFooter,
+  PostPageHeader,
+} from '@/features/postpage';
+import { PostPageBody } from '@/features/postpage/sections/components/PostPageBody';
+import { FullScreenLoader } from '@/features/UI';
 import { appRouter } from '@/server/router';
 import { createContext } from '@/server/router/context';
 import { trpc } from '@/utils/trpc';
 
 type Props = {
-  post: Omit<Post, 'publishedAt'> & {
-    comments: (Comment & {
-      user: User;
-    })[];
-    author: User;
-    _count: { comments: number; likes: number };
-    publishedAt: string;
-  };
+  username: string;
+  slug: string;
 };
 
-const UserPostPage = ({ post }: Props) => {
-  const utils = trpc.useContext();
+const UserPostPage = ({ username, slug }: Props) => {
+  const { data: post, isLoading } = trpc.useQuery([
+    'public-posts.by-slug',
+    { slug, username },
+  ]);
 
-  const { data } = trpc.useQuery(['comment.by-post-slug', { slug: post.slug }]);
-
-  const { mutate: createComment } = trpc.useMutation('comment.create', {
-    onSuccess: () => {
-      utils.invalidateQueries(['comment.by-post-slug']);
-    },
-  });
   const commentsByParentId = useMemo(() => {
-    const comments = data;
+    const comments = post?.comments;
     const group: { [key: string]: CommentOnUser[] } = {};
     comments?.forEach((comment) => {
       const parentId = comment.parentId ?? 'null';
@@ -60,57 +39,25 @@ const UserPostPage = ({ post }: Props) => {
       group[parentId].push(comment);
     });
     return group;
-  }, [data]);
+  }, [post]);
 
-  const rootComments = data && commentsByParentId['null'];
-
+  const rootComments = post && commentsByParentId['null'];
+  if (isLoading || !post) return <FullScreenLoader />;
   return (
     <div className='post-page md:px-8 max-w-full'>
-      <header className='post-page-header'>
-        <h1 className='not-prose text-center text-white text-3xl md:text-5xl'>
-          {post.title}
-        </h1>
-        <div className='text-center my-8 text-lg'>
-          by <PostAuthor author={post.author} />
-        </div>
-      </header>
+      <PostPageHeader post={post} />
       <div className='post-page-main flex flex-col'>
-        <div className='prose prose-brand prose-a:text-brand-blue prose-a:hover:underline md:prose-lg prose-base xl:prose-xl 2xl:prose-2xl prose-p:font-normal prose-p:antialiased mx-auto prose-img:rounded prose-img:object-cover'>
-          {post.postType === 'ARTICLE' && (
-            <ReactMarkdown>{post.content}</ReactMarkdown>
-          )}
-        </div>
-        {post.postType === 'LINK' && <LinkContent post={post} />}
-        <div className='text-lg my-6'>
-          <PostAuthor author={post.author} /> submitted this link{' '}
-          <span>{format(parseISO(post.publishedAt), 'MMMM dd, yyyy')}</span>
-        </div>
-
-        <div className='not-prose text-brand-text font-normal text-lg'>
-          <div className='my-8 flex gap-4'>
-            <Button variant='outline' icon={<ChevronUp />}>
-              83
-            </Button>
-            <Button variant='outline' icon={<Bookmark />}>
-              23
-            </Button>
-            <Button variant='outline' icon={<ExternalLink />}></Button>
-          </div>
-          <CommentForm
-            onSubmit={(content) => createComment({ content, postId: post.id })}
-            initialValue=''
-            buttonLabel='post comment'
-          />
-          {rootComments && (
-            <CommentList
-              postId={post.id}
-              comments={rootComments}
-              commentsByParentId={commentsByParentId}
-            />
-          )}
-        </div>
+        <PostPageBody post={post} />
+        <PostPageFooter post={post} />
+        <PostPageComment
+          rootComments={rootComments}
+          postId={post.id}
+          commentsByParentId={commentsByParentId}
+        />
       </div>
+
       <PostPageAction
+        postId={post.id}
         likes={post._count.likes}
         comments={post._count.comments}
         bookmarks={10}
@@ -125,43 +72,6 @@ UserPostPage.getLayout = (page: ReactElement) => (
   <BasicLayout>{page}</BasicLayout>
 );
 
-const PostPageAction = ({ likes, comments, bookmarks }) => {
-  return (
-    <div className='post-page-action flex justify-between xl:flex-col xl:gap-5 xl:p-6 xl:rounded'>
-      <div className='flex gap-3 items-center'>
-        <Button
-          variant='gradient'
-          size='small'
-          className='rounded-full h-8 w-8 p-0 flex justify-center items-center'
-        >
-          <ChevronUp className='h-6 w-6' />
-        </Button>
-        <div className='md:flex gap-1 lg:gap-2'>
-          <span>{likes}</span>
-          <span>{likes} Likes</span>
-        </div>
-      </div>
-      <div className='md:flex hidden gap-3 items-center'>
-        <Bookmarks className='h-6 w-6' />
-        <div className='md:flex gap-1 lg:gap-2'>
-          <span>1</span>
-          <span>Bookmarks</span>
-        </div>
-      </div>
-      <div className='md:flex hidden gap-3 items-center'>
-        <Message className='h-6 w-6' />
-        <div className='md:flex gap-1 lg:gap-2'>
-          <span>{comments}</span>
-          <span>Comments</span>
-        </div>
-      </div>
-      <div className='flex gap-3 items-center'>
-        <IoWarning className='h-6 w-6' />
-      </div>
-    </div>
-  );
-};
-
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   const ssg = createSSGHelpers({
     router: appRouter,
@@ -170,28 +80,35 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   });
 
   const slug = context.params?.slug as string;
-  const username = context.params?.['@username'] as string;
-  const user = await prisma.user.findUnique({
-    where: {
-      username: username.split('@')[1],
-    },
-    select: {
-      posts: {
-        where: { slug },
-
-        include: {
-          author: true,
-          comments: { include: { user: true } },
-          _count: { select: { likes: true, comments: true } },
-        },
-      },
-    },
-  });
-  const { json } = superjson.serialize(user?.posts[0]);
+  const usernameParam = context.params?.['@username'] as string;
+  const username = usernameParam.split('@')[1];
+  try {
+    await ssg.fetchQuery('public-posts.by-slug', { username, slug });
+  } catch (error) {
+    if (error instanceof TRPCError) {
+      if (error.code === 'NOT_FOUND')
+        return {
+          redirect: {
+            destination: '/404',
+            permanent: false,
+          },
+        };
+      if (error.code === 'INTERNAL_SERVER_ERROR') {
+        return {
+          redirect: {
+            destination: '/500',
+            permanent: false,
+          },
+        };
+      }
+    }
+  }
 
   return {
     props: {
-      post: json,
+      trpcState: ssg.dehydrate(),
+      username,
+      slug,
     },
   };
 }

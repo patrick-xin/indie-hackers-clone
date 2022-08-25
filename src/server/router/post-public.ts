@@ -1,4 +1,5 @@
 import { Prisma } from '@prisma/client';
+import { TRPCError } from '@trpc/server';
 import {
   endOfMonth,
   parseISO,
@@ -52,26 +53,30 @@ export const publicPostRouter = createRouter()
   .query('by-slug', {
     input: z.object({ username: z.string(), slug: z.string() }),
     async resolve({ ctx, input: { username, slug } }) {
-      const comments = await ctx.prisma.comment.findMany({
+      const user = await ctx.prisma.user.findUnique({
         where: {
-          post: { slug },
+          username,
         },
-        include: { user: true },
+        select: {
+          posts: {
+            where: { slug },
+            include: {
+              author: { select: { username: true, image: true } },
+              comments: {
+                include: { user: { select: { username: true, image: true } } },
+              },
+              _count: { select: { comments: true, likes: true } },
+            },
+          },
+        },
       });
+      const post = user?.posts[0];
 
-      // const user = await ctx.prisma.user.findUnique({
-      //   where: {
-      //     username,
-      //   },
-      //   select: {
-      //     posts: {
-      //       where: { slug },
-      //       include: { author: true, comments: { include: { user: true } } },
-      //     },
-      //   },
-      // });
-      // const post = user?.posts[0];
-      return comments;
+      if (!post) {
+        throw new TRPCError({ code: 'NOT_FOUND' });
+      }
+
+      return post;
     },
   })
   .query('infinitePosts-popular-today', {
@@ -232,6 +237,30 @@ export const publicPostRouter = createRouter()
       return {
         posts: items,
         nextCursor,
+      };
+    },
+  })
+  .query('newest', {
+    input: z.object({
+      page: z.number(),
+    }),
+    async resolve({ ctx, input: { page } }) {
+      const _page = page ? page - 1 : 1;
+      const pageCount = 10;
+      const posts = await ctx.prisma.post.findMany({
+        skip: _page * pageCount,
+        take: pageCount,
+        orderBy: { createdAt: 'desc' },
+        include: {
+          author: { select: { username: true, image: true } },
+          _count: {
+            select: { likes: true, comments: true },
+          },
+        },
+      });
+
+      return {
+        posts,
       };
     },
   });

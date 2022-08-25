@@ -31,7 +31,6 @@ export const CommentForm = ({
         <div className='space-y-4'>
           <Input
             transparent
-            autoFocus
             className='min-h-[20vh] w-full border-[1px] border-brand-text focus:border-brand-blue'
             textarea
             value={content}

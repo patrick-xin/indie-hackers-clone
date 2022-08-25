@@ -13,7 +13,7 @@ import { BasicLayout } from '@/features/layout/Basic';
 import { trpc } from '@/utils/trpc';
 
 const TopPage = () => {
-  const { route, query, push } = useRouter();
+  const { query } = useRouter();
   const path = query.slug as string;
   const dateQuery = path && path.split('-').slice(2).join('-');
   const type = path && path.split('-')[0];

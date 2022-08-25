@@ -4,7 +4,12 @@ module.exports = {
     es2021: true,
     node: true,
   },
-  plugins: ['@typescript-eslint', 'simple-import-sort', 'unused-imports'],
+  plugins: [
+    '@typescript-eslint',
+    'simple-import-sort',
+    'unused-imports',
+    'tailwindcss',
+  ],
   extends: [
     'eslint:recommended',
     'next',
@@ -12,9 +17,10 @@ module.exports = {
     'plugin:@typescript-eslint/recommended',
     'prettier',
     'plugin:storybook/recommended',
+    'plugin:tailwindcss/recommended',
   ],
   rules: {
-    'no-unused-vars': 'off',
+    'no-unused-vars': 'warn',
     'no-console': 'warn',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
     'react/display-name': 'off',
@@ -34,7 +40,7 @@ module.exports = {
         caughtErrorsIgnorePattern: '^_',
       },
     ],
-    '@typescript-eslint/no-explicit-any': 'off',
+    '@typescript-eslint/no-explicit-any': 'warn',
     '@typescript-eslint/no-empty-interface': 'off',
     'unused-imports/no-unused-imports': 'error',
     'unused-imports/no-unused-vars': [

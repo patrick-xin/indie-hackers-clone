@@ -6,7 +6,7 @@ import React, { useState } from 'react';
 import { usePopper } from 'react-popper';
 
 type Props = {
-  user: User;
+  user: Pick<User, 'image' | 'username'>;
 };
 
 export const AvatarPopover = ({ user }: Props) => {
@@ -29,8 +29,8 @@ export const AvatarPopover = ({ user }: Props) => {
           <Image
             src={user.image ?? '/avatat.webp'}
             className='rounded-full'
-            width={48}
-            height={48}
+            width={40}
+            height={40}
             alt='user-avatar'
           />
         </div>

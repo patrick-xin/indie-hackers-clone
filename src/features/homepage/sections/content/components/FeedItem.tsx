@@ -1,5 +1,4 @@
 import { Post, User } from '@prisma/client';
-import { format } from 'date-fns';
 import { motion } from 'framer-motion';
 import Image from 'next/future/image';
 import Link from 'next/link';
@@ -10,7 +9,7 @@ import { trpc } from '@/utils/trpc';
 
 type Props = {
   post: Post & {
-    author: User;
+    author: Pick<User, 'username' | 'image'>;
     _count: {
       comments: number;
       likes: number;
@@ -41,15 +40,20 @@ export const FeedItem = ({ post }: Props) => {
           slug={post.slug}
           author={post.author.username}
         />
-        <div className='items-center hidden p-1 sm:flex'>
-          <Comments count={post._count.comments} />
+        <div className='items-center hidden p-0.5 sm:flex'>
+          <Comments
+            count={post._count.comments}
+            postType={post.postType}
+            content={post.content}
+            username={post.author.username}
+          />
           <Group />
-          <div className='hidden lg:block'>
+          {/* <div className='hidden lg:block'>
             <span className='mx-1'>·</span>
             <div className='text-sm text-[#63809c] rounded '>
               {format(post.publishedAt, 'yyyy-MM-dd')}
             </div>
-          </div>
+          </div> */}
 
           {/* <span className='mx-1'>·</span>
           <div className='text-sm text-[#63809c] rounded'>
@@ -73,7 +77,7 @@ const Upvote = ({ count, postId }: { count: number; postId: string }) => {
   const utils = trpc.useContext();
   const { mutate } = trpc.useMutation('private-posts.upvote', {
     onSuccess: () => {
-      utils.invalidateQueries('public-posts.infinitePosts-newest');
+      utils.invalidateQueries('public-posts.newest');
     },
   });
   return (
@@ -104,11 +108,29 @@ const MobileComments = ({ count }: { count: number }) => {
   );
 };
 
-const Comments = ({ count }: { count: number }) => {
+const Comments = ({
+  count,
+  postType,
+  content,
+  username,
+}: {
+  count: number;
+  postType: 'LINK' | 'ARTICLE';
+  content: string;
+  username: string | null;
+}) => {
+  const linkContent = postType === 'LINK' && JSON.parse(content);
+
   return (
     <div className='flex gap-2 items-center'>
       <div className='hover:bg-[#1E364D] sm:p-1 hover:text-white rounded'>
-        link
+        {postType === 'LINK' ? (
+          <a href={linkContent.ogUrl} rel='nofollow noreferrer' target='_blank'>
+            {linkContent.ogUrl}
+          </a>
+        ) : (
+          <div>{username && username}</div>
+        )}
       </div>
       <div className='hover:bg-[#1E364D] sm:p-1 text-[#63809c] hover:text-gray-400 rounded'>
         <div className='text-sm group-hover:text-white'>· {count} comments</div>
@@ -127,9 +149,9 @@ const Title = ({
   author: string | null;
 }) => {
   return (
-    <h2 className='hover:bg-[#1E364D] px-2 py-1 rounded text-white sm:text-lg md:text-["#b6cce2"] hover:text-white'>
+    <h2 className='hover:bg-[#1E364D] px-2 py-1 rounded sm:text-lg md:text-["#b6cce2"] hover:text-white'>
       <Link href={`/@${author}/${slug}`}>
-        <a>{title}</a>
+        <a className='visited:text-white'>{title}</a>
       </Link>
     </h2>
   );
@@ -140,9 +162,9 @@ const Group = () => {
     <div className='flex gap-2 items-center p-1'>
       <div className='hover:bg-[#1E364D] hover:text-white rounded'>
         <Image
-          src='/avatar.webp'
-          width={32}
-          height={32}
+          src='/group-logo.webp'
+          width={24}
+          height={24}
           className='rounded-full'
           alt='group-image'
         />

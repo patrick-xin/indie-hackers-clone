@@ -117,7 +117,7 @@ export const SectionHeaderNav = ({
 
         {(route === '/' || route.startsWith('/top')) && (
           <div className='space-y-4 w-full'>
-            <FilterLinks path={path ?? ''} />
+            <FilterLinks />
             {route.startsWith('/top') && renderContent()}
           </div>
         )}

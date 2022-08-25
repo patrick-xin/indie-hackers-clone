@@ -24,22 +24,22 @@ export const PostCard = ({
   username,
 }: Props) => {
   return (
-    <article className='p-6 bg-[#1E364D] rounded hover:bg-[#274059] group transition-colors ease-linear'>
+    <article className='group rounded bg-[#1E364D] p-6 transition-colors ease-linear hover:bg-[#274059]'>
       <Link href={`/@${username}/${slug}`}>
         <a>
           <header className='relative'>
-            <div className='flex gap-4 items-center'>
+            <div className='flex items-center gap-4'>
               <div>{format(publishedAt, 'MMMM dd, yyyy')}</div>
               <div className='flex items-center gap-4'>
-                <div className='flex gap-2 items-center'>
-                  <BsFillHeartFill className='group-hover:text-red-500 transition-colors ease-linear' />
-                  <div className='group-hover:text-gray-200 transition-colors ease-linear'>
+                <div className='flex items-center gap-2'>
+                  <BsFillHeartFill className='transition-colors ease-linear group-hover:text-red-500' />
+                  <div className='transition-colors ease-linear group-hover:text-gray-200'>
                     {_count.likes}
                   </div>
                 </div>
-                <div className='flex gap-2 items-center'>
-                  <BiCommentDetail className='group-hover:text-brand-blue transition-colors ease-linear' />
-                  <div className='group-hover:text-gray-200 transition-colors ease-linear'>
+                <div className='flex items-center gap-2'>
+                  <BiCommentDetail className='transition-colors ease-linear group-hover:text-brand-blue' />
+                  <div className='transition-colors ease-linear group-hover:text-gray-200'>
                     {_count.comments}
                   </div>
                 </div>
@@ -58,7 +58,7 @@ export const PostCard = ({
           </header>
 
           <div>
-            <h2 className='text-2xl text-white my-4'>{title}</h2>
+            <h2 className='my-4 text-2xl text-white'>{title}</h2>
             <p className='line-clamp-3'>{content}</p>
           </div>
         </a>

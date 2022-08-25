@@ -7,15 +7,21 @@ export const userRouter = createRouter()
   .query('username', {
     input: z.object({
       username: z.string(),
+      limit: z.number().min(1).max(100).nullish(),
+      cursor: z.string().nullish(),
     }),
-    async resolve({ input: { username }, ctx }) {
+    async resolve({ input, ctx }) {
+      const limit = input.limit ?? 50;
+      const { cursor } = input;
       const user = await ctx.prisma.user.findUnique({
         where: {
-          username,
+          username: input.username,
         },
         include: {
           _count: { select: { comment: true, postLikes: true } },
           posts: {
+            take: limit + 1,
+            cursor: cursor ? { id: cursor } : undefined,
             select: {
               title: true,
               slug: true,
@@ -34,7 +40,12 @@ export const userRouter = createRouter()
           },
         },
       });
-      return user;
+      let nextCursor: typeof cursor | null = null;
+      if (user && user.posts && user.posts.length > limit) {
+        const nextItem = user.posts.pop();
+        nextCursor = nextItem!.id;
+      }
+      return { user, nextCursor };
     },
   })
   .middleware(async ({ ctx, next }) => {

@@ -4,7 +4,7 @@ import { ExternalLink } from 'tabler-icons-react';
 import { Flex } from '@/features/UI';
 
 type Props = {
-  post: Omit<Post, 'publishedAt'> & { publishedAt: string };
+  post: Pick<Post, 'content' | 'postType'>;
 };
 
 export const LinkContent = ({ post }: Props) => {
@@ -33,7 +33,7 @@ export const LinkContent = ({ post }: Props) => {
             <p className='text-base my-1 md:text-lg'>
               {linkContent?.ogDescription}
             </p>
-            <div className='uppercase text-sm my-3'>{linkContent?.ogTitle}</div>
+            <div className='uppercase text-sm my-3'>{linkContent?.ogUrl}</div>
           </div>
         </div>
       </a>

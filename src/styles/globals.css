@@ -8,6 +8,7 @@
 @import './post.css';
 @import './group.css';
 @import './nprogress.css';
+@import './user.css';
 
 @layer base {
   :root {

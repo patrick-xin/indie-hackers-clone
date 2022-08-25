@@ -8,7 +8,9 @@ export const PostAuthor = ({
   return (
     <span>
       <Link href={`/@${author.username}`}>
-        <a>{author.username}</a>
+        <a className='decoration-brand-blue decoration-[2px] underline-offset-[6px] hover:text-brand-blue hover:underline'>
+          {author.username}
+        </a>
       </Link>
     </span>
   );
