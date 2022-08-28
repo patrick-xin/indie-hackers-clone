@@ -1,5 +1,5 @@
 import { createSSGHelpers } from '@trpc/react/ssg';
-import { GetServerSidePropsContext } from 'next';
+import { GetServerSideProps } from 'next';
 import Image from 'next/future/image';
 import React from 'react';
 import { FaDraftingCompass, FaUserFriends } from 'react-icons/fa';
@@ -26,9 +26,9 @@ const GroupDetailPage = () => {
 
   const { data, fetchNextPage, isLoading, isError, hasNextPage } = postsQuery;
   return (
-    <div className='space-y-6 max-w-5xl mx-auto'>
+    <div className='mx-auto max-w-5xl space-y-6'>
       <GroupDetailHeader {...groupDetail} />
-      <div className='md:grid grid-cols-8 gap-10'>
+      <div className='grid-cols-8 gap-10 md:grid'>
         <div className='col-span-5'>
           <Content
             posts={data?.pages.flatMap((p) => p.posts)}
@@ -39,14 +39,14 @@ const GroupDetailPage = () => {
             tablinks={<GroupTabLinks />}
           />
         </div>
-        <div className='hidden md:block col-start-6 col-span-full'>
-          <h3 className='text-xl font-semibold mt-2 mb-6 uppercase'>About</h3>
-          <p className='bg-[#182e43] p-4 text-lg rounded'>
+        <div className='col-span-full col-start-6 hidden md:block'>
+          <h3 className='mt-2 mb-6 text-xl font-semibold uppercase'>About</h3>
+          <p className='rounded bg-[#182e43] p-4 text-lg'>
             Lorem, ipsum dolor sit amet consectetur adipisicing elit. Inventore
             nostrum, harum provident maiores ipsam temporibus veniam impedit
             voluptates vel sint?
           </p>
-          <div className='bg-[#182e43] p-4 mt-1 rounded space-y-2'>
+          <div className='mt-1 space-y-2 rounded bg-[#182e43] p-4'>
             <div className='flex items-center gap-2'>
               <div>
                 <FaUserFriends />
@@ -70,7 +70,7 @@ const GroupDetailPage = () => {
 
 export default GroupDetailPage;
 
-export async function getServerSideProps(context: GetServerSidePropsContext) {
+export const getServerSideProps: GetServerSideProps = async () => {
   const ssg = createSSGHelpers({
     router: appRouter,
     ctx: await createContext(),
@@ -86,7 +86,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       trpcState: ssg.dehydrate(),
     },
   };
-}
+};
 
 GroupDetailPage.getLayout = (page: React.ReactElement) => (
   <BasicLayout>{page}</BasicLayout>
@@ -105,7 +105,7 @@ const GroupDetailHeader = ({
 }: GroupDetailHeaderProps) => {
   return (
     <div>
-      <div className='flex items-center bg-[#1f364d] p-4 gap-6 md:p-10 md:gap-10'>
+      <div className='flex items-center gap-6 bg-[#1f364d] p-4 md:gap-10 md:p-10'>
         <div className='max-w-[80px]'>
           <Image
             src={logo}
@@ -116,28 +116,28 @@ const GroupDetailHeader = ({
           />
         </div>
         <div className='md:space-y-4'>
-          <h1 className='text-white text-2xl font-bold md:text-3xl'>{name}</h1>
+          <h1 className='text-2xl font-bold text-white md:text-3xl'>{name}</h1>
           <p className='md:text-lg'>{description}</p>
         </div>
       </div>
 
-      <div className='bg-[#152C41] py-4 pb-0 md:flex items-center flex-row-reverse justify-between'>
+      <div className='flex-row-reverse items-center justify-between bg-[#152C41] py-4 pb-0 md:flex'>
         <div className='mx-4'>
           <Button
             fullWidth
             variant='outline'
-            icon={<Check className='w-4 h-4' />}
+            icon={<Check className='h-4 w-4' />}
           >
             Member
           </Button>
         </div>
-        <div className='pt-6 flex gap-4'>
+        <div className='flex gap-4 pt-6'>
           <Button
             size='small'
             variant='underline'
             className='uppercase'
             transition
-            icon={<Message className='w-5 h-5' />}
+            icon={<Message className='h-5 w-5' />}
           >
             discussions
           </Button>
@@ -146,7 +146,7 @@ const GroupDetailHeader = ({
             variant='underline'
             className='uppercase'
             transition
-            icon={<Users className='w-5 h-5' />}
+            icon={<Users className='h-5 w-5' />}
           >
             members
           </Button>

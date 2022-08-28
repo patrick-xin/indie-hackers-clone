@@ -7,27 +7,27 @@ export const FilterLinks = () => {
   const { pathname, asPath } = useRouter();
 
   return (
-    <Flex className='gap-3'>
-      <ButtonLink href='/' variant='blue' isActive={pathname === '/'}>
+    <Flex className='absolute top-0 left-0 z-10 flex-col divide-y-[1px] divide-[#152C41] rounded-lg text-sm uppercase'>
+      <ButtonLink href='/' variant='primary' isActive={pathname === '/'}>
         today
       </ButtonLink>
       <ButtonLink
         href={`/top/week-of-${format(new Date(), 'yyyy-MM-dd')}`}
-        variant='blue'
+        variant='primary'
         isActive={asPath.includes('week')}
       >
         weekly
       </ButtonLink>
       <ButtonLink
         href={`/top/month-of-${format(new Date(), 'yyyy-MM')}`}
-        variant='blue'
+        variant='primary'
         isActive={asPath.includes('month')}
       >
         monthly
       </ButtonLink>
       <ButtonLink
         href='/top/all-time'
-        variant='blue'
+        variant='primary'
         isActive={asPath.includes('all')}
       >
         all time

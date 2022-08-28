@@ -22,7 +22,7 @@ export const Input = forwardRef<
     <div>
       <label
         htmlFor={label}
-        className='text-white my-2 inline-block capitalize text-lg'
+        className='my-2 inline-block text-lg capitalize text-white'
       >
         {label}
       </label>

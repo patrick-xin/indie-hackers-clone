@@ -1,44 +1,77 @@
-import { useRouter } from 'next/router';
-import { ReactElement } from 'react';
+import { createSSGHelpers } from '@trpc/react/ssg';
+import { TRPCError } from '@trpc/server';
+import { GetServerSidePropsContext } from 'next';
+import superjson from 'superjson';
 
 import { UserPageLayout } from '@/features/layout/UserPage';
-import { UserPageSidebar } from '@/features/userpage/components';
+import { PostCard } from '@/features/post/components';
+import { appRouter } from '@/server/router';
+import { createContext } from '@/server/router/context';
 import { trpc } from '@/utils/trpc';
 
-const UserPage = () => {
-  const { query } = useRouter();
-  const username = query['@username'] as string;
+type Props = {
+  username: string;
+};
 
-  // const { data: user } = trpc.useQuery(
-  //   ['user.username', { username: username?.split('@')[1] }],
-  //   { enabled: Boolean(username) }
-  // );
-  const { data, fetchNextPage, isLoading, isError, hasNextPage } =
-    trpc.useInfiniteQuery(
-      [
-        'user.username',
-        {
-          limit: 4,
-          username: username?.split('@')[1],
-        },
-      ],
-      {
-        getNextPageParam: (lastPage) => lastPage.nextCursor ?? false,
-        enabled: Boolean(username),
-      }
-    );
+const UserPage = ({ username }: Props) => {
+  const { data: user } = trpc.useQuery([
+    'user.username-featured',
+    { username },
+  ]);
 
   return (
-    <div className='user-content'>
-      {/* <UserPageHeader user={user} />
-      <UserPageBody user={user?.user} /> */}
-      <UserPageSidebar />
-    </div>
+    <>
+      {user && (
+        <UserPageLayout user={user}>
+          <div className='space-y-4'>
+            {user.posts.map((p) => (
+              <PostCard {...p} key={p.id} username={user.username} />
+            ))}
+          </div>
+        </UserPageLayout>
+      )}
+    </>
   );
 };
 
 export default UserPage;
 
-UserPage.getLayout = (page: ReactElement) => (
-  <UserPageLayout>{page}</UserPageLayout>
-);
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const ssg = createSSGHelpers({
+    router: appRouter,
+    ctx: await createContext(),
+    transformer: superjson,
+  });
+
+  const usernameParam = context.params?.['@username'] as string;
+  const username = usernameParam.split('@')[1];
+
+  try {
+    await ssg.prefetchQuery('user.username-featured', { username });
+  } catch (error) {
+    if (error instanceof TRPCError) {
+      if (error.code === 'NOT_FOUND')
+        return {
+          redirect: {
+            destination: '/404',
+            permanent: false,
+          },
+        };
+      if (error.code === 'INTERNAL_SERVER_ERROR') {
+        return {
+          redirect: {
+            destination: '/500',
+            permanent: false,
+          },
+        };
+      }
+    }
+  }
+
+  return {
+    props: {
+      trpcState: ssg.dehydrate(),
+      username,
+    },
+  };
+}

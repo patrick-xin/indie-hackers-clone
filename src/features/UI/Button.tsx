@@ -90,7 +90,7 @@ export const Button: React.FC<ButtonProps> = ({
       {...props}
     >
       {loading ? (
-        <span className='flex gap-4 items-center'>
+        <span className='flex items-center gap-4'>
           <Spinner size={size === 'small' ? '2' : '4'} />
           <span>{loadingText}</span>
         </span>

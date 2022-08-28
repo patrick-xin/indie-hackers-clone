@@ -1,7 +1,7 @@
 import { createSSGHelpers } from '@trpc/react/ssg';
 import { TRPCError } from '@trpc/server';
 import { GetServerSidePropsContext } from 'next';
-import { ReactElement, useMemo } from 'react';
+import { ReactElement, useMemo, useState } from 'react';
 import superjson from 'superjson';
 
 import { BasicLayout } from '@/features/layout/Basic';
@@ -40,11 +40,11 @@ const UserPostPage = ({ username, slug }: Props) => {
     });
     return group;
   }, [post]);
-
+  const [hasScrolled, setScrolled] = useState(false);
   const rootComments = post && commentsByParentId['null'];
   if (isLoading || !post) return <FullScreenLoader />;
   return (
-    <div className='post-page md:px-8 max-w-full'>
+    <div className='post-page max-w-full md:px-8'>
       <PostPageHeader post={post} />
       <div className='post-page-main flex flex-col'>
         <PostPageBody post={post} />
@@ -53,6 +53,7 @@ const UserPostPage = ({ username, slug }: Props) => {
           rootComments={rootComments}
           postId={post.id}
           commentsByParentId={commentsByParentId}
+          hasScrolled={hasScrolled}
         />
       </div>
 
@@ -61,6 +62,7 @@ const UserPostPage = ({ username, slug }: Props) => {
         likes={post._count.likes}
         comments={post._count.comments}
         bookmarks={10}
+        setScrolled={() => setScrolled(true)}
       />
     </div>
   );

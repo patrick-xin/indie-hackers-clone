@@ -29,13 +29,13 @@ const buttonMap: {
 
 const SignInPage = ({ providers }: Props) => {
   return (
-    <div className='max-w-4xl px-8 rounded mx-auto'>
+    <div className='mx-auto max-w-4xl rounded px-8'>
       <div className='grid grid-cols-1'>
         <div>
-          <h2 className='bg-[#274059] p-6 text-2xl md:text-3xl text-white'>
+          <h2 className='bg-[#274059] p-6 text-2xl text-white md:text-3xl'>
             Join a thriving community of entrepreneurs and developers.
           </h2>
-          <div className='bg-[#1E364D] p-4 space-y-4'>
+          <div className='space-y-4 bg-[#1E364D] p-4'>
             <div className='flex items-center gap-2'>
               <div>
                 <Image src='/shop.png' width={60} height={60} />
@@ -64,11 +64,11 @@ const SignInPage = ({ providers }: Props) => {
       </div>
       <div className='mt-6 space-y-4'>
         <h3 className='text-2xl'>Sign in with</h3>
-        <div className='gap-4 flex items-center'>
+        <div className='flex items-center gap-4'>
           {Object.values(providers).map((provider) => (
             <div key={provider.name}>
               <button
-                className={`rounded-full hover:bg-opacity-80 transition-colors ease-linear p-2.5 h-10 w-10 flex justify-center items-center ${
+                className={`flex h-10 w-10 items-center justify-center rounded-full p-2.5 transition-colors ease-linear hover:bg-opacity-80 ${
                   buttonMap[provider.name].bg
                 }`}
                 onClick={() => {
@@ -101,8 +101,4 @@ export const getServerSideProps: GetServerSideProps = async () => {
   return {
     props: { providers },
   };
-};
-
-const SignInButton = () => {
-  return <button></button>;
 };

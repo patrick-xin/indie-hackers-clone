@@ -174,10 +174,6 @@ export const privatePostRouter = createRouter()
         query: { page, pageCount },
       },
     }) {
-      //page=1 take 3 skip 0
-      // page=2 tale 3 skip 3
-      // page=3 take 3 skip 6
-      //page=4 take 3 skip 9
       const totalCount = await ctx.prisma.post.aggregate({
         _count: true,
         where: {

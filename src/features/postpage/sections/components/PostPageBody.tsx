@@ -10,7 +10,7 @@ type Props = {
 export const PostPageBody = ({ post }: Props) => {
   return (
     <>
-      <div className='prose prose-brand prose-a:text-brand-blue prose-a:hover:underline md:prose-lg prose-base xl:prose-xl 2xl:prose-2xl prose-p:font-normal prose-p:antialiased mx-auto prose-img:rounded prose-img:object-cover'>
+      <div className='prose-base prose prose-brand mx-auto prose-p:font-normal prose-p:antialiased prose-a:text-brand-blue prose-a:hover:underline prose-img:rounded prose-img:object-cover md:prose-lg xl:prose-xl 2xl:prose-2xl'>
         {post.postType === 'ARTICLE' && (
           <ReactMarkdown>{post.content}</ReactMarkdown>
         )}

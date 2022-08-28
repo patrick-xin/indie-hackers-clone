@@ -45,7 +45,6 @@ const TopPage = () => {
           isError={isError}
           hasNextPage={hasNextPage}
           tablinks={<TabLinks />}
-          hasFliter
         />
 
         <Group />

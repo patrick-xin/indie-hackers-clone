@@ -35,19 +35,19 @@ export const ExploreSection = () => {
     return (
       <Wrapper>
         <div>
-          <div className='flex justify-between items-center border-3 border-gray-100/5 p-2.5'>
+          <div className='flex items-center justify-between border-3 border-gray-100/5 p-2.5'>
             <ButtonLink className='capitalize' variant='ghost' href='/'>
               Explore
             </ButtonLink>
             <div>
               <button
                 onClick={() => setShow(true)}
-                className='hover:rotate-90 transition-all ease-linear'
+                className='transition-all ease-linear hover:rotate-90'
               >
                 <svg
                   xmlns='http://www.w3.org/2000/svg'
                   viewBox='0 0 24 24'
-                  className='text-white fill-current w-4 h-4  hover:text-brand-blue'
+                  className='h-4 w-4 fill-current text-white  hover:text-brand-blue'
                 >
                   <path d='M24 9h-9v-9h-6v9h-9v6h9v9h6v-9h9z' />
                 </svg>
@@ -65,10 +65,10 @@ export const ExploreSection = () => {
         onMouseEnter={() => setMouseEnter(true)}
         onMouseLeave={() => setMouseEnter(false)}
       >
-        <div className='flex justify-between items-center w-full'>
-          <div className='group flex gap-2 items-center'>
+        <div className='flex w-full items-center justify-between'>
+          <div className='group flex items-center gap-2'>
             <div className='space-y-2'>
-              <div className='flex gap-4 items-center'>
+              <div className='flex items-center gap-4'>
                 <ButtonLink className='capitalize' variant='ghost' href='/'>
                   Explore: {TOPICKS[activeIndex].title}
                 </ButtonLink>
@@ -76,22 +76,22 @@ export const ExploreSection = () => {
                 <div className='flex gap-2'>
                   <button
                     onClick={handleClick}
-                    className='p-1 rounded-sm text-white bg-brand-indigo-bg hover:bg-brand-blue'
+                    className='rounded-sm bg-brand-indigo-bg p-1 text-white hover:bg-brand-blue'
                   >
                     <BsCaretLeftFill className='h-3 w-3' />
                   </button>
                   <button
                     onClick={handleClick}
-                    className='p-1 rounded-sm text-white bg-brand-indigo-bg hover:bg-brand-blue'
+                    className='rounded-sm bg-brand-indigo-bg p-1 text-white hover:bg-brand-blue'
                   >
                     <BsCaretRightFill className='h-3 w-3' />
                   </button>
                 </div>
               </div>
 
-              <div className='bg-brand-indigo-bg h-[3px] rounded-lg w-48 relative'>
+              <div className='relative h-[3px] w-48 rounded-lg bg-brand-indigo-bg'>
                 <div
-                  className='absolute inset-0 bg-brand-blue rounded-lg w-full'
+                  className='absolute inset-0 w-full rounded-lg bg-brand-blue'
                   style={{ width: `${width}%` }}
                 />
               </div>
@@ -109,7 +109,7 @@ export const ExploreSection = () => {
           {TOPICKS[activeIndex].posts.map((post) => (
             <div
               key={post.id}
-              className='flex justify-between items-center p-1.5 rounded hover:bg-brand-indigo-bg'
+              className='flex items-center justify-between rounded p-1.5 hover:bg-brand-indigo-bg'
             >
               {post.title}
             </div>

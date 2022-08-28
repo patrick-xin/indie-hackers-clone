@@ -32,8 +32,8 @@ const WelcomePage = () => {
   >([]);
   const [username, setUsername] = useState('');
   return (
-    <div className='max-w-2xl mx-auto'>
-      <h1 className='text-3xl my-4 lg:my-8 text-white'>Welcome onboard!</h1>
+    <div className='mx-auto max-w-2xl'>
+      <h1 className='my-4 text-3xl text-white lg:my-8'>Welcome onboard!</h1>
       <p className='my-4'>
         You will be able to share your thoughts, ideas, projects or products
         with others.
@@ -53,7 +53,7 @@ const WelcomePage = () => {
 
         <div className='space-y-2'>
           <p className='text-gray-300'>What fields are you interested in?</p>
-          <Flex className='gap-2 flex-wrap'>
+          <Flex className='flex-wrap gap-2'>
             {categories.map((ca) => (
               <Button
                 size='small'
@@ -81,7 +81,7 @@ const WelcomePage = () => {
             ))}
           </Flex>
         </div>
-        <Flex className='justify-end w-full'>
+        <Flex className='w-full justify-end'>
           <Button
             loading={isLoading}
             variant='gradient'

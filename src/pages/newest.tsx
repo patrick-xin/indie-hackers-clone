@@ -54,7 +54,7 @@ const Newest = ({ p }) => {
         <section className='space-y-6'>
           <TabLinks />
 
-          <div className='grid grid-cols-1 gap-2 min-h-[50vh] lg:min-h-[80vh]'>
+          <div className='grid min-h-[50vh] grid-cols-1 gap-2 lg:min-h-[80vh]'>
             {isLoading || !data ? (
               <FeedItemLoaders count={10} key={0} />
             ) : data.posts.length === 0 ? (

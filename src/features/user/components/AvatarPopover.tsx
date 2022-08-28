@@ -2,7 +2,7 @@ import { Popover } from '@headlessui/react';
 import { User } from '@prisma/client';
 import Image from 'next/future/image';
 import Link from 'next/link';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { usePopper } from 'react-popper';
 
 type Props = {
@@ -15,7 +15,6 @@ export const AvatarPopover = ({ user }: Props) => {
   const [popperElement, setPopperElement] = useState<null | HTMLDivElement>(
     null
   );
-  const [arrowElement, setArrowElement] = useState<null | HTMLDivElement>(null);
 
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
     modifiers: [
@@ -41,12 +40,11 @@ export const AvatarPopover = ({ user }: Props) => {
         style={styles.popper}
         {...attributes.popper}
       >
-        <div className='min-h-56 w-72 mx-6 bg-[#274059] space-y-4 rounded-sm'>
-          <div ref={setArrowElement} style={styles.arrow} />
+        <div className='mx-6 min-h-[14rem] w-72 space-y-4 rounded-sm bg-[#274059]'>
           <header className='bg-[#2F4D6A] p-4'>
             <Link href={`/@${user.username}`}>
               <a>
-                <div className='flex gap-6 items-center'>
+                <div className='flex items-center gap-6'>
                   <Image
                     src={user.image ?? '/avatat.webp'}
                     className='rounded-full'
@@ -69,20 +67,20 @@ export const AvatarPopover = ({ user }: Props) => {
             <div className='space-y-2'>
               <div className='flex flex-col'>
                 <span className='inline-block text-sm'>Location:</span>
-                <span className='inline-block text-white text-lg'>
+                <span className='inline-block text-lg text-white'>
                   Victoria
                 </span>
               </div>
               <div className='flex gap-8'>
                 <div className='flex flex-col'>
                   <span className='inline-block text-sm'>Followers:</span>
-                  <span className='inline-block text-white text-lg'>112</span>
+                  <span className='inline-block text-lg text-white'>112</span>
                 </div>
 
                 <div>
                   <div className='flex flex-col'>
                     <span className='inline-block text-sm'>Points:</span>
-                    <span className='inline-block text-white text-lg'>220</span>
+                    <span className='inline-block text-lg text-white'>220</span>
                   </div>
                 </div>
               </div>
@@ -90,7 +88,7 @@ export const AvatarPopover = ({ user }: Props) => {
             </div>
           </div>
           <footer className='bg-[#213348] p-4'>
-            <button className='py-2 px-3 bg-gradient-to-r w-full rounded text-white text-center from-cyan-500 to-blue-500'>
+            <button className='w-full rounded bg-gradient-to-r from-cyan-500 to-blue-500 py-2 px-3 text-center text-white'>
               Follow
             </button>
           </footer>

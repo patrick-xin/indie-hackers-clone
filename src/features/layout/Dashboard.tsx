@@ -7,7 +7,7 @@ type Props = {
   loading?: boolean;
 };
 
-export const DashboardLayout: React.FC<Props> = ({ children, loading }) => {
+export const DashboardLayout: React.FC<Props> = ({ children }) => {
   const [collapse, setCollapse] = useState(false);
 
   return (
@@ -17,7 +17,7 @@ export const DashboardLayout: React.FC<Props> = ({ children, loading }) => {
       <CollapsedNav onClose={() => setCollapse(false)} shown={collapse} />
 
       <div
-        className={`w-[calc(100vw - 16rem)] ${
+        className={`w-[calc(100vw-16rem)] ${
           !collapse ? 'ml-64' : 'ml-auto'
         } lg:py-12`}
       >

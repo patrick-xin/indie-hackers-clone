@@ -15,12 +15,12 @@ export const Alert = ({ type, message }: Props) => {
     warning: 'bg-yellow-700/40 text-yellow-500',
   };
   const icons = {
-    success: <BiCheck className='text-green-500 h-6 w-6' />,
-    error: <BiError className='text-red-500 h-6 w-6' />,
-    warning: <IoWarning className='text-yellow-500 h-6 w-6' />,
+    success: <BiCheck className='h-6 w-6 text-green-500' />,
+    error: <BiError className='h-6 w-6 text-red-500' />,
+    warning: <IoWarning className='h-6 w-6 text-yellow-500' />,
   };
   return (
-    <div className='mx-auto w-full grid lg:text-lg grid-cols-1 place-items-center gap-4 text-center'>
+    <div className='mx-auto grid w-full grid-cols-1 place-items-center gap-4 text-center lg:text-lg'>
       <div
         className={cn(
           'rounded p-4 flex items-center gap-4 w-full',

@@ -15,8 +15,8 @@ export const GroupSection = ({
   updatedAt,
 }: GroupSectionProps) => {
   return (
-    <div className='border-[3px] border-spacing-2 border-[#1f364d] first-of-type:border-t-0 space-y-4 p-2 rounded first-of-type:rounded-t-none md:first-of-type:border md:first-of-type:rounded-t'>
-      <header className='bg-[#182e43] p-3 rounded space-y-3 '>
+    <div className='border-spacing-2 space-y-4 rounded border-[3px] border-[#1f364d] p-2 first-of-type:rounded-t-none first-of-type:border-t-0 md:first-of-type:rounded-t md:first-of-type:border'>
+      <header className='space-y-3 rounded bg-[#182e43] p-3 '>
         <h2 className='text-2xl text-white'>{title}</h2>
         <p className='text-[#9cb3c9]'>{description}</p>
         <p className='text-sm italic text-[#63809c]'>{updatedAt}</p>

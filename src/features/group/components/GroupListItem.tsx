@@ -18,7 +18,7 @@ export const GroupListItem = ({
   return (
     <Link href={`/groups/${slug}`}>
       <a className='inline-block'>
-        <div className='flex justify-between items-center p-2 group hover:bg-[#1E364D] rounded transition-colors ease-linear'>
+        <div className='group flex items-center justify-between rounded p-2 transition-colors ease-linear hover:bg-[#1E364D]'>
           <div className='flex items-center gap-3'>
             <div>
               <Image
@@ -34,7 +34,7 @@ export const GroupListItem = ({
             </div>
           </div>
 
-          <div className='rounded-2xl text-[#4799eb] bg-[#4799eb] bg-opacity-10 px-1.5 py-1 group-hover:invisible'>
+          <div className='rounded-2xl bg-[#4799eb] bg-opacity-10 px-1.5 py-1 text-[#4799eb] group-hover:invisible'>
             +{ratio}%
           </div>
         </div>

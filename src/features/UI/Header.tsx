@@ -1,5 +1,4 @@
 import { signIn, useSession } from 'next-auth/react';
-import React from 'react';
 import { ImSpinner8 } from 'react-icons/im';
 import { IoIosMenu, IoIosSearch } from 'react-icons/io';
 
@@ -10,7 +9,7 @@ export const Header = () => {
   const session = useSession();
   const renderUserStatus = () => {
     if (session.status === 'loading') {
-      return <ImSpinner8 className='animate-spin h-4 w-4' />;
+      return <ImSpinner8 className='h-4 w-4 animate-spin' />;
     } else if (session.status === 'authenticated') {
       return <ProfileMenuDropdown session={session.data} />;
     } else {
@@ -18,8 +17,8 @@ export const Header = () => {
     }
   };
   return (
-    <div className='flex justify-between px-4 h-14 mt-1 bg-[#1E364D] items-center lg:px-12'>
-      <div className='flex gap-2 items-center'>
+    <div className='mt-1 flex h-14 items-center justify-between bg-[#1E364D] px-4 lg:px-12'>
+      <div className='flex items-center gap-2'>
         <div className='sm:hidden'>
           <Logo hasName={false} />
         </div>
@@ -31,7 +30,7 @@ export const Header = () => {
         </div>
       </div>
 
-      <div className='hidden sm:flex gap-2 sm:gap-4 items-center text-white font-black'>
+      <div className='hidden items-center gap-2 font-black text-white sm:flex sm:gap-4'>
         <Logo />
       </div>
 

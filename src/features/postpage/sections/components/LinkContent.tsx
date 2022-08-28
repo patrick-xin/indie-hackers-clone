@@ -12,13 +12,13 @@ export const LinkContent = ({ post }: Props) => {
     post && post.postType === 'LINK' && JSON.parse(post.content);
 
   return (
-    <div className='bg-[#182e43] hover:bg-[#1E364D] p-3 rounded max-w-full'>
+    <div className='max-w-full rounded bg-[#182e43] p-3 hover:bg-[#1E364D]'>
       <a href={linkContent.ogUrl}>
         <div className='flex flex-col gap-6 sm:flex-row'>
           {linkContent.ogImage ? (
-            <div className='bg-red-300 rounded'>
+            <div className='flex items-center justify-center rounded'>
               <img
-                className='max-h-[200px] w-full md:h-[140px] sm:w-[140px] object-cover rounded'
+                className='h-full max-h-[200px] w-full rounded sm:w-[140px] md:h-[140px]'
                 src={linkContent.ogImage?.url}
               />
             </div>
@@ -30,10 +30,10 @@ export const LinkContent = ({ post }: Props) => {
 
           <div className='flex-1'>
             <h3 className='text-white md:text-xl'>{linkContent?.ogTitle}</h3>
-            <p className='text-base my-1 md:text-lg'>
+            <p className='my-1 text-base md:text-lg'>
               {linkContent?.ogDescription}
             </p>
-            <div className='uppercase text-sm my-3'>{linkContent?.ogUrl}</div>
+            <div className='my-3 text-sm uppercase'>{linkContent?.ogUrl}</div>
           </div>
         </div>
       </a>

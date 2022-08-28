@@ -1,14 +1,12 @@
-import { useRouter } from 'next/router';
 import React from 'react';
 
 import { GroupSection } from '@/features/group/components';
 import { BasicLayout } from '@/features/layout/Basic';
 
 const GroupPage = () => {
-  const { push } = useRouter();
   return (
     <div>
-      <div className='grid grid-cols-1 gap-4 -mx-4 md:grid-cols-2 md:-mx-0 lg:grid-cols-3 lg:gap-6'>
+      <div className='-mx-4 grid grid-cols-1 gap-4 md:-mx-0 md:grid-cols-2 lg:grid-cols-3 lg:gap-6'>
         <GroupSection
           title='Fast Growing'
           description='Up-and-coming groups whose membership counts grew the highest percentage in the past week.'

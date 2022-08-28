@@ -33,7 +33,7 @@ import { Button } from '@/features/UI/Button';
 
 const PostCreatePage = () => {
   const [title, setTitle] = useState('');
-  const { ref, commandController } = useTextAreaMarkdownEditor({
+  const { _ref, commandController } = useTextAreaMarkdownEditor({
     commandMap: {
       bold: bold,
       italic: italic,
@@ -58,7 +58,7 @@ const PostCreatePage = () => {
 
   return (
     <div>
-      <div className='max-w-4xl mx-auto'>
+      <div className='mx-auto max-w-4xl'>
         <form
           className='space-y-6'
           onSubmit={(e) => {
@@ -81,18 +81,18 @@ const PostCreatePage = () => {
 
           <div className='my-8'>
             {/* Button group */}
-            <Flex className='p-2 bg-[#152C41]/60 my-6 shadow'>
+            <Flex className='my-6 bg-[#152C41]/60 p-2 shadow'>
               <Flex className='flex-1'>
                 {writingMode && (
                   <Flex className='flex gap-4'>
                     <button
                       type='button'
-                      className='p-1 hover:bg-brand-blue rounded group transition-colors ease-linear'
+                      className='group rounded p-1 transition-colors ease-linear hover:bg-brand-blue'
                       onClick={async () => {
                         await commandController.executeCommand('header');
                       }}
                     >
-                      <Heading className='w-5 h-5 group-hover:text-gray-200 transition-colors ease-linear' />
+                      <Heading className='h-5 w-5 transition-colors ease-linear group-hover:text-gray-200' />
                     </button>
                     <button
                       type='button'
@@ -100,7 +100,7 @@ const PostCreatePage = () => {
                         await commandController.executeCommand('bold');
                       }}
                     >
-                      <Bold className='w-5 h-5 hover:text-gray-200 transition-colors ease-linear' />
+                      <Bold className='h-5 w-5 transition-colors ease-linear hover:text-gray-200' />
                     </button>
                     <button
                       type='button'
@@ -108,7 +108,7 @@ const PostCreatePage = () => {
                         await commandController.executeCommand('italic');
                       }}
                     >
-                      <Italic className='w-5 h-5 hover:text-gray-200 transition-colors ease-linear' />
+                      <Italic className='h-5 w-5 transition-colors ease-linear hover:text-gray-200' />
                     </button>
                     <button
                       type='button'
@@ -116,7 +116,7 @@ const PostCreatePage = () => {
                         await commandController.executeCommand('code');
                       }}
                     >
-                      <Code className='w-5 h-5 hover:text-gray-200 transition-colors ease-linear' />
+                      <Code className='h-5 w-5 transition-colors ease-linear hover:text-gray-200' />
                     </button>
                     <button
                       type='button'
@@ -124,7 +124,7 @@ const PostCreatePage = () => {
                         await commandController.executeCommand('link');
                       }}
                     >
-                      <Link className='w-5 h-5 hover:text-gray-200 transition-colors ease-linear' />
+                      <Link className='h-5 w-5 transition-colors ease-linear hover:text-gray-200' />
                     </button>
                     <button
                       type='button'
@@ -132,7 +132,7 @@ const PostCreatePage = () => {
                         await commandController.executeCommand('image');
                       }}
                     >
-                      <IoMdImage className='w-5 h-5 hover:text-gray-200 transition-colors ease-linear' />
+                      <IoMdImage className='h-5 w-5 transition-colors ease-linear hover:text-gray-200' />
                     </button>
                     <button
                       type='button'
@@ -140,7 +140,7 @@ const PostCreatePage = () => {
                         await commandController.executeCommand('quote');
                       }}
                     >
-                      <Quote className='w-5 h-5 hover:text-gray-200 transition-colors ease-linear' />
+                      <Quote className='h-5 w-5 transition-colors ease-linear hover:text-gray-200' />
                     </button>
                     <button
                       type='button'
@@ -150,7 +150,7 @@ const PostCreatePage = () => {
                         );
                       }}
                     >
-                      <ListNumbers className='w-5 h-5 hover:text-gray-200 transition-colors ease-linear' />
+                      <ListNumbers className='h-5 w-5 transition-colors ease-linear hover:text-gray-200' />
                     </button>
                     <button
                       type='button'
@@ -160,7 +160,7 @@ const PostCreatePage = () => {
                         );
                       }}
                     >
-                      <List className='w-5 h-5 hover:text-gray-200 transition-colors ease-linear' />
+                      <List className='h-5 w-5 transition-colors ease-linear hover:text-gray-200' />
                     </button>
                     <button
                       type='button'
@@ -170,7 +170,7 @@ const PostCreatePage = () => {
                         );
                       }}
                     >
-                      <ListCheck className='w-5 h-5 hover:text-gray-200 transition-colors ease-linear' />
+                      <ListCheck className='h-5 w-5 transition-colors ease-linear hover:text-gray-200' />
                     </button>
                   </Flex>
                 )}
@@ -197,18 +197,18 @@ const PostCreatePage = () => {
                 placeholder='Write content here...'
                 textarea
                 onChange={(e) => setValue(e.target.value)}
-                className='w-full text-2xl p-2 shadow rounded min-h-[60vh]'
+                className='min-h-[60vh] w-full rounded p-2 text-2xl shadow'
               />
             )}
             {previewMode && (
-              <div className='w-full min-h-[60vh]'>
-                <div className='prose prose-brand prose-a:text-brand-blue prose-a:hover:underline xl:prose-xl 2xl:prose-2xl mx-auto prose-img:rounded prose-img:object-cover'>
+              <div className='min-h-[60vh] w-full'>
+                <div className='prose prose-brand mx-auto prose-a:text-brand-blue prose-a:hover:underline prose-img:rounded prose-img:object-cover xl:prose-xl 2xl:prose-2xl'>
                   <ReactMarkdown>{value}</ReactMarkdown>
                 </div>
               </div>
             )}
           </div>
-          <Flex className='gap-4 justify-end'>
+          <Flex className='justify-end gap-4'>
             <Button type='submit' variant='gradient-inverse'>
               Save draft
             </Button>

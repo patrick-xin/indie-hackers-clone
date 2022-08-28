@@ -38,17 +38,12 @@ const postTypes = [
   },
 ];
 
-type Props = {
-  open: boolean;
-  setOpen: (v: boolean) => void;
-};
-
 export const NewPostModal = () => {
   const router = useRouter();
   const [title, setTitle] = useState('');
   const [editorType, setEditorType] = useState(editorTypes[0]);
   const [postType, setPostType] = useState(postTypes[0]);
-  const { modalOpen, setOpen, setClose } = useModalStore();
+  const { modalOpen, setClose } = useModalStore();
   const { mutate, isLoading } = trpc.useMutation('private-posts.create', {
     onSuccess: (id) => {
       setClose();
@@ -72,11 +67,11 @@ export const NewPostModal = () => {
         open={modalOpen}
       >
         <div>
-          <div className='fixed inset-0 transition-opacity bg-brand-indigo-bg/20 bg-opacity-30 backdrop-blur-lg' />
+          <div className='bg-brand-indigo-bg/20 fixed inset-0 bg-opacity-30 backdrop-blur-lg transition-opacity' />
         </div>
 
         <div className='fixed inset-0 z-10 overflow-y-auto'>
-          <div className='flex justify-center min-h-full p-4 text-center sm:items-center sm:p-0'>
+          <div className='flex min-h-full justify-center p-4 text-center sm:items-center sm:p-0'>
             <AnimatePresence>
               {modalOpen && (
                 <Dialog.Panel
@@ -84,7 +79,7 @@ export const NewPostModal = () => {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1, transition: { duration: 0.1 } }}
                   exit={{ opacity: 0 }}
-                  className='relative px-4 pt-5 pb-4 bg-[#152C41] transform rounded-lg border-[1px] border-gray-100/20 min-h-[40vh] w-[90vw] sm:my-8 sm:w-full sm:p-6 lg:w-[60vw] shadow-lg'
+                  className='relative min-h-[40vh] w-[90vw] rounded-lg border-[1px] border-gray-100/20 bg-[#152C41] px-4 pt-5 pb-4 shadow-lg sm:my-8 sm:w-full sm:p-6 lg:w-[60vw]'
                 >
                   <div className='absolute top-0 right-0 pt-4 pr-4'>
                     <button
@@ -93,7 +88,7 @@ export const NewPostModal = () => {
                       onClick={() => setClose()}
                     >
                       <span className='sr-only'>Close</span>
-                      <X className='w-6 h-6' aria-hidden='true' />
+                      <X className='h-6 w-6' aria-hidden='true' />
                     </button>
                   </div>
                   <div className='flex flex-row justify-between'>
@@ -106,14 +101,14 @@ export const NewPostModal = () => {
                       e.preventDefault();
                       alert('to do!!');
                     }}
-                    className='inline-block w-full p-2 overflow-hidden text-left align-bottom transition-all transform sm:align-middle space-y-6'
+                    className='inline-block w-full space-y-6 overflow-hidden p-2 text-left align-bottom transition-all sm:align-middle'
                   >
                     {/* Title */}
 
                     <Input
                       label='title'
                       value={title}
-                      className='border-[1px] border-[#63809c]/50 focus:bg-transparent focus:border-gray-400 focus:ring-0 p-3'
+                      className='border-[1px] border-[#63809c]/50 p-3 focus:border-gray-400 focus:bg-transparent focus:ring-0'
                       onChange={(e) => setTitle(e.target.value)}
                     />
                     <RadioGroup value={postType} onChange={setPostType}>
@@ -121,7 +116,7 @@ export const NewPostModal = () => {
                         Create new article or link
                       </RadioGroup.Label>
 
-                      <div className='grid grid-cols-2 md:grid-cols-1 mt-4 gap-2 md:gap-y-6 sm:grid-cols-2 sm:gap-x-4'>
+                      <div className='mt-4 grid grid-cols-2 gap-2 sm:grid-cols-2 sm:gap-x-4 md:grid-cols-1 md:gap-y-6'>
                         {postTypes.map((type) => (
                           <RadioGroup.Option
                             key={type.id}
@@ -179,7 +174,7 @@ export const NewPostModal = () => {
                             Which type of editor do you prefer?
                           </RadioGroup.Label>
 
-                          <div className='grid grid-cols-2 md:grid-cols-1 mt-4 gap-2 md:gap-y-6 sm:grid-cols-2 sm:gap-x-4'>
+                          <div className='mt-4 grid grid-cols-2 gap-2 sm:grid-cols-2 sm:gap-x-4 md:grid-cols-1 md:gap-y-6'>
                             {editorTypes.map((formType) => (
                               <RadioGroup.Option
                                 key={formType.id}
@@ -221,7 +216,7 @@ export const NewPostModal = () => {
                                           </RadioGroup.Label>
                                           <RadioGroup.Description
                                             as='span'
-                                            className='items-center hidden md:flex mt-1 text-xs whitespace-pre-wrap'
+                                            className='mt-1 hidden items-center whitespace-pre-wrap text-xs md:flex'
                                           >
                                             {formType.description}
                                           </RadioGroup.Description>
@@ -235,7 +230,7 @@ export const NewPostModal = () => {
                           </div>
                         </RadioGroup>
                         {/* Checkbox for remember choice */}
-                        <div className='flex gap-2 items-center'>
+                        <div className='flex items-center gap-2'>
                           <input
                             type='checkbox'
                             className='rounded-full bg-transparent'
@@ -248,7 +243,7 @@ export const NewPostModal = () => {
                     )}
 
                     {/* Submit button */}
-                    <div className='mt-5 sm:mt-6 flex justify-end'>
+                    <div className='mt-5 flex justify-end sm:mt-6'>
                       <Button
                         disabled={title.length < 5}
                         variant='primary'

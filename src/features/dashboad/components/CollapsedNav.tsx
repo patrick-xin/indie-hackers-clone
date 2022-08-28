@@ -25,19 +25,19 @@ export const CollapsedNav = ({
             opacity: shown ? 1 : 0,
             transition: { easings: [0.8, 0, 1, 1] },
           }}
-          className='fixed shadow inset-0 w-[60px] bg-[#1E364D] text-sm text-gray-300'
+          className='fixed inset-0 w-[60px] bg-[#1E364D] text-sm text-gray-300 shadow'
         >
-          <div className='h-full w-full relative flex justify-center'>
+          <div className='relative flex h-full w-full justify-center'>
             <div>
               <button
-                className='absolute inline-block -right-3 group top-24 p-0.5 text-gray-100 rounded-full bg-[#63809c]'
+                className='group absolute -right-3 top-24 inline-block rounded-full bg-[#63809c] p-0.5 text-gray-100'
                 onClick={onClose}
               >
                 <ChevronsRight className='h-4 w-4' />
               </button>
             </div>
 
-            <div className='h-full space-y-10 w-full'>
+            <div className='h-full w-full space-y-10'>
               <Flex className='my-10 justify-center'>
                 <Logo hasName={false} />
               </Flex>

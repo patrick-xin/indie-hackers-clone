@@ -5,7 +5,7 @@ type Props = {
 };
 export const NavTooltip = ({ label }: Props) => {
   return (
-    <div className='absolute bg-brand-blue hidden group-hover:block group-hover:animate-fade-in group-hover:translate-x-[95%] -top-0.5 p-1.5 rounded w-max text-sm'>
+    <div className='absolute -top-0.5 hidden w-max rounded bg-brand-blue p-1.5 text-sm group-hover:block group-hover:translate-x-[95%] group-hover:animate-fade-in'>
       {label}
       <div className='left-tran absolute top-2.5 -left-1.5' />
     </div>

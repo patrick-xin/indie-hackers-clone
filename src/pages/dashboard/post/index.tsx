@@ -2,10 +2,8 @@ import { Listbox } from '@headlessui/react';
 import cn from 'clsx';
 import { format } from 'date-fns';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
 import React, { ReactElement, useState } from 'react';
 import { Selector } from 'tabler-icons-react';
-import z from 'zod';
 
 import { DashboardLayout } from '@/features/layout/Dashboard';
 import { Button, ButtonLink, Flex, FullScreenLoader } from '@/features/UI';
@@ -14,16 +12,14 @@ import { trpc } from '@/utils/trpc';
 const SELECT_PAGE_COUNT = [4, 6, 8];
 
 const DashboardPage = () => {
-  const [opened, setOpened] = useState<null | string>(null);
-  const [order, setOrder] = useState<null | string>('Recently Created');
   const [selectedPageCount, setSelectedPageCount] = useState(
     SELECT_PAGE_COUNT[0]
   );
 
-  const router = useRouter();
-  const sort = z.enum(['title', 'creation', 'published']);
+  //const router = useRouter();
+  //const sort = z.enum(['title', 'creation', 'published']);
   const [page, setPage] = useState(0);
-  const query = router.query.sort as z.infer<typeof sort>;
+  //const query = router.query.sort as z.infer<typeof sort>;
   // const { data: posts, isLoading } = trpc.useQuery([
   //   'private-posts.all',
   //   { query: query ?? 'creation' },
@@ -43,7 +39,7 @@ const DashboardPage = () => {
   }
 
   return (
-    <div className='max-w-4xl relative mx-auto'>
+    <div className='relative mx-auto max-w-4xl'>
       <div>
         {isLoading ? (
           <div>Loading...</div>
@@ -51,7 +47,7 @@ const DashboardPage = () => {
           <div>Error</div>
         ) : (
           <div className='h-screen'>
-            <h1 className='text-3xl text-white mb-12'>
+            <h1 className='mb-12 text-3xl text-white'>
               My Posts {posts.totalCount}
             </h1>
             <div className='overflow-auto pb-12'>
@@ -59,11 +55,11 @@ const DashboardPage = () => {
                 {posts.posts.map((post) => (
                   <li
                     key={post.id}
-                    className='bg-indigo-300/10 rounded-md px-4 py-3'
+                    className='rounded-md bg-indigo-300/10 px-4 py-3'
                   >
-                    <Flex className='justify-between items-center'>
+                    <Flex className='items-center justify-between'>
                       <div>
-                        <div className='text-sm mb-1 italic'>
+                        <div className='mb-1 text-sm italic'>
                           {format(post.createdAt, 'HH:mm, LLLL dd, yyyy')}
                         </div>
 
@@ -155,10 +151,10 @@ const DashboardPage = () => {
           />
         </Group> */}
       </div>
-      <div className='sticky w-full bottom-0 bg-indigo-300/10'>
-        <div className='flex justify-between items-center'>
+      <div className='sticky bottom-0 w-full bg-indigo-300/10'>
+        <div className='flex items-center justify-between'>
           <div>{posts.totalCount}</div>
-          <Flex className='gap-4 items-center'>
+          <Flex className='items-center gap-4'>
             <div>
               <Button
                 onClick={() => setPage((old) => Math.max(old - 1, 0))}
@@ -199,14 +195,14 @@ const DashboardPage = () => {
               }}
             >
               <div className='relative mt-1'>
-                <Listbox.Button className='relative bg-brand-blue w-full text-gray-100 cursor-default rounded-lg py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm'>
+                <Listbox.Button className='relative w-full cursor-default rounded-lg bg-brand-blue py-2 pl-3 pr-10 text-left text-gray-100 shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm'>
                   <span className='block truncate'>{selectedPageCount}</span>
                   <span className='pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2'>
                     <Selector className='h-5 w-5' aria-hidden='true' />
                   </span>
                 </Listbox.Button>
                 <div>
-                  <Listbox.Options className='absolute text-gray-100 -top-2 my-1 -translate-y-full max-h-60 w-full overflow-auto rounded-md bg-brand-blue py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm'>
+                  <Listbox.Options className='absolute -top-2 my-1 max-h-60 w-full -translate-y-full overflow-auto rounded-md bg-brand-blue py-1 text-base text-gray-100 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm'>
                     {SELECT_PAGE_COUNT.map((count, index) => (
                       <Listbox.Option
                         key={index}

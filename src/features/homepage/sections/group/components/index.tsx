@@ -12,7 +12,7 @@ export const GroupSection = () => {
     return (
       <Wrapper>
         <div>
-          <div className='flex justify-between items-center border-3 border-gray-100/5 p-2.5'>
+          <div className='flex items-center justify-between border-3 border-gray-100/5 p-2.5'>
             <ButtonLink className='capitalize' variant='ghost' href='/'>
               Trending groups
             </ButtonLink>
@@ -20,12 +20,12 @@ export const GroupSection = () => {
             <div>
               <button
                 onClick={() => setShow(true)}
-                className='hover:rotate-90 transition-all ease-linear'
+                className='transition-all ease-linear hover:rotate-90'
               >
                 <svg
                   xmlns='http://www.w3.org/2000/svg'
                   viewBox='0 0 24 24'
-                  className='text-white fill-current w-4 h-4  hover:text-[#4799eb]'
+                  className='h-4 w-4 fill-current text-white  hover:text-[#4799eb]'
                 >
                   <path d='M24 9h-9v-9h-6v9h-9v6h9v9h6v-9h9z'></path>
                 </svg>
@@ -43,13 +43,13 @@ export const GroupSection = () => {
         onMouseEnter={() => setMouseEnter(true)}
         onMouseLeave={() => setMouseEnter(false)}
       >
-        <div className='flex justify-between items-center'>
+        <div className='flex items-center justify-between'>
           <ButtonLink
             className='capitalize'
             variant='ghost'
             href='/'
             icon={
-              <FaArrowRight className='group-hover:animate-bounce-front-back ml-2' />
+              <FaArrowRight className='ml-2 group-hover:animate-bounce-front-back' />
             }
           >
             Trending groups
@@ -65,9 +65,9 @@ export const GroupSection = () => {
           {Array.from([1, 2, 3, 4, 5, 6]).map((i) => (
             <div
               key={i}
-              className='flex justify-between items-center p-1.5 rounded hover:bg-[#1E364D]'
+              className='flex items-center justify-between rounded p-1.5 hover:bg-[#1E364D]'
             >
-              <div className='flex gap-4 items-center'>
+              <div className='flex items-center gap-4'>
                 <div>
                   <Image
                     src='/avatar.webp'
@@ -80,7 +80,7 @@ export const GroupSection = () => {
                 <div>name</div>
               </div>
               <div>
-                <button className='bg-[#182E43] hover:bg-[#4799eb] px-2 py-1 rounded-lg text-white text-sm capitalize font-bold par'>
+                <button className='rounded-lg bg-[#182E43] px-2 py-1 text-sm font-bold capitalize text-white hover:bg-[#4799eb]'>
                   join
                 </button>
               </div>

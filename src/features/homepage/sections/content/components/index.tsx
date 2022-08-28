@@ -1,9 +1,21 @@
 import { Comment, Post, User } from '@prisma/client';
+import {
+  addMonths,
+  addWeeks,
+  format,
+  isToday,
+  parseISO,
+  subMonths,
+  subWeeks,
+} from 'date-fns';
 import { motion } from 'framer-motion';
+import { useRouter } from 'next/router';
 import InfiniteScroll from 'react-infinite-scroller';
 
+import { container } from '@/lib/animation';
+
 import { FeedItemLoaders } from '@/features/homepage/sections/common/components/FeedItemLoader';
-import { Alert, FilterLinks } from '@/features/UI';
+import { Alert, FliterNav } from '@/features/UI';
 
 import { FeedItem } from './FeedItem';
 
@@ -23,18 +35,6 @@ type Props = {
   hasNextPage: boolean | undefined;
   isError: boolean;
   tablinks: React.ReactNode;
-  hasFliter?: boolean;
-};
-
-const container = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.15,
-      ease: 'easeIn',
-    },
-  },
 };
 
 export const ContentSection = ({
@@ -44,17 +44,86 @@ export const ContentSection = ({
   fetchNextPage,
   hasNextPage,
   tablinks,
-  hasFliter = false,
 }: Props) => {
+  const { route, query, push } = useRouter();
+
+  const path = query.slug as string;
+  const dateQuery = path && path.split('-').slice(2).join('-');
+  const dateQueryToDate = parseISO(dateQuery);
+  const istoday = isToday(dateQueryToDate);
+  const renderContent = () => {
+    if (path?.startsWith('week')) {
+      return (
+        <FliterNav
+          nextDisabled={istoday}
+          onNextClick={() =>
+            push(
+              `/top/week-of-${format(
+                addWeeks(dateQueryToDate, 1),
+                'yyyy-MM-dd'
+              )}`
+            )
+          }
+          onPrevClick={() =>
+            push(
+              `/top/week-of-${format(
+                subWeeks(dateQueryToDate, 1),
+                'yyyy-MM-dd'
+              )}`
+            )
+          }
+        >
+          <div className='flex w-full flex-1 justify-center gap-3'>
+            <div>
+              {dateQuery && format(parseISO(dateQuery), 'LLL dd, yyyy')}
+            </div>
+            <div>-</div>
+            <div>
+              {dateQuery &&
+                format(subWeeks(dateQueryToDate, 1), 'LLL dd, yyyy')}
+            </div>
+          </div>
+        </FliterNav>
+      );
+    }
+    if (path?.startsWith('month')) {
+      return (
+        <FliterNav
+          onNextClick={() =>
+            push(
+              `/top/month-of-${format(
+                addMonths(dateQueryToDate, 1),
+                'yyyy-MM'
+              )}`
+            )
+          }
+          onPrevClick={() =>
+            push(
+              `/top/month-of-${format(
+                subMonths(dateQueryToDate, 1),
+                'yyyy-MM'
+              )}`
+            )
+          }
+        >
+          <div className='flex w-full flex-1 justify-center gap-3'>
+            <div>{dateQuery && format(parseISO(dateQuery), 'LLL, yyyy')}</div>
+          </div>
+        </FliterNav>
+      );
+    }
+    return null;
+  };
+
   return (
     <>
       <section className='space-y-6'>
         <div className='space-y-4'>
           {tablinks}
-          {hasFliter && <FilterLinks />}
+          {route.startsWith('/top') && <>{renderContent()}</>}
         </div>
 
-        <div className='grid grid-cols-1 gap-2 min-h-[50vh] lg:min-h-[80vh]'>
+        <div className='grid min-h-[50vh] grid-cols-1 gap-2 lg:min-h-[80vh]'>
           {isLoading || !posts ? (
             <FeedItemLoaders count={6} />
           ) : isError ? (

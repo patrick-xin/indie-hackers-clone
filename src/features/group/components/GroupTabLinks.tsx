@@ -5,7 +5,7 @@ import { Button, Flex } from '@/features/UI';
 export const GroupTabLinks = () => {
   const { setOpen } = useModalStore();
   return (
-    <Flex className='justify-between items-center'>
+    <Flex className='items-center justify-between'>
       <Flex className='gap-4'>
         <Button variant='link' isActive size='noPadding' rounded='none'>
           New

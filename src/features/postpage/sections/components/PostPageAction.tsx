@@ -1,5 +1,6 @@
 import { Popover } from '@headlessui/react';
 import { IoWarning } from 'react-icons/io5';
+import ScrollIntoView from 'react-scroll-into-view';
 import {
   Bookmark,
   Bookmarks,
@@ -19,6 +20,7 @@ type Props = {
   comments: number;
   bookmarks: number;
   postId: string;
+  setScrolled: () => void;
 };
 
 export const PostPageAction = ({
@@ -26,6 +28,7 @@ export const PostPageAction = ({
   comments,
   bookmarks,
   postId,
+  setScrolled,
 }: Props) => {
   const utils = trpc.useContext();
   const { mutate } = trpc.useMutation('private-posts.upvote', {
@@ -34,36 +37,38 @@ export const PostPageAction = ({
     },
   });
   return (
-    <div className='post-page-action flex justify-between xl:flex-col xl:gap-5 xl:p-6 xl:rounded'>
-      <div className='flex gap-3 items-center'>
+    <div className='post-page-action flex justify-between xl:flex-col xl:gap-5 xl:rounded xl:p-6'>
+      <div className='flex items-center gap-3'>
         <Button
           onClick={() => mutate({ id: postId })}
           variant='gradient'
           size='small'
-          className='rounded-full h-8 w-8 p-0 flex justify-center items-center'
+          className='flex h-8 w-8 items-center justify-center rounded-full p-0'
         >
           <ChevronUp className='h-6 w-6' />
         </Button>
-        <div className='md:flex gap-1 lg:gap-2'>
+        <div className='gap-1 md:flex lg:gap-2'>
           <span>{likes}</span>
           <span>{likes > 0 ? 'Likes' : 'Like'} </span>
         </div>
       </div>
-      <div className='md:flex hidden gap-3 items-center'>
+      <div className='hidden items-center gap-3 md:flex'>
         <Bookmarks className='h-6 w-6' />
-        <div className='md:flex gap-1 lg:gap-2'>
+        <div className='gap-1 md:flex lg:gap-2'>
           <span>{bookmarks}</span>
           <span>Bookmarks</span>
         </div>
       </div>
-      <div className='md:flex hidden gap-3 items-center'>
+      <div className='hidden items-center gap-3 md:flex'>
         <Message className='h-6 w-6' />
-        <div className='md:flex gap-1 lg:gap-2'>
-          <span>{comments}</span>
-          <span>Comments</span>
-        </div>
+        <ScrollIntoView selector='#comment-input' onClick={setScrolled}>
+          <button className='gap-1 md:flex lg:gap-2'>
+            <span>{comments}</span>
+            <span>Comments</span>
+          </button>
+        </ScrollIntoView>
       </div>
-      <div className='flex gap-3 items-center'>
+      <div className='flex items-center gap-3'>
         <IoWarning className='h-6 w-6' />
       </div>
     </div>
@@ -72,10 +77,13 @@ export const PostPageAction = ({
 
 export const PostPageInlineAction = ({
   likes,
-  comments,
   bookmarks,
   postId,
-}: Props) => {
+}: {
+  likes: number;
+  bookmarks: number;
+  postId: string;
+}) => {
   const utils = trpc.useContext();
   const { mutate } = trpc.useMutation('private-posts.upvote', {
     onSuccess: () => {
@@ -84,7 +92,11 @@ export const PostPageInlineAction = ({
   });
   return (
     <div className='my-8 flex gap-4'>
-      <Button variant='outline' icon={<ChevronUp />}>
+      <Button
+        variant='outline'
+        onClick={() => mutate({ id: postId })}
+        icon={<ChevronUp />}
+      >
         {likes}
       </Button>
       <Button
@@ -101,25 +113,25 @@ export const PostPageInlineAction = ({
 const ShareButton = () => {
   return (
     <Popover className='relative'>
-      <Popover.Button className='border-2 py-2 px-6 inline-flex justify-center text-sm border-gray-100/5 p-2.5 hover:text-green-500 rounded'>
+      <Popover.Button className='inline-flex justify-center rounded border-2 border-gray-100/5 p-2.5 py-2 px-6 text-sm hover:text-green-500'>
         <Share className='group-hover:text-white' />
       </Popover.Button>
 
       <Popover.Panel className='absolute top-0 left-0 z-10 w-[12rem] rounded-lg'>
         <div className='divide-y-[1px] divide-gray-600'>
-          <button className='w-full text-sm gap-4 justify-start inline-flex items-center hover:bg-brand-blue bg-[#1f364d] py-3 px-2 text-white uppercase rounded rounded-b-none'>
+          <button className='inline-flex w-full items-center justify-start gap-4 rounded rounded-b-none bg-[#1f364d] py-3 px-2 text-sm uppercase text-white hover:bg-brand-blue'>
             <span>
               <ExternalLink className='h-5 w-5' />
             </span>
             <span>Copy Link</span>
           </button>
-          <button className='w-full text-sm gap-4 justify-start inline-flex items-center hover:bg-brand-blue bg-[#1f364d] py-3 px-2 text-white'>
+          <button className='inline-flex w-full items-center justify-start gap-4 bg-[#1f364d] py-3 px-2 text-sm text-white hover:bg-brand-blue'>
             <span>
               <BrandTwitter className='h-5 w-5' />
             </span>
             <span> Share On Twitter</span>
           </button>
-          <button className='w-full text-sm gap-4 justify-start inline-flex items-center hover:bg-brand-blue bg-[#1f364d] py-3 px-2 text-white rounded rounded-t-none'>
+          <button className='inline-flex w-full items-center justify-start gap-4 rounded rounded-t-none bg-[#1f364d] py-3 px-2 text-sm text-white hover:bg-brand-blue'>
             <span>
               <BrandFacebook className='h-5 w-5' />
             </span>

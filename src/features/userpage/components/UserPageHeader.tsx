@@ -1,11 +1,11 @@
-import { User } from '@prisma/client';
 import Image from 'next/future/image';
 
 type Props = {
-  user: Pick<User, 'image' | 'username'>;
+  image: string;
+  username: string;
 };
 
-export const UserPageHeader = ({ user }: Props) => {
+export const UserPageHeader = ({ image, username }: Props) => {
   return (
     <header className='user-header rounded rounded-b-none bg-[#1f364d] px-4 pb-8 md:pt-8 md:pb-28'>
       <div className='mx-auto max-w-5xl items-center gap-6 md:flex md:px-10 lg:items-start lg:gap-8'>
@@ -15,14 +15,14 @@ export const UserPageHeader = ({ user }: Props) => {
               className='rounded-full'
               height={160}
               width={160}
-              src={user?.image ?? '/avatar.webp'}
+              src={image ?? '/avatar.webp'}
               alt='user-avatar'
             />
           </div>
         </div>
         <div>
           <h3 className='py-4 text-center text-2xl text-gray-100 md:text-left md:text-3xl'>
-            {user?.username}
+            {username}
           </h3>
           <button>report</button>
           <p className='md:text-lg'>

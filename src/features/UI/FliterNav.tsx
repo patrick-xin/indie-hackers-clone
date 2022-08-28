@@ -17,7 +17,7 @@ export const FliterNav = ({
   nextDisabled,
 }: Props) => {
   return (
-    <div className='flex justify-between items-center w-full p-2 bg-[#152C41]'>
+    <div className='flex w-full items-center justify-between bg-[#152C41] p-2'>
       <button
         className='disabled:opacity-20'
         onClick={onPrevClick}
@@ -26,7 +26,7 @@ export const FliterNav = ({
         <BiChevronLeft className='h-6 w-6' />
       </button>
 
-      <div className='flex-1 flex justify-center w-full gap-3'>{children}</div>
+      <div className='flex w-full flex-1 justify-center gap-3'>{children}</div>
       <button
         onClick={onNextClick}
         disabled={nextDisabled}

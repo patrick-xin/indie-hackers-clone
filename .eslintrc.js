@@ -20,7 +20,7 @@ module.exports = {
     'plugin:tailwindcss/recommended',
   ],
   rules: {
-    'no-unused-vars': 'warn',
+    'no-unused-vars': 'off',
     'no-console': 'warn',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
     'react/display-name': 'off',
@@ -33,7 +33,7 @@ module.exports = {
     ],
     //#region  //*=========== Unused Import ===========
     '@typescript-eslint/no-unused-vars': [
-      'warn', // or error
+      'error', // or error
       {
         argsIgnorePattern: '^_',
         varsIgnorePattern: '^_',

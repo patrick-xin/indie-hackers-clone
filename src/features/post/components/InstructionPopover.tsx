@@ -26,7 +26,7 @@ export const InstructionPopover = () => {
         {...attributes.popper}
       >
         {({ close }: { close: () => void }) => (
-          <div className='w-96 p-4 bg-[#0C1F31] space-y-4 rounded-sm z-100 relative'>
+          <div className='relative z-100 w-96 space-y-4 rounded-sm bg-[#0C1F31] p-4'>
             <div className='absolute right-4 top-4 hover:rotate-90'>
               <IconButton icon={<X />} onClick={close} />
             </div>

@@ -8,7 +8,7 @@ type Props = {
 };
 export const Logo = ({ hasName = true, className }: Props) => {
   return (
-    <div className={`flex gap-2 items-center ${className ? className : ''}`}>
+    <div className={`flex items-center gap-2 ${className ? className : ''}`}>
       {hasName && (
         <div>
           <Link href='/'>

@@ -27,22 +27,22 @@ export const MainNav = ({
             transition: { easings: [0.8, 0, 1, 1] },
           }}
           exit={{ opacity: shown ? 0 : 1 }}
-          className='fixed shadow inset-0 w-64 bg-[#1E364D] text-sm text-gray-300'
+          className='fixed inset-0 w-64 bg-[#1E364D] text-sm text-gray-300 shadow'
         >
-          <div className='h-full w-full relative'>
+          <div className='relative h-full w-full'>
             <div>
               <button
-                className='absolute inline-block -right-3 group top-12 p-0.5 text-gray-100 rounded-full bg-[#63809c]'
+                className='group absolute -right-3 top-12 inline-block rounded-full bg-[#63809c] p-0.5 text-gray-100'
                 onClick={onClose}
               >
                 <ChevronsLeft className='h-4 w-4' />
               </button>
             </div>
-            <div className='h-full space-y-10 w-full'>
+            <div className='h-full w-full space-y-10'>
               <Flex className='my-10 justify-center'>
                 <Logo hasName className='flex-row-reverse' />
               </Flex>
-              <div className='h-full flex flex-col justify-between'>
+              <div className='flex h-full flex-col justify-between'>
                 <ul className='space-y-1 py-8'>
                   {DASHBOARD_NAV_LINKS['top'].map((link) => (
                     <MainNavLink
@@ -53,7 +53,7 @@ export const MainNav = ({
                   ))}
                 </ul>
 
-                <ul className='space-y-1 py-8 mb-52'>
+                <ul className='mb-52 space-y-1 py-8'>
                   {DASHBOARD_NAV_LINKS['bottom'].map((link) => (
                     <MainNavLink
                       key={link.label}
@@ -101,12 +101,12 @@ const MainNavLink = ({
           icon={icons}
           variant='ghost'
           href={href}
-          className='gap-4 text-lg flex-row-reverse p-1 text-brand-text group-hover:text-white'
+          className='flex-row-reverse gap-4 p-1 text-lg text-brand-text group-hover:text-white'
         >
           {label}
         </ButtonLink>
       ) : (
-        <button className='text-lg p-2 capitalize gap-4 inline-flex text-brand-text group-hover:text-white'>
+        <button className='inline-flex gap-4 p-2 text-lg capitalize text-brand-text group-hover:text-white'>
           <span>{icons}</span>
           <span> {label}</span>
         </button>

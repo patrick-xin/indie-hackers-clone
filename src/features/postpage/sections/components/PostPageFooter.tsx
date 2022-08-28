@@ -11,14 +11,13 @@ type Props = {
 export const PostPageFooter = ({ post }: Props) => {
   return (
     <div>
-      <div className='text-lg my-6'>
+      <div className='my-6 text-lg'>
         <PostAuthor author={post.author} /> submitted this link{' '}
         <span>{format(post.publishedAt, 'MMMM dd, yyyy')}</span>
       </div>
       <PostPageInlineAction
         postId={post.id}
         likes={post._count.likes}
-        comments={post._count.comments}
         bookmarks={10}
       />
     </div>

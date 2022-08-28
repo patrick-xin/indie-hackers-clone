@@ -1,8 +1,10 @@
 import { formatDistance } from 'date-fns';
+import { motion } from 'framer-motion';
 import Image from 'next/future/image';
-import { useRouter } from 'next/router';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { ChevronUp } from 'tabler-icons-react';
+
+import { container } from '@/lib/animation';
 
 import { CommentForm } from '@/features/post/components/comment/CommentForm';
 import { CommentOnUser } from '@/features/post/types';
@@ -18,16 +20,14 @@ export const PostComment = ({
   postId: string;
   commentsByParentId: { [key: string]: CommentOnUser[] };
 }) => {
-  const router = useRouter();
-  const [areChildrenHidden, setAreChildrenHidden] = useState(false);
+  const utils = trpc.useContext();
+
   const [showContent, setShowContent] = useState(true);
   const [showReplyForm, setShowReplyForm] = useState(false);
   const childComments = commentsByParentId[comment.id] ?? [];
   const { mutate: createComment } = trpc.useMutation('comment.create', {
     onSuccess: () => {
-      router.replace(router.asPath, undefined, {
-        scroll: false,
-      });
+      utils.invalidateQueries(['public-posts.by-slug']);
       setShowReplyForm(false);
     },
   });
@@ -45,8 +45,8 @@ export const PostComment = ({
         <div className='w-full text-sm'>
           {showContent && <div className='text-lg'>{comment.content}</div>}
 
-          <div className='flex items-center gap-2 my-2'>
-            <Flex className='gap-2 max-h-fit items-center'>
+          <div className='my-2 flex items-center gap-2'>
+            <Flex className='max-h-fit items-center gap-2'>
               <div>
                 <Image
                   className='rounded-full'
@@ -115,7 +115,12 @@ export const CommentList = ({
   commentsByParentId: { [key: string]: CommentOnUser[] };
 }) => {
   return (
-    <div className='space-y-10'>
+    <motion.div
+      className='space-y-10'
+      variants={container}
+      initial='hidden'
+      animate='show'
+    >
       {comments.map((comment) => (
         <PostComment
           postId={postId}
@@ -124,6 +129,6 @@ export const CommentList = ({
           commentsByParentId={commentsByParentId}
         />
       ))}
-    </div>
+    </motion.div>
   );
 };

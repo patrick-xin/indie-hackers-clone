@@ -40,14 +40,14 @@ export const POST_ORDER = [
 export type PostOrder = typeof POST_ORDER;
 
 export const MENU_LINKS = [
-  { title: 'Profile', icon: <FaUserCircle className='w-6 h-6' />, href: '/' },
+  { title: 'Profile', icon: <FaUserCircle className='h-6 w-6' />, href: '/' },
   {
     title: 'Notifications',
-    icon: <IoNotifications className='w-6 h-6' />,
+    icon: <IoNotifications className='h-6 w-6' />,
     href: '/',
   },
-  { title: 'Bookmarks', icon: <IoBookmark className='w-6 h-6' />, href: '/' },
-  { title: 'Settings', icon: <IoIosSettings className='w-6 h-6' />, href: '/' },
+  { title: 'Bookmarks', icon: <IoBookmark className='h-6 w-6' />, href: '/' },
+  { title: 'Settings', icon: <IoIosSettings className='h-6 w-6' />, href: '/' },
 ];
 export type MenuLink = typeof MENU_LINKS[0];
 
@@ -78,8 +78,8 @@ export const DASHBOARD_NAV_LINKS = {
       label: 'dashboard',
       icons: (
         <>
-          <Dashboard className='w-6 h-6 text-violet-400 block group-hover:hidden group-hover:animate-fade-out' />
-          <LayoutDashboard className='w-6 h-6 hidden group-hover:block group-hover:animate-fade-in text-violet-400' />
+          <Dashboard className='block h-6 w-6 text-violet-400 group-hover:hidden group-hover:animate-fade-out' />
+          <LayoutDashboard className='hidden h-6 w-6 text-violet-400 group-hover:block group-hover:animate-fade-in' />
         </>
       ),
       href: '/dashboard',
@@ -89,8 +89,8 @@ export const DASHBOARD_NAV_LINKS = {
       label: 'my post',
       icons: (
         <>
-          <Book className='w-6 h-6 text-yellow-400 block group-hover:hidden group-hover:animate-fade-out' />
-          <Book2 className='w-6 h-6 hidden group-hover:block group-hover:animate-fade-in text-yellow-400' />
+          <Book className='block h-6 w-6 text-yellow-400 group-hover:hidden group-hover:animate-fade-out' />
+          <Book2 className='hidden h-6 w-6 text-yellow-400 group-hover:block group-hover:animate-fade-in' />
         </>
       ),
       href: '/dashboard/post',
@@ -100,8 +100,8 @@ export const DASHBOARD_NAV_LINKS = {
       label: 'my likes',
       icons: (
         <>
-          <Heart className='w-6 h-6 text-red-400 block group-hover:hidden group-hover:animate-fade-out' />
-          <Heartbeat className='w-6 h-6 hidden group-hover:block group-hover:animate-fade-in text-red-400' />
+          <Heart className='block h-6 w-6 text-red-400 group-hover:hidden group-hover:animate-fade-out' />
+          <Heartbeat className='hidden h-6 w-6 text-red-400 group-hover:block group-hover:animate-fade-in' />
         </>
       ),
       href: '/dashboard/post/likes',
@@ -111,8 +111,8 @@ export const DASHBOARD_NAV_LINKS = {
       label: 'my comments',
       icons: (
         <>
-          <Message className='w-6 h-6 text-purple-400 block group-hover:hidden group-hover:animate-fade-out' />
-          <Message2 className='w-6 h-6 hidden group-hover:block group-hover:animate-fade-in text-purple-400' />
+          <Message className='block h-6 w-6 text-purple-400 group-hover:hidden group-hover:animate-fade-out' />
+          <Message2 className='hidden h-6 w-6 text-purple-400 group-hover:block group-hover:animate-fade-in' />
         </>
       ),
       href: '/dashboard/post/comments',
@@ -122,8 +122,8 @@ export const DASHBOARD_NAV_LINKS = {
       label: 'notification',
       icons: (
         <>
-          <Bell className='text-green-400 block group-hover:hidden group-hover:animate-fade-out' />
-          <BellRinging className='hidden group-hover:block group-hover:animate-fade-in text-green-400' />
+          <Bell className='block text-green-400 group-hover:hidden group-hover:animate-fade-out' />
+          <BellRinging className='hidden text-green-400 group-hover:block group-hover:animate-fade-in' />
         </>
       ),
       href: '/dashboard/post/notifications',
@@ -135,8 +135,8 @@ export const DASHBOARD_NAV_LINKS = {
       label: 'settings',
       icons: (
         <>
-          <Tool className='text-pink-400 block group-hover:hidden group-hover:animate-fade-out' />
-          <Tools className='hidden group-hover:block group-hover:animate-fade-in text-pink-400' />
+          <Tool className='block text-pink-400 group-hover:hidden group-hover:animate-fade-out' />
+          <Tools className='hidden text-pink-400 group-hover:block group-hover:animate-fade-in' />
         </>
       ),
       href: '/dashboard/settings',
@@ -146,8 +146,8 @@ export const DASHBOARD_NAV_LINKS = {
       label: 'logout',
       icons: (
         <>
-          <Logout className='text-cyan-400 block group-hover:hidden group-hover:animate-fade-out' />
-          <DoorExit className='hidden group-hover:block group-hover:animate-fade-in text-cyan-400' />
+          <Logout className='block text-cyan-400 group-hover:hidden group-hover:animate-fade-out' />
+          <DoorExit className='hidden text-cyan-400 group-hover:block group-hover:animate-fade-in' />
         </>
       ),
     },

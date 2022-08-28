@@ -29,9 +29,9 @@ export const ProfileMenuDropdown = ({ session }: { session: Session }) => {
     <Popover>
       <Popover.Button
         ref={setReferenceElement}
-        className='focus:outline-none focus:ring-1 p-1 rounded-lg focus:ring-[#b6cce2]'
+        className='rounded-lg p-1 focus:outline-none focus:ring-1 focus:ring-[#b6cce2]'
       >
-        <div className='flex gap-2 items-center'>
+        <div className='flex items-center gap-2'>
           <div>{session.user.username}</div>
           <Image
             src={session.user.image}
@@ -52,18 +52,18 @@ export const ProfileMenuDropdown = ({ session }: { session: Session }) => {
         <div
           ref={setArrowElement}
           style={styles.arrow}
-          className='h-3 w-3 triangle top-2'
+          className='triangle top-2 h-3 w-3'
         />
-        <div className='w-56 py-1 rounded mx-2 bg-[#274059] relative my-4'>
+        <div className='relative mx-2 my-4 w-56 rounded bg-[#274059] py-1'>
           {/* <div className='h-3 w-3 absolute transform rotate-45 bg-[#274059] -top-1.5 left-2/3' /> */}
           {MENU_LINKS.map((link) => (
             <ProfileMenuLink {...link} key={link.title} />
           ))}
-          <div className='py-2 px-3 hover:bg-[#2B4763] group'>
+          <div className='group py-2 px-3 hover:bg-[#2B4763]'>
             <button onClick={() => signOut()}>
-              <div className='flex gap-4 items-center'>
+              <div className='flex items-center gap-4'>
                 <div className='group-hover:text-brand-blue'>
-                  <IoLogOut className='w-6 h-6' />
+                  <IoLogOut className='h-6 w-6' />
                 </div>
                 <div>Sign out</div>
               </div>
@@ -77,10 +77,10 @@ export const ProfileMenuDropdown = ({ session }: { session: Session }) => {
 
 const ProfileMenuLink = ({ icon, href, title }: MenuLink) => {
   return (
-    <div className='py-2 px-3 hover:bg-[#2B4763] group'>
+    <div className='group py-2 px-3 hover:bg-[#2B4763]'>
       <Link href={href}>
-        <a className='w-full inline-block'>
-          <div className='flex gap-4 items-center'>
+        <a className='inline-block w-full'>
+          <div className='flex items-center gap-4'>
             <div className='group-hover:text-brand-blue'>{icon}</div>
             <div>{title}</div>
           </div>

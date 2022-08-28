@@ -10,7 +10,7 @@ export const Spinner: React.FC<{ size?: keyof typeof sizes }> = ({
 }) => {
   return (
     <svg
-      className={`animate-spin text-button ${sizes[size]}`}
+      className={`text-button animate-spin ${sizes[size]}`}
       xmlns='http://www.w3.org/2000/svg'
       fill='none'
       viewBox='0 0 24 24'

@@ -12,18 +12,17 @@ import { BasicLayout } from '@/features/layout/Basic';
 import { trpc } from '@/utils/trpc';
 
 const Home = () => {
-  const { data, fetchNextPage, isLoading, isError, hasNextPage } =
-    trpc.useInfiniteQuery(
-      [
-        'public-posts.infinitePosts-popular-today',
-        {
-          limit: 20,
-        },
-      ],
+  const { data, fetchNextPage, isLoading, hasNextPage } = trpc.useInfiniteQuery(
+    [
+      'public-posts.infinitePosts-popular-today',
       {
-        getNextPageParam: (lastPage) => lastPage.nextCursor ?? false,
-      }
-    );
+        limit: 20,
+      },
+    ],
+    {
+      getNextPageParam: (lastPage) => lastPage.nextCursor ?? false,
+    }
+  );
 
   return (
     <>
@@ -36,7 +35,6 @@ const Home = () => {
           isError={isLoading}
           hasNextPage={hasNextPage}
           tablinks={<TabLinks />}
-          hasFliter
         />
 
         <Group />
