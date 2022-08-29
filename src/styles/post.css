@@ -1,3 +1,7 @@
+.post {
+  background-image: linear-gradient(to bottom, transparent 0, #0c1f31 500px);
+}
+
 .post-page {
   @apply mx-auto;
   display: grid;

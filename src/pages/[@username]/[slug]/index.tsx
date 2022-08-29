@@ -4,7 +4,7 @@ import { GetServerSidePropsContext } from 'next';
 import { ReactElement, useMemo, useState } from 'react';
 import superjson from 'superjson';
 
-import { BasicLayout } from '@/features/layout/Basic';
+import { PostPageLayout } from '@/features/layout/PostPage';
 import { CommentOnUser } from '@/features/post/types';
 import {
   PostPageAction,
@@ -71,7 +71,7 @@ const UserPostPage = ({ username, slug }: Props) => {
 export default UserPostPage;
 
 UserPostPage.getLayout = (page: ReactElement) => (
-  <BasicLayout>{page}</BasicLayout>
+  <PostPageLayout>{page}</PostPageLayout>
 );
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {

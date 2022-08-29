@@ -8,7 +8,7 @@ type Props = {
 export const PostPageHeader = ({ post }: Props) => {
   return (
     <header className='post-page-header'>
-      <h1 className='not-prose text-center text-3xl text-white md:text-5xl'>
+      <h1 className='not-prose text-center text-3xl text-white md:text-5xl lg:mt-24'>
         {post.title}
       </h1>
       <div className='my-8 text-center text-lg lg:text-xl'>

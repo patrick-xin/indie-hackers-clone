@@ -12,8 +12,12 @@ export const PostPageFooter = ({ post }: Props) => {
   return (
     <div>
       <div className='my-6 text-lg'>
-        <PostAuthor author={post.author} /> submitted this link{' '}
-        <span>{format(post.publishedAt, 'MMMM dd, yyyy')}</span>
+        <span>--</span> <PostAuthor author={post.author} />{' '}
+        {post.postType === 'LINK' && <span>submitted this link </span>}
+        <span>on</span>{' '}
+        <span className='decoration-brand-blue decoration-[2px] underline-offset-[6px] hover:text-brand-blue hover:underline'>
+          {format(post.publishedAt, 'MMMM dd, yyyy')}
+        </span>
       </div>
       <PostPageInlineAction
         postId={post.id}

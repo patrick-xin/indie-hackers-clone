@@ -12,6 +12,15 @@ export type PostOnUser = Post & {
   };
 };
 
+export type PostFeed = Post & {
+  comments: Comment[];
+  author: User;
+  _count: {
+    comments: number;
+    likes: number;
+  };
+};
+
 export type UnionToType<U extends Record<string, unknown>> = {
   [K in U extends unknown ? keyof U : never]: U extends unknown
     ? K extends keyof U

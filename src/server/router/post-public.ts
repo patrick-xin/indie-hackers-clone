@@ -1,6 +1,7 @@
 import { Prisma } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 import {
+  addDays,
   endOfMonth,
   parseISO,
   startOfMonth,
@@ -8,6 +9,10 @@ import {
   subWeeks,
 } from 'date-fns';
 import z from 'zod';
+
+import { POST_FEED_COUNT } from '@/lib/constants';
+
+import { PostFeed } from '@/features/post/types';
 
 import { createRouter } from './context';
 
@@ -125,6 +130,61 @@ export const publicPostRouter = createRouter()
       return {
         posts,
         nextCursor,
+      };
+    },
+  })
+  .query('popular-today', {
+    input: z.object({
+      page: z.number(),
+    }),
+    async resolve({ ctx, input }) {
+      const { page } = input;
+      const _page = page ? page - 1 : 1;
+      const pageCount = 10;
+      let count = 1;
+      count += _page * pageCount;
+      const startDate = new Date();
+      startDate.setDate(startDate.getDate());
+      startDate.setHours(0);
+      startDate.setMinutes(0);
+      startDate.setSeconds(0);
+      startDate.setMilliseconds(0);
+      const endDate = new Date(startDate);
+      endDate.setHours(23);
+      endDate.setMinutes(59);
+      endDate.setSeconds(59);
+      const allPostsToday = await ctx.prisma.post.aggregate({
+        _count: true,
+        where: {
+          publishedAt: {
+            gte: startDate.toISOString(),
+            lte: endDate.toISOString(),
+          },
+        },
+      });
+
+      const posts = await ctx.prisma.post.findMany({
+        skip: _page * pageCount,
+        take: pageCount,
+        orderBy: { likes: { _count: 'desc' } },
+        where: {
+          publishedAt: {
+            gte: startDate.toISOString(),
+            lte: endDate.toISOString(),
+          },
+        },
+        include: {
+          author: true,
+          comments: true,
+          _count: {
+            select: { likes: true, comments: true },
+          },
+        },
+      });
+
+      return {
+        posts,
+        hasMore: count < allPostsToday._count,
       };
     },
   })
@@ -246,7 +306,7 @@ export const publicPostRouter = createRouter()
     }),
     async resolve({ ctx, input: { page } }) {
       const _page = page ? page - 1 : 1;
-      const pageCount = 10;
+      const pageCount = POST_FEED_COUNT;
       const posts = await ctx.prisma.post.findMany({
         skip: _page * pageCount,
         take: pageCount,
@@ -258,6 +318,80 @@ export const publicPostRouter = createRouter()
           },
         },
       });
+
+      return {
+        posts,
+      };
+    },
+  })
+  .query('popular', {
+    input: z.object({
+      page: z.number(),
+      query: z.string(),
+      type: z.string(),
+    }),
+    async resolve({ ctx, input: { page, type, query } }) {
+      const _page = page ? page - 1 : 1;
+      const pageCount = POST_FEED_COUNT;
+      let posts: PostFeed[];
+      const startDate = addDays(parseISO(query), 1);
+
+      let endDate: Date;
+      if (type === 'week') {
+        endDate = subWeeks(startDate, 1);
+
+        posts = await ctx.prisma.post.findMany({
+          skip: _page * pageCount,
+          take: pageCount,
+          orderBy: { comments: { _count: 'desc' } },
+          where: {
+            publishedAt: {
+              gte: endDate,
+              lte: startDate,
+            },
+          },
+          include: {
+            author: true,
+            comments: true,
+            _count: {
+              select: { likes: true, comments: true },
+            },
+          },
+        });
+      } else if (type === 'month') {
+        endDate = subMonths(startDate, 1);
+        posts = await ctx.prisma.post.findMany({
+          skip: _page * pageCount,
+          take: pageCount,
+          orderBy: { likes: { _count: 'desc' } },
+          where: {
+            publishedAt: {
+              gte: startOfMonth(startDate).toISOString(),
+              lte: endOfMonth(startDate).toISOString(),
+            },
+          },
+          include: {
+            author: true,
+            comments: true,
+            _count: {
+              select: { likes: true, comments: true },
+            },
+          },
+        });
+      } else {
+        posts = await ctx.prisma.post.findMany({
+          skip: _page * pageCount,
+          take: pageCount,
+          orderBy: { comments: { _count: 'desc' } },
+          include: {
+            author: true,
+            comments: true,
+            _count: {
+              select: { likes: true, comments: true },
+            },
+          },
+        });
+      }
 
       return {
         posts,

@@ -1,3 +1,4 @@
+import cn from 'clsx';
 import { signIn, useSession } from 'next-auth/react';
 import { ImSpinner8 } from 'react-icons/im';
 import { IoIosMenu, IoIosSearch } from 'react-icons/io';
@@ -5,7 +6,11 @@ import { IoIosMenu, IoIosSearch } from 'react-icons/io';
 import { Logo } from '@/features/UI/Logo';
 import { ProfileMenuDropdown } from '@/features/user/components';
 
-export const Header = () => {
+type Props = {
+  isTransparent?: boolean;
+};
+
+export const Header = ({ isTransparent = false }: Props) => {
   const session = useSession();
   const renderUserStatus = () => {
     if (session.status === 'loading') {
@@ -17,7 +22,15 @@ export const Header = () => {
     }
   };
   return (
-    <div className='mt-1 flex h-14 items-center justify-between bg-[#1E364D] px-4 lg:px-12'>
+    <div
+      className={cn(
+        'mt-1 flex h-14 items-center justify-between px-4 lg:px-12',
+        {
+          'bg-transparent': isTransparent,
+          'bg-[#1E364D]': !isTransparent,
+        }
+      )}
+    >
       <div className='flex items-center gap-2'>
         <div className='sm:hidden'>
           <Logo hasName={false} />

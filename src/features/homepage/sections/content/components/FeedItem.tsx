@@ -1,4 +1,5 @@
 import { Post, User } from '@prisma/client';
+import { format } from 'date-fns';
 import { motion } from 'framer-motion';
 import Image from 'next/future/image';
 import Link from 'next/link';
@@ -48,12 +49,12 @@ export const FeedItem = ({ post }: Props) => {
             username={post.author.username}
           />
           <Group />
-          {/* <div className='hidden lg:block'>
+          <div className='hidden lg:block'>
             <span className='mx-1'>·</span>
-            <div className='text-sm text-[#63809c] rounded '>
+            <span className='rounded text-sm text-[#63809c] '>
               {format(post.publishedAt, 'yyyy-MM-dd')}
-            </div>
-          </div> */}
+            </span>
+          </div>
 
           {/* <span className='mx-1'>·</span>
           <div className='text-sm text-[#63809c] rounded'>
@@ -149,9 +150,9 @@ const Title = ({
   author: string | null;
 }) => {
   return (
-    <h2 className='md:text-["#b6cce2"] rounded px-2 py-1 hover:bg-[#1E364D] hover:text-white sm:text-lg'>
+    <h2 className='rounded px-2 py-1 hover:bg-[#1E364D] sm:text-lg'>
       <Link href={`/@${author}/${slug}`}>
-        <a className='visited:text-white'>{title}</a>
+        <a className='text-white visited:text-red-400'>{title}</a>
       </Link>
     </h2>
   );

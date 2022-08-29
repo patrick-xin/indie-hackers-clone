@@ -1,51 +1,57 @@
 import { useRouter } from 'next/router';
-import React, { ReactElement } from 'react';
+import { ReactElement, useEffect, useState } from 'react';
+
+import { POST_FEED_COUNT } from '@/lib/constants';
 
 import {
   Container,
-  Content,
   Explore,
   Group,
   Onboard,
-} from '@/features/homepage/sections';
-import { TabLinks } from '@/features/homepage/sections/content/components/TabLinks';
+} from '@/features/homepage/sections/';
 import { BasicLayout } from '@/features/layout/Basic';
+import { PostFeeds } from '@/features/layout/PostFeeds';
 import { trpc } from '@/utils/trpc';
 
 const TopPage = () => {
-  const { query } = useRouter();
+  const { query, push } = useRouter();
   const path = query.slug as string;
   const dateQuery = path && path.split('-').slice(2).join('-');
-  const type = path && path.split('-')[0];
 
-  const { data, fetchNextPage, isLoading, isError, hasNextPage } =
-    trpc.useInfiniteQuery(
-      [
-        'public-posts.infinitePosts-popular',
-        {
-          limit: 20,
-          query: dateQuery,
-          type,
-        },
-      ],
-      {
-        getNextPageParam: (lastPage) => lastPage.nextCursor ?? false,
-        enabled: Boolean(path),
-      }
-    );
+  const type = path && path.split('-')[0];
+  const [page, setPage] = useState(1);
+
+  useEffect(() => {
+    if (query.page) {
+      setPage(parseInt(query.page as string));
+    } else {
+      setPage(1);
+    }
+  }, [query.slug, query.page]);
+
+  const { data, isLoading } = trpc.useQuery(
+    ['public-posts.popular', { page, query: dateQuery, type }],
+    {
+      enabled: Boolean(path) && Boolean(dateQuery),
+    }
+  );
 
   return (
     <>
       <Onboard />
       <Container>
-        <Content
-          posts={data?.pages.flatMap((p) => p.posts)}
-          fetchNextPage={fetchNextPage}
-          isLoading={isLoading || !data}
-          isError={isError}
-          hasNextPage={hasNextPage}
-          tablinks={<TabLinks />}
-        />
+        {data && (
+          <PostFeeds
+            posts={data.posts}
+            isLoading={isLoading}
+            onNextPage={() => {
+              setPage(page + 1);
+              push(`/top/${query.slug}/?page=${page + 1}`);
+            }}
+            hideButton={data.posts.length <= POST_FEED_COUNT}
+            hasPagination
+          />
+        )}
 
         <Group />
         <Explore />

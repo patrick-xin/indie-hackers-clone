@@ -153,3 +153,6 @@ export const DASHBOARD_NAV_LINKS = {
     },
   ],
 };
+
+export const POST_PAGE_LIMIT = 100;
+export const POST_FEED_COUNT = 10;

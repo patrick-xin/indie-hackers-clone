@@ -48,7 +48,7 @@ module.exports = {
       typography: ({ theme }) => ({
         brand: {
           css: {
-            '--tw-prose-body': theme('colors.gray[300]'),
+            '--tw-prose-body': '#d1dbe6',
             '--tw-prose-headings': theme('colors.gray[200]'),
             '--tw-prose-lead': theme('colors.gray[200]'),
             '--tw-prose-links': '#4799eb',

@@ -18,7 +18,9 @@ export const UserPageAction = ({ username }: { username: string }) => {
         >
           <BiBook className='h-6 w-6 lg:hidden' />
           <Link href={`/@${username}`}>
-            <a className='hover:text-white'>Posts</a>
+            <a className='transition-colors ease-linear hover:text-white'>
+              Posts
+            </a>
           </Link>
         </div>
         <div
@@ -28,7 +30,9 @@ export const UserPageAction = ({ username }: { username: string }) => {
         >
           <BiHistory className='h-6 w-6 lg:hidden' />
           <Link href={`/@${username}/history`}>
-            <a className='text-white'>History</a>
+            <a className='transition-colors ease-linear hover:text-white'>
+              History
+            </a>
           </Link>
         </div>
         <div
@@ -38,7 +42,9 @@ export const UserPageAction = ({ username }: { username: string }) => {
         >
           <BiBookBookmark className='h-6 w-6 lg:hidden' />
           <Link href='/'>
-            <a className='text-white'>Bookmark</a>
+            <a className='transition-colors ease-linear hover:text-white'>
+              Bookmark
+            </a>
           </Link>
         </div>
       </div>

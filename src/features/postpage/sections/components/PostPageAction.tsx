@@ -37,7 +37,7 @@ export const PostPageAction = ({
     },
   });
   return (
-    <div className='post-page-action flex justify-between xl:flex-col xl:gap-5 xl:rounded xl:p-6'>
+    <div className='post-page-action flex justify-between lg:flex-col lg:gap-5 lg:rounded lg:p-6 xl:flex-row 2xl:flex-col'>
       <div className='flex items-center gap-3'>
         <Button
           onClick={() => mutate({ id: postId })}

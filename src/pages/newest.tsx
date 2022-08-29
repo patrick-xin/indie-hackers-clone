@@ -35,7 +35,6 @@ const container = {
 const Newest = ({ p }) => {
   const router = useRouter();
   const query = (router.query.page as string) || '';
-
   const [page, setPage] = useState(p);
   useEffect(() => {
     if (router.query.page) {
