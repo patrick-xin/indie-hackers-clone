@@ -21,7 +21,6 @@ model Profile {
     userId     String  @unique
 }
 
-// Necessary for Next auth
 model Account {
     id                       String  @id @default(cuid())
     userId                   String
@@ -63,12 +62,21 @@ model User {
     interest      Category[]
     notification  Notification[]
     followers     Follows[]      @relation("follower")
-    following     Follows[]      @relation("following")
+    followings    Follows[]      @relation("following")
     feed          Feed[]
     comment       Comment[]
     posts         Post[]
     postLikes     PostLike[]
     commentLikes  CommentLike[]
+}
+
+model Follows {
+    id           String        @id @default(cuid())
+    follower     User          @relation("follower", fields: [followerId], references: [id])
+    followerId   String
+    following    User          @relation("following", fields: [followingId], references: [id])
+    followingId  String
+    notification Notification?
 }
 
 model VerificationToken {
@@ -197,13 +205,4 @@ model Reply {
     comment   Comment?
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
-}
-
-model Follows {
-    id           String        @id @default(cuid())
-    follower     User          @relation("follower", fields: [followerId], references: [id])
-    followerId   String
-    following    User          @relation("following", fields: [followingId], references: [id])
-    followingId  String
-    notification Notification?
 }

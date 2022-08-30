@@ -45,7 +45,8 @@ export const userRouter = createRouter()
               },
             },
             followers: true,
-            following: true,
+            followings: true,
+
             profile: {
               select: {
                 about: true,
@@ -118,7 +119,14 @@ export const userRouter = createRouter()
           username: input.username,
         },
         include: {
-          _count: { select: { comment: true, postLikes: true } },
+          _count: {
+            select: {
+              comment: true,
+              postLikes: true,
+              followers: true,
+              followings: true,
+            },
+          },
           posts: {
             where: { isFeatured: true },
             orderBy: { createdAt: 'desc' },
@@ -131,8 +139,6 @@ export const userRouter = createRouter()
               id: true,
             },
           },
-          followers: true,
-          following: true,
           profile: {
             select: {
               about: true,
@@ -204,6 +210,51 @@ export const userRouter = createRouter()
       }
     },
   })
+  .query('username-follows', {
+    input: z.object({
+      username: z.string(),
+    }),
+    async resolve({ input, ctx }) {
+      const { username } = input;
+
+      try {
+        const user = await ctx.prisma.user.findUnique({
+          where: {
+            username,
+          },
+          include: {
+            _count: {
+              select: {
+                followers: true,
+                followings: true,
+              },
+            },
+            followings: {
+              select: {
+                follower: { select: { username: true, image: true, id: true } },
+              },
+            },
+            followers: {
+              select: {
+                following: {
+                  select: { username: true, image: true, id: true },
+                },
+              },
+            },
+          },
+        });
+        if (!user) throw new TRPCError({ code: 'NOT_FOUND' });
+        const userId = ctx.session?.user.userId as string;
+        const hasFollowed = user?.followings
+          .map((following) => following.follower.id)
+          .includes(userId);
+
+        return { hasFollowed, user };
+      } catch (error) {
+        throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });
+      }
+    },
+  })
   .middleware(async ({ ctx, next }) => {
     if (!ctx.session) {
       throw new TRPCError({ code: 'UNAUTHORIZED' });
@@ -221,6 +272,47 @@ export const userRouter = createRouter()
         },
         data: {
           username,
+        },
+      });
+    },
+  })
+  .mutation('follow', {
+    input: z.object({
+      followerId: z.string(),
+    }),
+    async resolve({ ctx, input: { followerId } }) {
+      await ctx.prisma.follows.create({
+        data: {
+          follower: { connect: { id: ctx.session?.user.userId } },
+          following: { connect: { id: followerId } },
+          notification: {
+            create: {
+              notificationType: 'FOLLOWER',
+              userId: followerId,
+              message: {
+                content: `starts following you.`,
+                follower: ctx.session?.user.username,
+              },
+            },
+          },
+        },
+      });
+    },
+  })
+  .mutation('unfollow', {
+    input: z.object({
+      unfollowerId: z.string(),
+    }),
+    async resolve({ ctx, input: { unfollowerId } }) {
+      const follows = await ctx.prisma.follows.findFirst({
+        where: {
+          followerId: ctx.session?.user.userId,
+          AND: { followingId: unfollowerId },
+        },
+      });
+      await ctx.prisma.follows.delete({
+        where: {
+          id: follows?.id,
         },
       });
     },

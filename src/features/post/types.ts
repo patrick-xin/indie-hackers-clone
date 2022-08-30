@@ -1,4 +1,4 @@
-import { Comment, Post, User } from '@prisma/client';
+import { Comment, Post, Prisma, User } from '@prisma/client';
 
 export type CommentOnUser = Comment & {
   user: Pick<User, 'username' | 'image'>;
@@ -55,3 +55,36 @@ type CommentType = {
 };
 
 export type Combined = UnionToType<PostType | CommentType>;
+
+export type UserProfile = Prisma.UserGetPayload<{
+  include: {
+    _count?: {
+      select: {
+        comment: true;
+        postLikes: true;
+        followers: true;
+        followings: true;
+      };
+    };
+    posts?: {
+      where: { isFeatured: true };
+      orderBy: { createdAt: 'desc' };
+      select: {
+        title: true;
+        slug: true;
+        _count: true;
+        publishedAt: true;
+        content: true;
+        id: true;
+      };
+    };
+    comment?: {
+      include: { post: { select: { title: true; id: true; slug: true } } };
+    };
+    profile?: {
+      select: {
+        about: true;
+      };
+    };
+  };
+}>;

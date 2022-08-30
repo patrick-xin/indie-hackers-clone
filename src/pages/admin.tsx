@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import React, { ReactElement } from 'react';
 
 import { BasicLayout } from '@/features/layout/Basic';
@@ -17,7 +18,11 @@ const AdminPage = () => {
             <li key={user.id}>
               <div className='flex gap-2'>
                 <div>{user.email}</div>
-                <div>{user.username}</div>
+                <div>
+                  <Link href={`/@${user.username}`}>
+                    <a>{user.username}</a>
+                  </Link>
+                </div>
               </div>
             </li>
           ))}

@@ -14,10 +14,12 @@ type Props = {
 };
 
 const UserPage = ({ username }: Props) => {
-  const { data: user } = trpc.useQuery([
-    'user.username-featured',
-    { username },
-  ]);
+  const { data: user } = trpc.useQuery(
+    ['user.username-featured', { username }],
+    {
+      enabled: Boolean(username),
+    }
+  );
 
   return (
     <div>

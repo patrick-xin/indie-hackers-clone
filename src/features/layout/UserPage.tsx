@@ -1,6 +1,6 @@
-import { User } from '@prisma/client';
 import React from 'react';
 
+import { UserProfile } from '@/features/post/types';
 import {
   UserPageHeader,
   UserPageSidebar,
@@ -11,7 +11,7 @@ import { Footer, Header } from '../UI';
 
 export const UserPageLayout: React.FC<{
   children: React.ReactNode;
-  user: Pick<User, 'username' | 'image'>;
+  user: UserProfile;
 }> = ({ children, user }) => {
   return (
     <div>
@@ -23,7 +23,7 @@ export const UserPageLayout: React.FC<{
             <UserPageAction username={user.username} />
             {children}
           </div>
-          <UserPageSidebar />
+          <UserPageSidebar username={user.username} userId={user.id} />
         </div>
       </main>
       <Footer />
