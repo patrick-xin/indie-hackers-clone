@@ -12,7 +12,7 @@ export const GROUPS = [
     id: 15,
     logo: '/group-logo.webp',
     name: 'LinkedIn',
-    slug: 'Linked-in',
+    slug: 'linkedin',
     description:
       'Lorem ipsum dolor sit amet consectetur adipisicing elit. Maiores, quaerat!',
     ratio: 51.51,

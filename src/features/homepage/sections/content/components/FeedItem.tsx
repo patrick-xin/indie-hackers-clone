@@ -30,7 +30,7 @@ export const FeedItem = ({ post }: Props) => {
       className='flex flex-col rounded-sm bg-[#152C41] px-2 py-1 shadow-sm sm:flex-row sm:items-center sm:gap-4 sm:py-2 sm:px-4'
     >
       <div className='hidden sm:block'>
-        <AvatarPopover user={post.author} />
+        <AvatarPopover user={post.author} key={post.id} />
       </div>
       <div className='hidden sm:block'>
         <Upvote count={post._count.likes} postId={post.id} />

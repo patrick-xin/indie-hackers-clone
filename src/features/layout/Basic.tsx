@@ -7,7 +7,7 @@ export const BasicLayout: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   return (
     <>
-      <Header />
+      <Header isTransparent />
       <main className='mx-auto xl:px-12'>{children}</main>
       <Footer />
     </>

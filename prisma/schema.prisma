@@ -68,6 +68,28 @@ model User {
     posts         Post[]
     postLikes     PostLike[]
     commentLikes  CommentLike[]
+    groups        Group[]
+    role          Role           @default(viewer)
+    group         Group?         @relation("moderator")
+}
+
+enum Role {
+    moderator
+    admin
+    viewer
+}
+
+model Group {
+    id              String   @id @default(cuid())
+    name            String
+    image           String   @default("/group-logo.webp")
+    slug            String   @unique
+    description     String
+    members         User[]
+    post            Post[]
+    createdAt       DateTime @default(now())
+    createdBy       User     @relation(name: "moderator", fields: [createdByUserId], references: [id])
+    createdByUserId String   @unique
 }
 
 model Follows {
@@ -107,6 +129,8 @@ model Post {
     status      PostStatus
     postType    PostType   @default(ARTICLE)
     isFeatured  Boolean    @default(false)
+    group       Group?     @relation(fields: [groupId], references: [id])
+    groupId     String?
 }
 
 enum PostStatus {

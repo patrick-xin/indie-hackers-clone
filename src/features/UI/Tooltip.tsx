@@ -13,6 +13,7 @@ export const Tooltip = () => {
     modifiers: [
       {
         name: 'arrow',
+
         options: { element: arrowElement, padding: -4 },
       },
     ],
