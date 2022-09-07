@@ -216,6 +216,7 @@ const UserHistoryPage = () => {
               </div>
               <div className='space-y-4'>{content}</div>
               <Button
+                className='my-6'
                 onClick={() => {
                   setPage((p) => p + 1);
                 }}

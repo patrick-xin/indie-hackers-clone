@@ -9,6 +9,7 @@ export type PostOnUser = Post & {
   _count: {
     comments: number;
     likes: number;
+    markedBy: number;
   };
 };
 

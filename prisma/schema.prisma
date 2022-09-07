@@ -70,7 +70,8 @@ model User {
     commentLikes  CommentLike[]
     groups        Group[]
     role          Role           @default(viewer)
-    group         Group?         @relation("moderator")
+    group         Group[]        @relation("moderator")
+    bookmarks     Post[]         @relation("bookmark")
 }
 
 enum Role {
@@ -89,7 +90,7 @@ model Group {
     post            Post[]
     createdAt       DateTime @default(now())
     createdBy       User     @relation(name: "moderator", fields: [createdByUserId], references: [id])
-    createdByUserId String   @unique
+    createdByUserId String
 }
 
 model Follows {
@@ -131,6 +132,7 @@ model Post {
     isFeatured  Boolean    @default(false)
     group       Group?     @relation(fields: [groupId], references: [id])
     groupId     String?
+    markedBy    User[]     @relation("bookmark")
 }
 
 enum PostStatus {

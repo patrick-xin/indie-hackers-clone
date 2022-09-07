@@ -22,7 +22,7 @@ export const PostPageFooter = ({ post }: Props) => {
       <PostPageInlineAction
         postId={post.id}
         likes={post._count.likes}
-        bookmarks={10}
+        bookmarks={post._count.markedBy}
       />
     </div>
   );

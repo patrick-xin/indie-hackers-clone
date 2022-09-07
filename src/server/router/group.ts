@@ -35,7 +35,7 @@ export const groupRouter = createRouter()
       }
     },
   })
-  .query('by-slug-feed', {
+  .query('by-slug-feeds', {
     input: z.object({
       slug: z.string(),
       limit: z.number().min(1).max(100).nullish(),
@@ -81,7 +81,34 @@ export const groupRouter = createRouter()
       }
     },
   })
+  .query('by-slug-members', {
+    input: z.object({
+      slug: z.string(),
+      page: z.number(),
+      pageCount: z.number(),
+    }),
+    async resolve({ input, ctx }) {
+      const { slug, page, pageCount } = input;
 
+      try {
+        const data = await ctx.prisma.group.findUnique({
+          where: { slug },
+          select: {
+            members: {
+              skip: page * pageCount,
+              take: pageCount,
+              select: { username: true, id: true, image: true, profile: true },
+            },
+          },
+        });
+        if (!data) throw new TRPCError({ code: 'NOT_FOUND' });
+
+        return data.members;
+      } catch (error) {
+        throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });
+      }
+    },
+  })
   .middleware(async ({ ctx, next }) => {
     if (!ctx.session) {
       throw new TRPCError({ code: 'UNAUTHORIZED' });

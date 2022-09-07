@@ -85,26 +85,86 @@ export const PostPageInlineAction = ({
   postId: string;
 }) => {
   const utils = trpc.useContext();
-  const { mutate } = trpc.useMutation('private-posts.upvote', {
-    onSuccess: () => {
-      utils.invalidateQueries('public-posts.by-slug');
-    },
-  });
+  const { data } = trpc.useQuery(['auth.me', { postId }]);
+
+  const { mutate: upvote, isLoading: isVoting } = trpc.useMutation(
+    'private-posts.upvote',
+    {
+      onSuccess: async () => {
+        utils.invalidateQueries('public-posts.by-slug');
+        utils.invalidateQueries('auth.me');
+      },
+    }
+  );
+  const { mutate: cancleUpvote, isLoading: isCanclingVoting } =
+    trpc.useMutation('private-posts.cancle-upvote', {
+      onSuccess: () => {
+        utils.invalidateQueries('public-posts.by-slug');
+        utils.invalidateQueries('auth.me');
+      },
+    });
+  const { mutate: addToBookmark, isLoading: isAdding } = trpc.useMutation(
+    'private-posts.addToBookmark',
+    {
+      onSuccess: () => {
+        utils.invalidateQueries('public-posts.by-slug');
+        utils.invalidateQueries('auth.me');
+      },
+    }
+  );
+  const { mutate: removeFromBookmark, isLoading: isRemoving } =
+    trpc.useMutation('private-posts.removeFromBookmark', {
+      onSuccess: () => {
+        utils.invalidateQueries('public-posts.by-slug');
+        utils.invalidateQueries('auth.me');
+      },
+    });
   return (
     <div className='my-8 flex gap-4'>
-      <Button
-        variant='outline'
-        onClick={() => mutate({ id: postId })}
-        icon={<ChevronUp />}
-      >
-        {likes}
-      </Button>
-      <Button
-        variant='outline'
-        icon={<Bookmark className='group-hover:text-red-500' />}
-      >
-        {bookmarks}
-      </Button>
+      {data?.canLike ? (
+        <Button
+          loading={isVoting}
+          variant='outline'
+          onClick={() => upvote({ id: postId })}
+          icon={<ChevronUp />}
+          loadingText=''
+        >
+          {likes}
+        </Button>
+      ) : (
+        <Button
+          loading={isCanclingVoting}
+          variant='outline'
+          onClick={() => cancleUpvote({ id: postId })}
+          icon={<ChevronUp />}
+          loadingText=''
+        >
+          {likes}
+        </Button>
+      )}
+
+      {data?.canBookmark ? (
+        <Button
+          loadingText=''
+          loading={isAdding}
+          onClick={() => addToBookmark({ id: postId })}
+          variant='outline'
+          icon={<Bookmark className='group-hover:text-red-500' />}
+        >
+          {bookmarks}
+        </Button>
+      ) : (
+        <Button
+          loadingText=''
+          loading={isRemoving}
+          onClick={() => removeFromBookmark({ id: postId })}
+          variant='outline'
+          icon={<Bookmark className='group-hover:text-red-500' />}
+        >
+          {bookmarks}
+        </Button>
+      )}
+
       <ShareButton />
     </div>
   );

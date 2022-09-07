@@ -18,7 +18,9 @@ export const GroupDetailHeader = ({
   image,
   isMember,
 }: GroupDetailHeaderProps) => {
-  const { query } = useRouter();
+  const { query, push, pathname } = useRouter();
+  console.log(pathname);
+
   const slug = query.slug as string;
   const utils = trpc.useContext();
   const { mutate: join, isLoading: isJoining } = trpc.useMutation(
@@ -88,8 +90,9 @@ export const GroupDetailHeader = ({
         </div>
         <div className='flex gap-4 pt-6'>
           <Button
+            onClick={() => push(`/groups/${slug}`)}
             size='small'
-            variant='underline'
+            variant={pathname.endsWith('[slug]') ? 'underline' : 'transparent'}
             className='uppercase'
             transition
             icon={<Message className='h-5 w-5' />}
@@ -97,8 +100,9 @@ export const GroupDetailHeader = ({
             discussions
           </Button>
           <Button
+            onClick={() => push(`/groups/${slug}/members`)}
             size='small'
-            variant='underline'
+            variant={pathname.endsWith('members') ? 'underline' : 'transparent'}
             className='uppercase'
             transition
             icon={<Users className='h-5 w-5' />}

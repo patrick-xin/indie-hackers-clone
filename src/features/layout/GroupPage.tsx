@@ -6,7 +6,7 @@ import {
   GroupDetailInfo,
 } from '@/features/group/components';
 
-import { Footer, Header } from '../UI';
+import { Footer, FullScreenLoader, Header } from '../UI';
 
 type IGroup = {
   groupInfo:
@@ -34,7 +34,7 @@ export const GroupPageLayout: React.FC<{
   group: IGroup | undefined;
   loadingGroup: boolean;
 }> = ({ children, group, loadingGroup }) => {
-  if (loadingGroup || !group) return <div>loading...</div>;
+  if (loadingGroup || !group) return <FullScreenLoader />;
   const { groupInfo, isMember } = group;
   return (
     <div>

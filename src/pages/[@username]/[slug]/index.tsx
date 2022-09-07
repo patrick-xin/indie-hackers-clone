@@ -56,12 +56,11 @@ const UserPostPage = ({ username, slug }: Props) => {
           hasScrolled={hasScrolled}
         />
       </div>
-
       <PostPageAction
         postId={post.id}
         likes={post._count.likes}
         comments={post._count.comments}
-        bookmarks={10}
+        bookmarks={post._count.markedBy}
         setScrolled={() => setScrolled(true)}
       />
     </div>

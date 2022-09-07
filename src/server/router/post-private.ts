@@ -204,7 +204,7 @@ export const privatePostRouter = createRouter()
       id: z.string(),
     }),
     async resolve({ ctx, input: { id } }) {
-      const updatedPost = ctx.prisma.post.update({
+      const updatedPost = await ctx.prisma.post.update({
         where: {
           id,
         },
@@ -218,6 +218,64 @@ export const privatePostRouter = createRouter()
               },
             },
           },
+        },
+      });
+
+      return updatedPost;
+    },
+  })
+  .mutation('cancle-upvote', {
+    input: z.object({
+      id: z.string(),
+    }),
+    async resolve({ ctx, input: { id } }) {
+      const like = await ctx.prisma.postLike.findFirst({
+        where: { postId: id },
+        select: { id: true },
+      });
+
+      const updatedPost = await ctx.prisma.post.update({
+        where: {
+          id,
+        },
+        data: {
+          likes: {
+            delete: { id: like?.id },
+          },
+        },
+      });
+
+      return updatedPost;
+    },
+  })
+  .mutation('addToBookmark', {
+    input: z.object({
+      id: z.string(),
+    }),
+    async resolve({ ctx, input: { id } }) {
+      const updatedPost = ctx.prisma.post.update({
+        where: {
+          id,
+        },
+        data: {
+          markedBy: { connect: { username: ctx.session?.user.username } },
+        },
+      });
+
+      return updatedPost;
+    },
+  })
+  .mutation('removeFromBookmark', {
+    input: z.object({
+      id: z.string(),
+    }),
+    async resolve({ ctx, input: { id } }) {
+      const updatedPost = ctx.prisma.post.update({
+        where: {
+          id,
+        },
+        data: {
+          markedBy: { disconnect: { username: ctx.session?.user.username } },
         },
       });
 

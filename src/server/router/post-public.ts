@@ -70,7 +70,9 @@ export const publicPostRouter = createRouter()
               comments: {
                 include: { user: { select: { username: true, image: true } } },
               },
-              _count: { select: { comments: true, likes: true } },
+              _count: {
+                select: { comments: true, likes: true, markedBy: true },
+              },
             },
           },
         },
