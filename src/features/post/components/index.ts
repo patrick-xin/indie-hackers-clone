@@ -1,3 +1,4 @@
+export { BookmarkCard } from './BookmarkCard';
 export { CommentForm } from './comment/CommentForm';
 export { InstructionPopover } from './InstructionPopover';
 export { NewPostModal } from './NewPostModal';

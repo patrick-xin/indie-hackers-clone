@@ -97,7 +97,7 @@ const DashboardPage = () => {
                         </ButtonLink>
                         <ButtonLink
                           variant='outline'
-                          href={`/dashboard/post//${post.postType.toLowerCase()}/${
+                          href={`/dashboard/post/${post.postType.toLowerCase()}/${
                             post.id
                           }`}
                         >

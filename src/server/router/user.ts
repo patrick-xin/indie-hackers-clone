@@ -210,6 +210,49 @@ export const userRouter = createRouter()
       }
     },
   })
+  .query('username-bookmark', {
+    input: z.object({
+      username: z.string(),
+    }),
+    async resolve({ input, ctx }) {
+      const { username } = input;
+
+      try {
+        const user = await ctx.prisma.user.findUnique({
+          where: {
+            username,
+          },
+          include: {
+            _count: {
+              select: {
+                comment: true,
+                postLikes: true,
+                followers: true,
+                followings: true,
+              },
+            },
+            bookmarks: {
+              select: {
+                author: { select: { username: true } },
+                title: true,
+                content: true,
+                id: true,
+                slug:true
+              },
+            },
+            profile: {
+              select: {
+                about: true,
+              },
+            },
+          },
+        });
+        return user;
+      } catch (error) {
+        throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });
+      }
+    },
+  })
   .query('username-follows', {
     input: z.object({
       username: z.string(),

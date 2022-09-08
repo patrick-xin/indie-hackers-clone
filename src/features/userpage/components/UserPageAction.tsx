@@ -41,7 +41,7 @@ export const UserPageAction = ({ username }: { username: string }) => {
           })}
         >
           <BiBookBookmark className='h-6 w-6 lg:hidden' />
-          <Link href='/'>
+          <Link href={`/@${username}/bookmark`}>
             <a className='transition-colors ease-linear hover:text-white'>
               Bookmark
             </a>

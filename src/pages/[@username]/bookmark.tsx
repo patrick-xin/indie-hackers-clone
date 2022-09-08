@@ -4,7 +4,7 @@ import { GetServerSidePropsContext } from 'next';
 import superjson from 'superjson';
 
 import { UserPageLayout } from '@/features/layout/UserPage';
-import { PostCard } from '@/features/post/components';
+import { BookmarkCard } from '@/features/post/components';
 import { appRouter } from '@/server/router';
 import { createContext } from '@/server/router/context';
 import { trpc } from '@/utils/trpc';
@@ -15,7 +15,7 @@ type Props = {
 
 const UserPage = ({ username }: Props) => {
   const { data: user } = trpc.useQuery([
-    'user.username-featured',
+    'user.username-bookmark',
     { username },
   ]);
 
@@ -24,16 +24,16 @@ const UserPage = ({ username }: Props) => {
       {user && (
         <UserPageLayout user={user}>
           <div className='space-y-4'>
-            <h3 className='text-3xl text-white'>Featured Post</h3>
-            {user.posts.length === 0 && (
+            {user.bookmarks.length === 0 && (
               <p className='text-lg'>
-                {user.username} hasn&apos;t featured any posts on their profile.
-                Check back later, or perhaps give them a friendly nudge. 😇
+                {user.username} hasn&apos;t bookmarked any posts.
               </p>
             )}
-            {user.posts.map((p) => (
-              <PostCard {...p} key={p.id} username={user.username} />
-            ))}
+            <div className='space-y-6'>
+              {user.bookmarks.map((bookmark) => (
+                <BookmarkCard bookmark={bookmark} key={bookmark.id} />
+              ))}
+            </div>
           </div>
         </UserPageLayout>
       )}
@@ -54,7 +54,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   const username = usernameParam.split('@')[1];
 
   try {
-    await ssg.prefetchQuery('user.username-featured', { username });
+    await ssg.prefetchQuery('user.username-bookmark', { username });
   } catch (error) {
     if (error instanceof TRPCError) {
       if (error.code === 'NOT_FOUND')

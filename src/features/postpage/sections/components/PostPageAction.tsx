@@ -1,9 +1,16 @@
 import { Popover } from '@headlessui/react';
+import { useSession } from 'next-auth/react';
 import { IoWarning } from 'react-icons/io5';
+import {
+  MdBookmark,
+  MdBookmarkAdd,
+  MdBookmarkRemove,
+  MdOutlineExpandLess,
+  MdOutlineExpandMore,
+} from 'react-icons/md';
 import ScrollIntoView from 'react-scroll-into-view';
 import {
   Bookmark,
-  Bookmarks,
   BrandFacebook,
   BrandTwitter,
   ChevronUp,
@@ -13,6 +20,7 @@ import {
 } from 'tabler-icons-react';
 
 import { Button } from '@/features/UI';
+import { AuthWrapper } from '@/features/UI/AuthWrapper';
 import { trpc } from '@/utils/trpc';
 
 type Props = {
@@ -31,29 +39,117 @@ export const PostPageAction = ({
   setScrolled,
 }: Props) => {
   const utils = trpc.useContext();
-  const { mutate } = trpc.useMutation('private-posts.upvote', {
-    onSuccess: () => {
+  const { data: session } = useSession();
+  const { data } = trpc.useQuery(['auth.me', { postId }], {
+    enabled: Boolean(session),
+  });
+
+  const { mutate: upvote } = trpc.useMutation('private-posts.upvote', {
+    onSuccess: async () => {
       utils.invalidateQueries('public-posts.by-slug');
+      utils.invalidateQueries('auth.me');
     },
   });
+  const { mutate: cancleUpvote } = trpc.useMutation(
+    'private-posts.cancle-upvote',
+    {
+      onSuccess: () => {
+        utils.invalidateQueries('public-posts.by-slug');
+        utils.invalidateQueries('auth.me');
+      },
+    }
+  );
+  const { mutate: addToBookmark } = trpc.useMutation(
+    'private-posts.addToBookmark',
+    {
+      onSuccess: () => {
+        utils.invalidateQueries('public-posts.by-slug');
+        utils.invalidateQueries('auth.me');
+      },
+    }
+  );
+  const { mutate: removeFromBookmark } = trpc.useMutation(
+    'private-posts.removeFromBookmark',
+    {
+      onSuccess: () => {
+        utils.invalidateQueries('public-posts.by-slug');
+        utils.invalidateQueries('auth.me');
+      },
+    }
+  );
   return (
-    <div className='post-page-action flex justify-between lg:flex-col lg:gap-5 lg:rounded lg:p-6 xl:flex-row 2xl:flex-col'>
+    <div className='post-page-action flex justify-between lg:gap-5 lg:rounded lg:p-6 xl:flex-col'>
       <div className='flex items-center gap-3'>
-        <Button
-          onClick={() => mutate({ id: postId })}
-          variant='gradient'
-          size='small'
-          className='flex h-8 w-8 items-center justify-center rounded-full p-0'
-        >
-          <ChevronUp className='h-6 w-6' />
-        </Button>
+        <AuthWrapper>
+          {session ? (
+            data?.canLike ? (
+              <Button
+                onClick={() => upvote({ id: postId })}
+                variant='gradient'
+                size='small'
+                className='flex h-8 w-8 items-center justify-center rounded-full p-0'
+              >
+                <MdOutlineExpandLess className='h-6 w-6' />
+              </Button>
+            ) : (
+              <Button
+                variant='gradient'
+                size='small'
+                className='flex h-8 w-8 items-center justify-center rounded-full p-0'
+                onClick={() => cancleUpvote({ id: postId })}
+              >
+                <MdOutlineExpandMore className='h-6 w-6' />
+              </Button>
+            )
+          ) : (
+            <Button
+              variant='gradient'
+              size='small'
+              className='flex h-8 w-8 items-center justify-center rounded-full p-0'
+            >
+              <MdOutlineExpandLess className='h-6 w-6' />
+            </Button>
+          )}
+        </AuthWrapper>
+
         <div className='gap-1 md:flex lg:gap-2'>
           <span>{likes}</span>
-          <span>{likes > 0 ? 'Likes' : 'Like'} </span>
+          <span>{likes > 1 ? 'Likes' : 'Like'} </span>
         </div>
       </div>
       <div className='hidden items-center gap-3 md:flex'>
-        <Bookmarks className='h-6 w-6' />
+        <AuthWrapper>
+          {session ? (
+            data?.canBookmark ? (
+              <Button
+                onClick={() => addToBookmark({ id: postId })}
+                variant='transparent'
+                size='small'
+                className='flex h-8 w-8 items-center justify-center rounded-full p-0'
+              >
+                <MdBookmarkAdd className='h-6 w-6' />
+              </Button>
+            ) : (
+              <Button
+                variant='transparent'
+                size='small'
+                className='flex h-8 w-8 items-center justify-center rounded-full p-0'
+                onClick={() => removeFromBookmark({ id: postId })}
+              >
+                <MdBookmarkRemove className='h-6 w-6' />
+              </Button>
+            )
+          ) : (
+            <Button
+              variant='transparent'
+              size='small'
+              className='flex h-8 w-8 items-center justify-center rounded-full p-0'
+            >
+              <MdBookmark className='h-6 w-6' />
+            </Button>
+          )}
+        </AuthWrapper>
+
         <div className='gap-1 md:flex lg:gap-2'>
           <span>{bookmarks}</span>
           <span>Bookmarks</span>
@@ -85,25 +181,27 @@ export const PostPageInlineAction = ({
   postId: string;
 }) => {
   const utils = trpc.useContext();
-  const { data } = trpc.useQuery(['auth.me', { postId }]);
+  const { data: session } = useSession();
+  const { data } = trpc.useQuery(['auth.me', { postId }], {
+    enabled: Boolean(session),
+  });
 
-  const { mutate: upvote, isLoading: isVoting } = trpc.useMutation(
-    'private-posts.upvote',
+  const { mutate: upvote } = trpc.useMutation('private-posts.upvote', {
+    onSuccess: async () => {
+      utils.invalidateQueries('public-posts.by-slug');
+      utils.invalidateQueries('auth.me');
+    },
+  });
+  const { mutate: cancleUpvote } = trpc.useMutation(
+    'private-posts.cancle-upvote',
     {
-      onSuccess: async () => {
+      onSuccess: () => {
         utils.invalidateQueries('public-posts.by-slug');
         utils.invalidateQueries('auth.me');
       },
     }
   );
-  const { mutate: cancleUpvote, isLoading: isCanclingVoting } =
-    trpc.useMutation('private-posts.cancle-upvote', {
-      onSuccess: () => {
-        utils.invalidateQueries('public-posts.by-slug');
-        utils.invalidateQueries('auth.me');
-      },
-    });
-  const { mutate: addToBookmark, isLoading: isAdding } = trpc.useMutation(
+  const { mutate: addToBookmark } = trpc.useMutation(
     'private-posts.addToBookmark',
     {
       onSuccess: () => {
@@ -112,59 +210,67 @@ export const PostPageInlineAction = ({
       },
     }
   );
-  const { mutate: removeFromBookmark, isLoading: isRemoving } =
-    trpc.useMutation('private-posts.removeFromBookmark', {
+  const { mutate: removeFromBookmark } = trpc.useMutation(
+    'private-posts.removeFromBookmark',
+    {
       onSuccess: () => {
         utils.invalidateQueries('public-posts.by-slug');
         utils.invalidateQueries('auth.me');
       },
-    });
+    }
+  );
   return (
     <div className='my-8 flex gap-4'>
-      {data?.canLike ? (
-        <Button
-          loading={isVoting}
-          variant='outline'
-          onClick={() => upvote({ id: postId })}
-          icon={<ChevronUp />}
-          loadingText=''
-        >
-          {likes}
-        </Button>
-      ) : (
-        <Button
-          loading={isCanclingVoting}
-          variant='outline'
-          onClick={() => cancleUpvote({ id: postId })}
-          icon={<ChevronUp />}
-          loadingText=''
-        >
-          {likes}
-        </Button>
-      )}
-
-      {data?.canBookmark ? (
-        <Button
-          loadingText=''
-          loading={isAdding}
-          onClick={() => addToBookmark({ id: postId })}
-          variant='outline'
-          icon={<Bookmark className='group-hover:text-red-500' />}
-        >
-          {bookmarks}
-        </Button>
-      ) : (
-        <Button
-          loadingText=''
-          loading={isRemoving}
-          onClick={() => removeFromBookmark({ id: postId })}
-          variant='outline'
-          icon={<Bookmark className='group-hover:text-red-500' />}
-        >
-          {bookmarks}
-        </Button>
-      )}
-
+      <AuthWrapper>
+        {data?.canLike ? (
+          <Button
+            variant='outline'
+            onClick={() => {
+              if (!session) return;
+              upvote({ id: postId });
+            }}
+            icon={<ChevronUp />}
+          >
+            {likes}
+          </Button>
+        ) : (
+          <Button
+            variant='outline'
+            onClick={() => {
+              if (!session) return;
+              cancleUpvote({ id: postId });
+            }}
+            icon={<ChevronUp />}
+          >
+            {likes}
+          </Button>
+        )}
+      </AuthWrapper>
+      <AuthWrapper>
+        {data?.canBookmark ? (
+          <Button
+            onClick={() => {
+              if (!session) return;
+              addToBookmark({ id: postId });
+            }}
+            variant='outline'
+            icon={<Bookmark className='group-hover:text-red-500' />}
+          >
+            {bookmarks}
+          </Button>
+        ) : (
+          <Button
+            onClick={() => {
+              if (!session) return;
+              removeFromBookmark({ id: postId });
+            }}
+            variant='outline'
+            icon={<Bookmark className='group-hover:text-red-500' />}
+          >
+            {bookmarks}
+          </Button>
+        )}
+      </AuthWrapper>
       <ShareButton />
     </div>
   );
