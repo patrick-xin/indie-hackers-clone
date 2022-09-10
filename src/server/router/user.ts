@@ -237,7 +237,7 @@ export const userRouter = createRouter()
                 title: true,
                 content: true,
                 id: true,
-                slug:true
+                slug: true,
               },
             },
             profile: {
@@ -334,7 +334,10 @@ export const userRouter = createRouter()
               userId: followerId,
               message: {
                 content: `starts following you.`,
-                follower: ctx.session?.user.username,
+                follower: {
+                  username: ctx.session?.user.username,
+                  avatar: ctx.session?.user.image,
+                },
               },
             },
           },

@@ -1,16 +1,19 @@
 import { useRouter } from 'next/router';
+import { useSession } from 'next-auth/react';
 import { useRef } from 'react';
 import { useHover } from 'usehooks-ts';
 
 import { useModalStore } from '@/lib/store/modal';
 
 import { Button, ButtonLink, FilterLinks, Flex } from '@/features/UI';
+import { AuthWrapper } from '@/features/UI/AuthWrapper';
 
 export const TabLinks = () => {
   const { pathname } = useRouter();
   const { setOpen } = useModalStore();
   const ref = useRef<HTMLButtonElement | null>(null);
   const isHover = useHover(ref);
+  const { data: session } = useSession();
   return (
     <Flex className='justify-between'>
       <Flex className='gap-4'>
@@ -48,9 +51,18 @@ export const TabLinks = () => {
           Groups
         </ButtonLink>
       </Flex>
-      <Button variant='gradient' size='small' onClick={setOpen}>
-        New Post
-      </Button>
+      <AuthWrapper>
+        <Button
+          variant='gradient'
+          size='small'
+          onClick={() => {
+            if (!session) return;
+            setOpen();
+          }}
+        >
+          New Post
+        </Button>
+      </AuthWrapper>
     </Flex>
   );
 };

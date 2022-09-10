@@ -5,6 +5,7 @@ import { IoIosMenu, IoIosSearch } from 'react-icons/io';
 
 import { Logo } from '@/features/UI/Logo';
 import { ProfileMenuDropdown } from '@/features/user/components';
+import { trpc } from '@/utils/trpc';
 
 type Props = {
   isTransparent?: boolean;
@@ -12,11 +13,14 @@ type Props = {
 
 export const Header = ({ isTransparent = false }: Props) => {
   const session = useSession();
+  const { data } = trpc.useQuery(['auth.me', { postId: undefined }], {
+    enabled: Boolean(session),
+  });
   const renderUserStatus = () => {
     if (session.status === 'loading') {
       return <ImSpinner8 className='h-4 w-4 animate-spin' />;
-    } else if (session.status === 'authenticated') {
-      return <ProfileMenuDropdown session={session.data} />;
+    } else if (session.status === 'authenticated' && data && data.user) {
+      return <ProfileMenuDropdown user={data.user} />;
     } else {
       return <LoginRegister />;
     }

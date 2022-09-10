@@ -165,7 +165,6 @@ const UserHistoryPage = () => {
             <div>No activities yet</div>
           ) : (
             <>
-              {' '}
               <div className='mb-6 flex gap-0.5'>
                 <button
                   onClick={() => {

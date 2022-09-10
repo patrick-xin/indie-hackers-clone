@@ -47,7 +47,7 @@ export const ExploreSection = () => {
                 <svg
                   xmlns='http://www.w3.org/2000/svg'
                   viewBox='0 0 24 24'
-                  className='h-4 w-4 fill-current text-white  hover:text-brand-blue'
+                  className='h-4 w-4 fill-current text-white hover:text-brand-blue'
                 >
                   <path d='M24 9h-9v-9h-6v9h-9v6h9v9h6v-9h9z' />
                 </svg>

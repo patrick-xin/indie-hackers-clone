@@ -5,14 +5,14 @@ import { IoWarning } from 'react-icons/io5';
 
 type Props = {
   type: 'success' | 'error' | 'warning';
-  message: string;
+  message: React.ReactNode;
   className?: string;
 };
 
 export const Alert = ({ type, message, className }: Props) => {
   const variantsMap = {
     success: 'bg-green-700/30',
-    error: 'bg-red-700/30',
+    error: 'bg-red-700/20 text-red-500',
     warning: 'bg-yellow-700/30 text-yellow-500',
   };
   const icons = {
@@ -33,7 +33,7 @@ export const Alert = ({ type, message, className }: Props) => {
         )}
       >
         {icons[type]}
-        <p>{message}</p>
+        <div>{message}</div>
       </div>
     </div>
   );

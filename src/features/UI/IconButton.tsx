@@ -9,8 +9,8 @@ import { Spinner } from './Spinner';
 
 const sizeClassnames = {
   big: 'py-2 px-6 text-sm',
-  small: 'p-0.5 text-sm',
-  tiny: 'px-0.5 text-sm',
+  medium: 'p-1 px-4 text-base',
+  small: 'px-0.5 text-sm',
 };
 
 const roundedClassnames = {
@@ -24,6 +24,8 @@ const roundedClassnames = {
 const variantClassnames = {
   transparent: 'bg-transparent',
   outline: 'border-2 border-gray-100/5 hover:text-[#4799eb]',
+  gradient:
+    'bg-gradient-to-r from-[#e052a0] to-[#f15c41] rounded-sm hover:from-cyan-500 hover:to-blue-500 disabled:bg-red-500',
 };
 
 export type IconButtonProps = DetailedHTMLProps<
@@ -45,7 +47,6 @@ export const IconButton: React.FC<IconButtonProps> = ({
   icon,
   rounded = 'medium',
   className = '',
-
   ...props
 }) => {
   return (

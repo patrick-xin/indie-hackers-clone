@@ -10,6 +10,7 @@ import {
   DoorExit,
   Heart,
   Heartbeat,
+  History,
   LayoutDashboard,
   Logout,
   Message,
@@ -40,14 +41,27 @@ export const POST_ORDER = [
 export type PostOrder = typeof POST_ORDER;
 
 export const MENU_LINKS = [
-  { title: 'Profile', icon: <FaUserCircle className='h-6 w-6' />, href: '/' },
+  { title: 'Profile', icon: <FaUserCircle className='h-6 w-6' />, href: '' },
   {
     title: 'Notifications',
     icon: <IoNotifications className='h-6 w-6' />,
-    href: '/',
+    href: 'notifications',
   },
-  { title: 'Bookmarks', icon: <IoBookmark className='h-6 w-6' />, href: '/' },
-  { title: 'Settings', icon: <IoIosSettings className='h-6 w-6' />, href: '/' },
+  {
+    title: 'Bookmarks',
+    icon: <IoBookmark className='h-6 w-6' />,
+    href: 'bookmark',
+  },
+  {
+    title: 'History',
+    icon: <History className='h-6 w-6' />,
+    href: 'history',
+  },
+  {
+    title: 'Settings',
+    icon: <IoIosSettings className='h-6 w-6' />,
+    href: 'settings',
+  },
 ];
 export type MenuLink = typeof MENU_LINKS[0];
 

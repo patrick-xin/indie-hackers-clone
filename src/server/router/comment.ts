@@ -33,18 +33,32 @@ export const commentRouter = createRouter()
     }),
     async resolve({ ctx, input: { content, postId, parentId } }) {
       try {
+        const post = await ctx.prisma.post.findUnique({
+          where: { id: postId },
+          include: { author: { select: { id: true } } },
+        });
         const comment = await ctx.prisma.comment.create({
           data: {
             content,
             parentId,
             postId,
             userId: ctx.session?.user.userId as string,
+            notification: {
+              create: {
+                notificationType: 'COMMENT',
+                message: {
+                  commentedBy: ctx.session?.user.username,
+                  post: { slug: post?.slug, title: post?.title },
+                },
+                user: { connect: { id: post?.author.id } },
+              },
+            },
           },
         });
 
         return comment;
       } catch (error) {
-        console.error(error);
+        throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });
       }
     },
   });

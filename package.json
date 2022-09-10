@@ -21,6 +21,7 @@
     "@next/bundle-analyzer": "^12.2.5",
     "@popperjs/core": "^2.11.5",
     "@prisma/client": "^4.3.1",
+    "@react-google-maps/api": "^2.12.2",
     "@trpc/client": "^9.26.2",
     "@trpc/next": "^9.26.2",
     "@trpc/react": "^9.26.2",
@@ -46,6 +47,7 @@
     "superjson": "^1.9.1",
     "tabler-icons-react": "^1.54.0",
     "tailwind-scrollbar-hide": "^1.1.7",
+    "use-places-autocomplete": "^4.0.0",
     "usehooks-ts": "^2.6.0",
     "zod": "^3.17.10",
     "zustand": "^4.1.1"
