@@ -49,7 +49,11 @@ export const userRouter = createRouter()
 
             profile: {
               select: {
-                about: true,
+                bio: true,
+                fullName: true,
+                location: true,
+                publicEmail: true,
+                twitter: true,
               },
             },
           },
@@ -141,7 +145,11 @@ export const userRouter = createRouter()
           },
           profile: {
             select: {
-              about: true,
+              bio: true,
+              fullName: true,
+              location: true,
+              publicEmail: true,
+              twitter: true,
             },
           },
         },
@@ -242,7 +250,11 @@ export const userRouter = createRouter()
             },
             profile: {
               select: {
-                about: true,
+                bio: true,
+                fullName: true,
+                location: true,
+                publicEmail: true,
+                twitter: true,
               },
             },
           },
@@ -304,7 +316,7 @@ export const userRouter = createRouter()
     }
     return next();
   })
-  .mutation('edit-bio', {
+  .mutation('edit-username', {
     input: z.object({
       username: z.string().min(3),
     }),

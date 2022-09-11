@@ -20,7 +20,7 @@ const WelcomePage = () => {
   const router = useRouter();
 
   const { mutate: saveProfile, isLoading } = trpc.useMutation(
-    ['user.edit-bio'],
+    ['user.edit-username'],
     {
       onSuccess: () => {
         router.push('/');

@@ -1,4 +1,3 @@
-import { User } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 import z from 'zod';
 
@@ -24,9 +23,20 @@ export const authRouter = createRouter()
     }),
     async resolve({ ctx, input: { postId } }) {
       const username = ctx.session?.user.username;
-      const user = (await ctx.prisma.user.findUnique({
+      const user = await ctx.prisma.user.findUnique({
         where: { username },
-      })) as User;
+        include: {
+          profile: {
+            select: {
+              bio: true,
+              fullName: true,
+              location: true,
+              twitter: true,
+              publicEmail: true,
+            },
+          },
+        },
+      });
       const notifications = await ctx.prisma.notification.findMany({
         where: { user: { username: ctx.session?.user.username } },
       });
@@ -86,5 +96,48 @@ export const authRouter = createRouter()
         },
       });
       return { message: `username updated` };
+    },
+  })
+  .mutation('edit-bio', {
+    input: z.object({
+      fullName: z.string().optional(),
+      twitter: z.string().url().optional(),
+      publicEmail: z.string().email().optional(),
+      bio: z.string().optional(),
+      location: z.string().optional(),
+    }),
+    async resolve({
+      ctx,
+      input: { fullName, twitter, publicEmail, bio, location },
+    }) {
+      try {
+        await ctx.prisma.user.update({
+          where: {
+            id: ctx.session?.user.userId,
+          },
+          data: {
+            profile: {
+              upsert: {
+                create: {
+                  fullName,
+                  location,
+                  twitter,
+                  publicEmail,
+                  bio,
+                },
+                update: {
+                  fullName,
+                  location,
+                  twitter,
+                  publicEmail,
+                  bio,
+                },
+              },
+            },
+          },
+        });
+      } catch (error) {
+        console.log(error);
+      }
     },
   });

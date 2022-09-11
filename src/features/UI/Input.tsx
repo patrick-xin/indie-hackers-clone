@@ -19,7 +19,7 @@ export const Input = forwardRef<
   ) => {
     const bg = transparent ? `bg-transparent` : `bg-[#1E364D]`;
     const ring = error ? `ring-1 ring-red-400` : '';
-    const cn = `w-full p-2 rounded text-gray-300 placeholder:text-gray-500 outline-none appearance-none focus:outline-none  ${bg} ${ring} ${className} disabled:bg-[#172C43] disabled:text-[#63809c]`;
+    const cn = `form-input ${bg} ${ring} ${className} disabled:bg-[#172C43] disabled:text-[#63809c]`;
 
     return textarea ? (
       <div>

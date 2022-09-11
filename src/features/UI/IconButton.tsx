@@ -8,9 +8,9 @@ import React, {
 import { Spinner } from './Spinner';
 
 const sizeClassnames = {
-  big: 'py-2 px-6 text-sm',
-  medium: 'p-1 px-4 text-base',
-  small: 'px-0.5 text-sm',
+  big: 'p-2 text-sm',
+  medium: 'p-1 text-base',
+  small: 'p-0.5 text-sm',
 };
 
 const roundedClassnames = {

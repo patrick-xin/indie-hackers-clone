@@ -1,6 +1,6 @@
-import { Combobox } from '@headlessui/react';
+import { Combobox, Transition } from '@headlessui/react';
 import { useJsApiLoader } from '@react-google-maps/api';
-import { useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { BsHouse } from 'react-icons/bs';
 import { MdLocationOn } from 'react-icons/md';
 import { Loader } from 'tabler-icons-react';
@@ -19,10 +19,12 @@ const libraries: Libraries = ['places'];
 
 interface LocationSearchBoxProps {
   onSelectAddress: (address: string) => void;
+  location: string;
 }
 
 export const LocationSearchBox = ({
   onSelectAddress,
+  location,
 }: LocationSearchBoxProps) => {
   const { isLoaded, loadError } = useJsApiLoader({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_API_KEY ?? '',
@@ -42,12 +44,15 @@ export const LocationSearchBox = ({
 
       <p className='mt-1 mb-2'>Search based on the name of your city.</p>
 
-      <ReadySearchBox onSelectAddress={onSelectAddress} />
+      <ReadySearchBox onSelectAddress={onSelectAddress} location={location} />
     </div>
   );
 };
 
-const ReadySearchBox = ({ onSelectAddress }: LocationSearchBoxProps) => {
+const ReadySearchBox = ({
+  onSelectAddress,
+  location,
+}: LocationSearchBoxProps) => {
   const {
     ready,
     value,
@@ -63,13 +68,15 @@ const ReadySearchBox = ({ onSelectAddress }: LocationSearchBoxProps) => {
     onSelectAddress(address);
     clearSuggestions();
   };
-
+  useEffect(() => {
+    if (location) setValue(location);
+  }, [location, setValue]);
   return (
     <div>
       <Combobox value={value} onChange={handleSelect} disabled={!ready}>
         <div className='relative flex justify-between'>
           <Combobox.Input
-            className='w-full appearance-none rounded bg-[#1E364D] p-2 text-white outline-none placeholder:text-gray-500 focus:outline-none'
+            className='form-input w-full'
             onChange={(event) => {
               setValue(event.target.value);
               setShowClearIcon(true);
@@ -77,11 +84,11 @@ const ReadySearchBox = ({ onSelectAddress }: LocationSearchBoxProps) => {
             placeholder='Search...'
           />
           {!showClearIcon ? (
-            <span className='absolute right-2 top-3'>
+            <span className='absolute right-2 top-3 lg:top-4'>
               <MdLocationOn className='h-4 w-4' />
             </span>
           ) : (
-            <span className='group absolute right-2 top-3.5'>
+            <span className='group absolute right-2 top-3.5 lg:top-4'>
               <IconButton
                 icon={
                   <svg
@@ -103,21 +110,27 @@ const ReadySearchBox = ({ onSelectAddress }: LocationSearchBoxProps) => {
             </span>
           )}
         </div>
-
-        <Combobox.Options>
-          {data.map((location) => (
-            <Combobox.Option
-              className='inline-flex w-full cursor-pointer appearance-none items-center gap-3 bg-[#1E364D] p-2 text-gray-300 outline-none placeholder:text-gray-500 hover:bg-brand-blue hover:text-white focus:outline-none'
-              key={location.place_id}
-              value={location.description}
-            >
-              <span>
-                <BsHouse />
-              </span>
-              {location.description}
-            </Combobox.Option>
-          ))}
-        </Combobox.Options>
+        <Transition
+          as={Fragment}
+          leave='transition ease-in duration-100'
+          leaveFrom='opacity-100'
+          leaveTo='opacity-0'
+        >
+          <Combobox.Options className='absolute z-100 mt-0.5 flex max-h-60 flex-col overflow-auto rounded py-1 shadow-lg  focus:outline-none'>
+            {data.map((location) => (
+              <Combobox.Option
+                className='combobox-option inline-flex w-full items-center gap-3'
+                key={location.place_id}
+                value={location.description}
+              >
+                <span>
+                  <BsHouse />
+                </span>
+                {location.description}
+              </Combobox.Option>
+            ))}
+          </Combobox.Options>
+        </Transition>
       </Combobox>
       {status === 'ZERO_RESULTS' && <div>No results found</div>}
     </div>

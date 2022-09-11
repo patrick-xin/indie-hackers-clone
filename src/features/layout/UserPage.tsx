@@ -18,7 +18,12 @@ export const UserPageLayout: React.FC<{
       <Header />
       <main className='p-4 md:p-0'>
         <div className='user-content'>
-          <UserPageHeader image={user.image} username={user.username} />
+          <UserPageHeader
+            image={user.image}
+            username={user.username}
+            detail={user.profile}
+            createdAt={user.createdAt}
+          />
           <div className='user-body z-100 md:mx-6'>
             <UserPageAction username={user.username} />
             {children}

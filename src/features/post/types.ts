@@ -84,7 +84,7 @@ export type UserProfile = Prisma.UserGetPayload<{
     };
     profile?: {
       select: {
-        about: true;
+        bio: true;
       };
     };
   };

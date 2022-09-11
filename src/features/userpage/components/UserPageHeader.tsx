@@ -1,3 +1,4 @@
+import { formatDistance } from 'date-fns';
 import Image from 'next/future/image';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
@@ -8,9 +9,22 @@ import { IconButton } from '@/features/UI';
 type Props = {
   image: string;
   username: string;
+  createdAt: Date;
+  detail: {
+    fullName?: string;
+    twitter?: string;
+    publicEmail?: string;
+    bio?: string;
+    location?: string;
+  };
 };
 
-export const UserPageHeader = ({ image, username }: Props) => {
+export const UserPageHeader = ({
+  image,
+  username,
+  createdAt,
+  detail,
+}: Props) => {
   const { data } = useSession();
   const isOwner = data?.user.username === username;
   const { push } = useRouter();
@@ -33,6 +47,9 @@ export const UserPageHeader = ({ image, username }: Props) => {
           <div className='flex items-center gap-4'>
             <h3 className='py-4 text-center text-2xl text-gray-100 md:text-left md:text-3xl'>
               {username}
+              {detail?.fullName && (
+                <span className='mx-4 text-brand-text'>{detail.fullName}</span>
+              )}
             </h3>
             {isOwner && (
               <IconButton
@@ -45,15 +62,29 @@ export const UserPageHeader = ({ image, username }: Props) => {
             )}
           </div>
 
-          <button>report</button>
-          <p className='md:text-lg'>
-            joined 4 years ago · Non-technical founder, aspiring maker, local
-            business advocate, husband, writer, musician, and armchair
-            archaeologist
-          </p>
+          <div className='md:text-lg'>
+            {detail?.location && <span>{detail.location}</span>}
+            <Separator />
+            <span>
+              joined{' '}
+              {formatDistance(createdAt, new Date(), {
+                addSuffix: true,
+              })}
+            </span>
+          </div>
+          {detail?.bio && (
+            <div>
+              <Separator />
+              {detail.bio}
+            </div>
+          )}
           <div className='mx-auto my-8 h-1 w-48 bg-gray-400/20 md:hidden' />
         </div>
       </div>
     </header>
   );
+};
+
+const Separator = () => {
+  return <span className='mx-1.5'>·</span>;
 };
