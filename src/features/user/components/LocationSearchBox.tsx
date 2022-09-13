@@ -31,8 +31,8 @@ export const LocationSearchBox = ({
     libraries,
   });
 
+  if (!isLoaded || !loadError) return <Loader className='animate-spin' />;
   if (loadError) return <Alert message='Bummer!' type='error' />;
-  if (!isLoaded) return <Loader className='animate-spin' />;
   return (
     <div className='relative'>
       <label
@@ -68,6 +68,7 @@ const ReadySearchBox = ({
     onSelectAddress(address);
     clearSuggestions();
   };
+
   useEffect(() => {
     if (location) setValue(location);
   }, [location, setValue]);

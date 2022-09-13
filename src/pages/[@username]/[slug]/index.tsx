@@ -83,6 +83,14 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   const slug = context.params?.slug as string;
   const usernameParam = context.params?.['@username'] as string;
   const username = usernameParam.split('@')[1];
+  if (!username)
+    return {
+      redirect: {
+        destination: '/404',
+        permanent: false,
+      },
+    };
+
   try {
     await ssg.fetchQuery('public-posts.by-slug', { username, slug });
   } catch (error) {
@@ -108,7 +116,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   return {
     props: {
       trpcState: ssg.dehydrate(),
-      username,
+      username: username ?? null,
       slug,
     },
   };

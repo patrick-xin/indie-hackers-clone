@@ -61,6 +61,8 @@ export const privatePostRouter = createRouter()
       const slug = `${slugify(title, {
         lower: true,
         trim: true,
+        strict: true,
+        remove: /[*+~.()'"!:@]/g,
       })}-${faker.random.alphaNumeric(5)}`;
       try {
         const post = await ctx.prisma.post.create({
@@ -90,7 +92,12 @@ export const privatePostRouter = createRouter()
       type: z.string(),
     }),
     async resolve({ ctx, input: { title, content, id, type } }) {
-      const slug = `${slugify(title)}-${faker.random.alphaNumeric(5)}`;
+      const slug = `${slugify(title, {
+        lower: true,
+        trim: true,
+        strict: true,
+        remove: /[*+~.()'"!:@]/g,
+      })}-${faker.random.alphaNumeric(5)}`;
 
       try {
         if (type === 'ARTICLE') {

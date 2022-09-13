@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { signOut, useSession } from 'next-auth/react';
 import React, { useState } from 'react';
 import { IoLogOut } from 'react-icons/io5';
+import { MdDashboard } from 'react-icons/md';
 import { usePopper } from 'react-popper';
 
 import { MENU_LINKS, MenuLink } from '@/lib/constants';
@@ -59,6 +60,19 @@ export const ProfileMenuDropdown = ({ user }: { user: User }) => {
           {MENU_LINKS.map((link) => (
             <ProfileMenuLink {...link} key={link.title} />
           ))}
+          <div className='group py-2 px-3 hover:bg-[#2B4763]'>
+            <Link href='dashboard'>
+              <a className='inline-block w-full'>
+                <div className='flex items-center gap-4'>
+                  <div className='group-hover:text-brand-blue'>
+                    <MdDashboard className='h-6 w-6' />
+                  </div>
+                  <div>Dashborad</div>
+                </div>
+              </a>
+            </Link>
+          </div>
+
           <div className='group py-2 px-3 hover:bg-[#2B4763]'>
             <button onClick={() => signOut()}>
               <div className='flex items-center gap-4'>

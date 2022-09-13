@@ -17,6 +17,7 @@ model Profile {
     publicEmail String?
     user        User    @relation(fields: [userId], references: [id])
     userId      String  @unique
+    birthday    String?
 }
 
 model Account {

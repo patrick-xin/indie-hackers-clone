@@ -1,6 +1,7 @@
 export { Alert } from './Alert';
 export { Button } from './Button';
 export { ConfirmModal } from './ConfirmModal';
+export { CustomToast } from './CustomToast';
 export { FilterLinks } from './FilterLinks';
 export { Flex } from './Flex';
 export { FliterNav } from './FliterNav';

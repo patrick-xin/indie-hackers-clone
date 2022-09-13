@@ -18,6 +18,7 @@ const UserPage = ({ username }: Props) => {
     'user.username-featured',
     { username },
   ]);
+  console.log(user);
 
   return (
     <div>

@@ -23,7 +23,7 @@ export const authRouter = createRouter()
     }),
     async resolve({ ctx, input: { postId } }) {
       const username = ctx.session?.user.username;
-      const user = await ctx.prisma.user.findUnique({
+      const user = await ctx.prisma.user.findUniqueOrThrow({
         where: { username },
         include: {
           profile: {
@@ -33,6 +33,7 @@ export const authRouter = createRouter()
               location: true,
               twitter: true,
               publicEmail: true,
+              birthday: true,
             },
           },
         },
@@ -59,6 +60,28 @@ export const authRouter = createRouter()
       }
 
       return { user, notifications, notificationsCounts: notifications.length };
+    },
+  })
+  .query('bookmarks', {
+    // input: z.object({}),
+    async resolve({ ctx }) {
+      const username = ctx.session?.user.username;
+      const bookmarks = await ctx.prisma.user.findUniqueOrThrow({
+        where: { username },
+        select: {
+          bookmarks: {
+            select: {
+              title: true,
+              slug: true,
+              postType: true,
+              id: true,
+              author: { select: { username: true } },
+            },
+          },
+        },
+      });
+
+      return bookmarks;
     },
   })
   .mutation('read-notification-by-id', {
@@ -105,10 +128,11 @@ export const authRouter = createRouter()
       publicEmail: z.string().email().optional(),
       bio: z.string().optional(),
       location: z.string().optional(),
+      birthday: z.string().optional(),
     }),
     async resolve({
       ctx,
-      input: { fullName, twitter, publicEmail, bio, location },
+      input: { fullName, twitter, publicEmail, bio, location, birthday },
     }) {
       try {
         await ctx.prisma.user.update({
@@ -124,6 +148,7 @@ export const authRouter = createRouter()
                   twitter,
                   publicEmail,
                   bio,
+                  birthday,
                 },
                 update: {
                   fullName,
@@ -131,13 +156,14 @@ export const authRouter = createRouter()
                   twitter,
                   publicEmail,
                   bio,
+                  birthday,
                 },
               },
             },
           },
         });
       } catch (error) {
-        console.log(error);
+        throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });
       }
     },
   });

@@ -1,10 +1,11 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import toast, { Toaster } from 'react-hot-toast';
 import z from 'zod';
 
 import { UserPageLayout } from '@/features/layout/UserPage';
-import { Alert, Button, ConfirmModal, Input } from '@/features/UI';
+import { Alert, Button, ConfirmModal, CustomToast, Input } from '@/features/UI';
 import { trpc } from '@/utils/trpc';
 
 const UserPage = () => {
@@ -47,7 +48,14 @@ const ChangeUsername = ({ username }: { username: string }) => {
   const { mutate: changeUsername } = trpc.useMutation('auth.change-username', {
     onSuccess: (data) => {
       utils.invalidateQueries('auth.me');
-      alert(data.message);
+      toast.custom((t) => (
+        <CustomToast
+          message={data.message}
+          onClose={() => toast.dismiss(t.id)}
+          type='success'
+          visible={t.visible}
+        />
+      ));
       setShowInpunt(false);
     },
     onError: (error) => {
@@ -130,6 +138,7 @@ const ChangeUsername = ({ username }: { username: string }) => {
           </form>
         </div>
       )}
+      <Toaster position='bottom-right' />
     </>
   );
 };

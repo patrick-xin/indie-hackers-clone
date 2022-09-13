@@ -94,11 +94,16 @@ const Select = ({
     </Combobox>
   );
 };
+type BirthdaySelectProps = {
+  birthday: {
+    day: string;
+    month: string;
+    year: string;
+  };
+  onSelect: (birthday: { day: string; month: string; year: string }) => void;
+};
 
-export const BirthdaySelect = () => {
-  const [selectedMonth, setSelectedMonth] = useState<string>('');
-  const [selectedDay, setSelectedDay] = useState<string>('');
-  const [selectedYear, setSelectedYear] = useState<string>('');
+export const BirthdaySelect = ({ birthday, onSelect }: BirthdaySelectProps) => {
   const years = useMemo(() => getYears(), []);
   return (
     <div>
@@ -109,23 +114,28 @@ export const BirthdaySelect = () => {
         <Select
           placeholder='Month'
           items={months}
-          selectedItem={selectedDay}
-          setSelectedItem={setSelectedDay}
+          selectedItem={birthday.month}
+          setSelectedItem={(month) => {
+            onSelect({ ...birthday, month });
+          }}
         />
         <Select
           size='small'
           placeholder='Day'
           items={days}
-          selectedItem={selectedMonth}
-          setSelectedItem={setSelectedMonth}
+          selectedItem={birthday.day}
+          setSelectedItem={(day) => {
+            onSelect({ ...birthday, day });
+          }}
         />
-
         <Select
           size='small'
           placeholder='Year'
           items={years}
-          selectedItem={selectedYear}
-          setSelectedItem={setSelectedYear}
+          selectedItem={birthday.year}
+          setSelectedItem={(year) => {
+            onSelect({ ...birthday, year });
+          }}
         />
       </div>
     </div>

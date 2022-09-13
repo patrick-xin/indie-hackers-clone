@@ -29,10 +29,16 @@ const UserEditPage = ({ username }: { username: string }) => {
   const { mutate: editBio } = trpc.useMutation('auth.edit-bio', {
     onSuccess: () => {
       utils.invalidateQueries('auth.me');
+
       push(`/@${username}`);
     },
   });
-  const [location, setLocation] = useState('');
+  const [location, setLocation] = useState(data?.user.profile?.location ?? '');
+  const [birthday, setBirthday] = useState({
+    day: data?.user.profile?.birthday?.split(' ')[1] ?? '',
+    month: data?.user.profile?.birthday?.split(' ')[0] ?? '',
+    year: data?.user.profile?.birthday?.split(' ')[2] ?? '',
+  });
 
   const {
     register,
@@ -43,7 +49,11 @@ const UserEditPage = ({ username }: { username: string }) => {
     resolver: zodResolver(BioSchema),
   });
   const onSubmit = (data: BioSchemaField) => {
-    editBio({ ...data, location });
+    editBio({
+      ...data,
+      location,
+      birthday: `${birthday.month} ${birthday.day} ${birthday.year}`,
+    });
   };
 
   useEffect(() => {
@@ -102,7 +112,7 @@ const UserEditPage = ({ username }: { username: string }) => {
                 {...register('fullName')}
               />
               <p className='text-red-500'>{errors.fullName?.message}</p>
-              <BirthdaySelect />
+              <BirthdaySelect birthday={birthday} onSelect={setBirthday} />
               <LocationSearchBox
                 location={data?.user?.profile?.location ?? ''}
                 onSelectAddress={(location) => setLocation(location)}
