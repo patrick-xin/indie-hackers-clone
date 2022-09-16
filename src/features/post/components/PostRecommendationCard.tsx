@@ -1,17 +1,30 @@
 import Image from 'next/future/image';
 import Link from 'next/link';
 
-const PostRecommendationCard = () => {
+type PostRecommendationCardProps = {
+  image: string;
+  title: string;
+  avatar: string;
+  username: string;
+};
+
+export const PostRecommendationCard = ({
+  image,
+  title,
+  avatar,
+  username,
+}: PostRecommendationCardProps) => {
   return (
     <Link href='/'>
       <a className='group'>
         <div className='p-1'>
           <div>
             <Image
-              src='/post-cover.jpg'
+              src={image}
               height={200}
               width={300}
               className='rounded'
+              alt={`${title}-image`}
             />
           </div>
           <div>
@@ -21,10 +34,11 @@ const PostRecommendationCard = () => {
             <div>
               <div>
                 <Image
-                  src='/avatar.webp'
+                  src={avatar}
                   height={32}
                   width={32}
                   className='rounded-full'
+                  alt={`${username}-avatar`}
                 />
               </div>
               <div>57 comments</div>
@@ -35,5 +49,3 @@ const PostRecommendationCard = () => {
     </Link>
   );
 };
-
-export default PostRecommendationCard;

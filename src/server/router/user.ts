@@ -9,41 +9,16 @@ export const userRouter = createRouter()
   .query('username', {
     input: z.object({
       username: z.string(),
-      limit: z.number().min(1).max(100).nullish(),
-      cursor: z.string().nullish(),
-      query: z.enum(['all', 'post', 'comment']),
     }),
     async resolve({ input, ctx }) {
-      const limit = input.limit ?? 50;
-      const { cursor, query } = input;
-
       try {
-        const user = await ctx.prisma.user.findUnique({
+        const user = await ctx.prisma.user.findUniqueOrThrow({
           where: {
             username: input.username,
           },
           include: {
             _count: { select: { comment: true, postLikes: true } },
-            comment: {
-              take: limit + 1,
-              cursor: cursor ? { id: cursor } : undefined,
-              orderBy: { createdAt: 'desc' },
-              include: {
-                post: { select: { slug: true, id: true, title: true } },
-              },
-            },
-            posts: {
-              take: limit + 1,
-              cursor: cursor ? { id: cursor } : undefined,
-              orderBy: { createdAt: 'desc' },
-              select: {
-                title: true,
-                slug: true,
-                publishedAt: true,
-                content: true,
-                id: true,
-              },
-            },
+
             followers: true,
             followings: true,
 
@@ -59,56 +34,8 @@ export const userRouter = createRouter()
             },
           },
         });
-        if (!user) throw new TRPCError({ code: 'NOT_FOUND' });
-        let nextItem;
-        let nextCursor: typeof cursor | null = null;
 
-        if (
-          query === 'comment' &&
-          user.comment &&
-          user.comment.length > limit
-        ) {
-          nextItem = user.comment.pop();
-
-          nextCursor = nextItem!.id;
-          return { user, nextCursor, data: user.comment };
-        }
-        if (query === 'post' && user.posts && user.posts.length > limit) {
-          nextItem = user.posts.pop();
-          nextCursor = nextItem!.id;
-          return { user, nextCursor, data: user.posts };
-        }
-
-        if (query === 'all') {
-          const posts = [...user.posts].map((p) => ({
-            ...p,
-            createdAt: p.publishedAt,
-            type: 'post',
-          }));
-          const comments = [...user.comment].map((p) => ({
-            ...p,
-            createdAt: p.createdAt,
-            type: 'comment',
-          }));
-          type PostType = typeof posts[0];
-          type CommentType = typeof comments[0];
-
-          type UnionToType<U extends Record<string, unknown>> = {
-            [K in U extends unknown ? keyof U : never]: U extends unknown
-              ? K extends keyof U
-                ? U[K]
-                : never
-              : never;
-          };
-          type Combined = UnionToType<PostType | CommentType>;
-
-          const data = [...posts, ...comments].sort(
-            (a, b) => Number(b.createdAt) - Number(a.createdAt)
-          ) as Combined[];
-          if (data.length > limit) nextItem = data.pop();
-          nextCursor = nextItem!.id;
-          return { nextCursor, data, user };
-        }
+        return user;
       } catch (error) {
         throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });
       }
@@ -119,7 +46,7 @@ export const userRouter = createRouter()
       username: z.string(),
     }),
     async resolve({ input, ctx }) {
-      const user = await ctx.prisma.user.findUnique({
+      const user = await ctx.prisma.user.findUniqueOrThrow({
         where: {
           username: input.username,
         },
@@ -170,7 +97,7 @@ export const userRouter = createRouter()
       const { page, pageCount, username } = input;
 
       try {
-        const user = await ctx.prisma.user.findUnique({
+        const user = await ctx.prisma.user.findUniqueOrThrow({
           where: {
             username,
           },
@@ -197,7 +124,6 @@ export const userRouter = createRouter()
             },
           },
         });
-        if (!user) throw new TRPCError({ code: 'NOT_FOUND' });
 
         const posts = [...user.posts].map((p) => ({
           ...p,
@@ -228,7 +154,7 @@ export const userRouter = createRouter()
       const { username } = input;
 
       try {
-        const user = await ctx.prisma.user.findUnique({
+        const user = await ctx.prisma.user.findUniqueOrThrow({
           where: {
             username,
           },
@@ -276,7 +202,7 @@ export const userRouter = createRouter()
       const { username } = input;
 
       try {
-        const user = await ctx.prisma.user.findUnique({
+        const user = await ctx.prisma.user.findUniqueOrThrow({
           where: {
             username,
           },
@@ -299,11 +225,12 @@ export const userRouter = createRouter()
                 },
               },
             },
+            profile: true,
           },
         });
-        if (!user) throw new TRPCError({ code: 'NOT_FOUND' });
+
         const userId = ctx.session?.user.userId as string;
-        const hasFollowed = user?.followings
+        const hasFollowed = user.followings
           .map((following) => following.follower.id)
           .includes(userId);
 
@@ -336,17 +263,17 @@ export const userRouter = createRouter()
   })
   .mutation('follow', {
     input: z.object({
-      followerId: z.string(),
+      followerUsername: z.string(),
     }),
-    async resolve({ ctx, input: { followerId } }) {
+    async resolve({ ctx, input: { followerUsername } }) {
       await ctx.prisma.follows.create({
         data: {
-          follower: { connect: { id: ctx.session?.user.userId } },
-          following: { connect: { id: followerId } },
+          follower: { connect: { username: ctx.session?.user.username } },
+          following: { connect: { username: followerUsername } },
           notification: {
             create: {
               notificationType: 'FOLLOWER',
-              userId: followerId,
+              user: { connect: { username: followerUsername } },
               message: {
                 content: `starts following you.`,
                 follower: {
@@ -362,13 +289,15 @@ export const userRouter = createRouter()
   })
   .mutation('unfollow', {
     input: z.object({
-      unfollowerId: z.string(),
+      unfollowerUsername: z.string(),
     }),
-    async resolve({ ctx, input: { unfollowerId } }) {
+    async resolve({ ctx, input: { unfollowerUsername } }) {
       const follows = await ctx.prisma.follows.findFirst({
         where: {
           followerId: ctx.session?.user.userId,
-          AND: { followingId: unfollowerId },
+          AND: {
+            following: { username: unfollowerUsername },
+          },
         },
       });
       await ctx.prisma.follows.delete({

@@ -20,6 +20,7 @@ export const LinkContent = ({ post }: Props) => {
               <img
                 className='h-full max-h-[200px] w-full rounded sm:w-[140px] md:h-[140px]'
                 src={linkContent.ogImage?.url}
+                alt={`${linkContent?.ogTitle}-image`}
               />
             </div>
           ) : (

@@ -58,9 +58,6 @@ const PostCreatePage = () => {
     onSuccess: () => {
       push('/dashboard/post');
     },
-    onError: () => {
-      console.error(error);
-    },
   });
   useEffect(() => {
     if (post) {

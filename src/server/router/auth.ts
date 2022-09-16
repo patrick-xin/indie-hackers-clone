@@ -1,6 +1,8 @@
 import { TRPCError } from '@trpc/server';
 import z from 'zod';
 
+import { INotification } from '@/features/notification/types';
+
 import { createRouter } from './context';
 
 export const authRouter = createRouter()
@@ -38,9 +40,11 @@ export const authRouter = createRouter()
           },
         },
       });
-      const notifications = await ctx.prisma.notification.findMany({
+
+      const notifications = (await ctx.prisma.notification.findMany({
         where: { user: { username: ctx.session?.user.username } },
-      });
+      })) as INotification[];
+
       if (postId) {
         const post = await ctx.prisma.post.findUnique({
           where: { id: postId },
@@ -112,13 +116,14 @@ export const authRouter = createRouter()
           code: 'BAD_REQUEST',
           message: `${username} has been taken.`,
         });
-      await ctx.prisma.user.update({
+      const user = await ctx.prisma.user.update({
         where: { id: ctx.session?.user.userId },
         data: {
           username,
         },
       });
-      return { message: `username updated` };
+
+      return { message: `username updated`, user };
     },
   })
   .mutation('edit-bio', {

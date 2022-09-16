@@ -87,6 +87,7 @@ const createPost = () => {
     categoryId: 'cl5l5fdvz1437ca0wnt355w2t',
     postType: 'ARTICLE',
     isFeatured: false,
+    groupId: 'cl7pcvbjv0121qp0w7myi6g0v',
   };
 
   return post;

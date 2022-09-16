@@ -67,7 +67,7 @@ export const NewPostModal = () => {
         open={modalOpen}
       >
         <div>
-          <div className='bg-brand-indigo-bg/20 fixed inset-0 bg-opacity-30 backdrop-blur-lg transition-opacity' />
+          <div className='bg-brand-indigo-bg/20 fixed inset-0 backdrop-blur-lg transition-opacity' />
         </div>
 
         <div className='fixed inset-0 z-10 overflow-y-auto'>

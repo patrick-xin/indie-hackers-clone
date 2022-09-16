@@ -25,15 +25,16 @@ const MyApp = ({
   pageProps: { session, ...pageProps },
 }: AppPropsWithLayout) => {
   const getLayout = Component.getLayout ?? ((page) => page);
+
   return (
     <SessionProvider session={session}>
       {getLayout(
         <>
           <Component {...pageProps} />
           <NewPostModal />
+          <Progressbar />
         </>
       )}
-      <Progressbar />
     </SessionProvider>
   );
 };

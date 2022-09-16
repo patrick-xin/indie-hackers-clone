@@ -5,28 +5,20 @@ import { useSession } from 'next-auth/react';
 import { Edit } from 'tabler-icons-react';
 
 import { IconButton } from '@/features/UI';
+import { trpc } from '@/utils/trpc';
 
-type Props = {
-  image: string;
-  username: string;
-  createdAt: Date;
-  detail: {
-    fullName?: string;
-    twitter?: string;
-    publicEmail?: string;
-    bio?: string;
-    location?: string;
-  };
-};
+export const UserPageHeader = () => {
+  const { query } = useRouter();
+  const usernameQuery = query && (query['@username'] as string);
+  const username = usernameQuery?.split('@')[1] as string;
 
-export const UserPageHeader = ({
-  image,
-  username,
-  createdAt,
-  detail,
-}: Props) => {
-  const { data } = useSession();
-  const isOwner = data?.user.username === username;
+  const { data: user } = trpc.useQuery(['user.username', { username }], {
+    enabled: Boolean(query) && Boolean(username),
+  });
+
+  const { data: session } = useSession();
+
+  const isOwner = session?.user.username === username;
   const { push } = useRouter();
 
   return (
@@ -38,7 +30,7 @@ export const UserPageHeader = ({
               className='rounded-full'
               height={160}
               width={160}
-              src={image ?? '/avatar.webp'}
+              src={user?.image ?? '/avatar.webp'}
               alt='user-avatar'
             />
           </div>
@@ -47,8 +39,10 @@ export const UserPageHeader = ({
           <div className='flex items-center gap-4'>
             <h3 className='py-4 text-center text-2xl text-gray-100 md:text-left md:text-3xl'>
               {username}
-              {detail?.fullName && (
-                <span className='mx-4 text-brand-text'>{detail.fullName}</span>
+              {user?.profile?.fullName && (
+                <span className='mx-4 text-brand-text'>
+                  {user.profile.fullName}
+                </span>
               )}
             </h3>
             {isOwner && (
@@ -63,19 +57,20 @@ export const UserPageHeader = ({
           </div>
 
           <div className='md:text-lg'>
-            {detail?.location && <span>{detail.location}</span>}
+            {user?.profile?.location && <span>{user.profile.location}</span>}
             <Separator />
             <span>
               joined{' '}
-              {formatDistance(createdAt, new Date(), {
-                addSuffix: true,
-              })}
+              {user &&
+                formatDistance(user.createdAt, new Date(), {
+                  addSuffix: true,
+                })}
             </span>
           </div>
-          {detail?.bio && (
+          {user?.profile?.bio && (
             <div>
               <Separator />
-              {detail.bio}
+              {user.profile.bio}
             </div>
           )}
           <div className='mx-auto my-8 h-1 w-48 bg-gray-400/20 md:hidden' />

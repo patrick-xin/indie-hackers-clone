@@ -19,7 +19,6 @@ export const GroupDetailHeader = ({
   isMember,
 }: GroupDetailHeaderProps) => {
   const { query, push, pathname } = useRouter();
-  console.log(pathname);
 
   const slug = query.slug as string;
   const utils = trpc.useContext();
@@ -50,6 +49,7 @@ export const GroupDetailHeader = ({
             width={160}
             className='rounded-full'
             style={{ boxShadow: '0 0 0 8px #0e2439' }}
+            alt={`group-${name}-${image}`}
           />
         </div>
         <div className='md:space-y-4'>

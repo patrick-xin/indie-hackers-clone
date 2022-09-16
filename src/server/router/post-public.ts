@@ -34,7 +34,7 @@ export const publicPostRouter = createRouter()
         select: {
           id: true,
         },
-        // orderBy: orderBy(),
+        orderBy: orderBy(),
 
         // include: {
         //   _count: {
@@ -398,5 +398,124 @@ export const publicPostRouter = createRouter()
       return {
         posts,
       };
+    },
+  })
+  .query('search', {
+    input: z.object({
+      query: z.string(),
+    }),
+    async resolve({ ctx, input: { query } }) {
+      const comments = await ctx.prisma.comment.findMany({
+        where: { content: { contains: query } },
+        take: 10,
+        include: {
+          user: { select: { username: true, image: true } },
+          post: {
+            include: {
+              _count: { select: { comments: true, likes: true } },
+              author: { select: { username: true } },
+            },
+          },
+        },
+      });
+      const commentsCount = await ctx.prisma.comment.aggregate({
+        where: { content: { contains: query } },
+        _count: true,
+      });
+      const groups = await ctx.prisma.group.findMany({
+        where: { name: { contains: query } },
+        take: 12,
+        include: { _count: { select: { members: true } } },
+      });
+      const groupsCount = await ctx.prisma.group.aggregate({
+        where: { name: { contains: query } },
+        _count: true,
+      });
+      const users = await ctx.prisma.user.findMany({
+        where: { username: { contains: query } },
+        take: 6,
+      });
+      const usersCount = await ctx.prisma.user.aggregate({
+        where: { username: { contains: query } },
+        _count: true,
+      });
+      return {
+        comments,
+        commentsCount,
+        groups,
+        groupsCount,
+        users,
+        usersCount,
+      };
+    },
+  })
+  .query('search-discussions', {
+    input: z.object({
+      page: z.number(),
+      query: z.string(),
+      order: z.enum(['recent', 'popular', 'oldest', 'discussed']),
+    }),
+    async resolve({ ctx, input: { page, query, order } }) {
+      const orderBy = () => {
+        const _orderDesc = 'desc' as Prisma.SortOrder;
+        const _orderAsc = 'asc' as Prisma.SortOrder;
+        if (order === 'recent') return { createdAt: _orderDesc };
+        if (order === 'oldest') return { createdAt: _orderAsc };
+        if (order === 'popular') return { likes: { _count: _orderDesc } };
+        if (order === 'discussed')
+          return { post: { comments: { _count: _orderDesc } } };
+        return { comments: { _count: order } };
+      };
+      const _page = page ? page - 1 : 1;
+      const pageCount = 10;
+      const comments = await ctx.prisma.comment.findMany({
+        where: { content: { contains: query } },
+        skip: _page * pageCount,
+        take: pageCount,
+        orderBy: orderBy(),
+        include: {
+          user: { select: { username: true, image: true } },
+          post: {
+            include: {
+              _count: { select: { comments: true, likes: true } },
+              author: { select: { username: true } },
+            },
+          },
+        },
+      });
+      return comments;
+    },
+  })
+  .query('search-groups', {
+    input: z.object({
+      page: z.number(),
+      query: z.string(),
+    }),
+    async resolve({ ctx, input: { page, query } }) {
+      const _page = page ? page - 1 : 1;
+      const pageCount = 10;
+      const groups = await ctx.prisma.group.findMany({
+        where: { name: { contains: query } },
+        skip: _page * pageCount,
+        take: pageCount,
+        include: { _count: { select: { members: true } } },
+      });
+      return groups;
+    },
+  })
+  .query('search-users', {
+    input: z.object({
+      page: z.number(),
+      query: z.string(),
+    }),
+    async resolve({ ctx, input: { page, query } }) {
+      const _page = page ? page - 1 : 1;
+      const pageCount = 6;
+      const users = await ctx.prisma.user.findMany({
+        where: { username: { contains: query } },
+        skip: _page * pageCount,
+        take: pageCount,
+      });
+      return users;
     },
   });

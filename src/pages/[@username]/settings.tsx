@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useRouter } from 'next/router';
 import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import toast, { Toaster } from 'react-hot-toast';
@@ -13,17 +14,17 @@ const UserPage = () => {
 
   return (
     <div>
-      {data && (
-        <UserPageLayout user={data.user}>
-          <div className='mb-8'>
-            <h3 className='text-3xl text-white'>Account</h3>
-          </div>
+      <UserPageLayout>
+        <div className='mb-8'>
+          <h3 className='text-3xl text-white'>Account</h3>
+        </div>
+        {data && (
           <div className='space-y-4'>
             <ChangeUsername username={data.user.username} />
             <DeleteAccount username={data.user.username} />
           </div>
-        </UserPageLayout>
-      )}
+        )}
+      </UserPageLayout>
     </div>
   );
 };
@@ -31,6 +32,7 @@ const UserPage = () => {
 export default UserPage;
 
 const ChangeUsername = ({ username }: { username: string }) => {
+  const router = useRouter();
   const schema = z
     .object({
       username: z
@@ -48,6 +50,7 @@ const ChangeUsername = ({ username }: { username: string }) => {
   const { mutate: changeUsername } = trpc.useMutation('auth.change-username', {
     onSuccess: (data) => {
       utils.invalidateQueries('auth.me');
+      utils.invalidateQueries('user.username');
       toast.custom((t) => (
         <CustomToast
           message={data.message}
@@ -57,6 +60,7 @@ const ChangeUsername = ({ username }: { username: string }) => {
         />
       ));
       setShowInpunt(false);
+      router.replace(`/@${data.user.username}/settings`);
     },
     onError: (error) => {
       setErrorMessage(error.message);

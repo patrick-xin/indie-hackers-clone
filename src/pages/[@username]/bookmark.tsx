@@ -20,24 +20,20 @@ const UserPage = ({ username }: Props) => {
   ]);
 
   return (
-    <div>
-      {user && (
-        <UserPageLayout user={user}>
-          <div className='space-y-4'>
-            {user.bookmarks.length === 0 && (
-              <p className='text-lg'>
-                {user.username} hasn&apos;t bookmarked any posts.
-              </p>
-            )}
-            <div className='space-y-6'>
-              {user.bookmarks.map((bookmark) => (
-                <BookmarkCard bookmark={bookmark} key={bookmark.id} />
-              ))}
-            </div>
-          </div>
-        </UserPageLayout>
-      )}
-    </div>
+    <UserPageLayout>
+      <div className='space-y-4'>
+        {user?.bookmarks.length === 0 && (
+          <p className='text-lg'>
+            {user?.username} hasn&apos;t bookmarked any posts.
+          </p>
+        )}
+        <div className='space-y-6'>
+          {user?.bookmarks.map((bookmark) => (
+            <BookmarkCard bookmark={bookmark} key={bookmark.id} />
+          ))}
+        </div>
+      </div>
+    </UserPageLayout>
   );
 };
 

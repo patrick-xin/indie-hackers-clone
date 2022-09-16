@@ -5,4 +5,5 @@ export { NewPostModal } from './NewPostModal';
 export { PostAuthor } from './PostAuthor';
 export { PostCard } from './PostCard';
 export { CommentList } from './PostComment';
+export { PostRecommendationCard } from './PostRecommendationCard';
 export { TopPagePagination } from './TopPagePagination';

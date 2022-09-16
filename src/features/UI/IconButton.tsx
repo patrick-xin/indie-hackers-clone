@@ -54,7 +54,7 @@ export const IconButton: React.FC<IconButtonProps> = ({
       type='button'
       disabled={disabled || loading}
       className={cn(
-        `flex outline-none text-gray-100 disabled:cursor-not-allowed disabled:bg-gray-500 items-center justify-center focus:ring-0 group transition-colors ease-linear ${sizeClassnames[size]} ${variantClassnames[variant]} ${roundedClassnames[rounded]}`,
+        `flex outline-none text-gray-100 disabled:cursor-not-allowed disabled:bg-gray-900/10 items-center justify-center focus:ring-0 group transition-colors ease-linear ${sizeClassnames[size]} ${variantClassnames[variant]} ${roundedClassnames[rounded]}`,
         className && ` ${className}`
       )}
       data-testid='button'

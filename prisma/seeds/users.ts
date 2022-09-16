@@ -11,6 +11,7 @@ const createUser = () => {
     id: cuid(),
     image: faker.internet.avatar(),
     name: faker.name.firstName(),
+    role: 'viewer',
   };
   return user;
 };

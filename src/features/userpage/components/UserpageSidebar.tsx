@@ -1,19 +1,19 @@
 import Image from 'next/future/image';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { useSession } from 'next-auth/react';
 import { Loader } from 'tabler-icons-react';
 
 import { Button } from '@/features/UI';
+import { AuthWrapper } from '@/features/UI/AuthWrapper';
 import { trpc } from '@/utils/trpc';
 
-export const UserPageSidebar = ({
-  username,
-  userId,
-}: {
-  username: string;
-  userId: string;
-}) => {
+export const UserPageSidebar = () => {
   const utils = trpc.useContext();
-
+  const { query } = useRouter();
+  const usernameQuery = query['@username'] as string;
+  const username = usernameQuery?.split('@')[1];
+  const { data: session } = useSession();
   const { data, isLoading } = trpc.useQuery([
     'user.username-follows',
     { username },
@@ -43,29 +43,37 @@ export const UserPageSidebar = ({
       ) : (
         <>
           <div className='space-y-4 bg-[#1f364d] px-10 md:rounded md:bg-[#274059] md:p-4'>
-            {data.hasFollowed ? (
-              <Button
-                disabled={isUnfollowingLoading}
-                variant='gradient-inverse'
-                fullWidth
-                onClick={() => {
-                  unfollow({ unfollowerId: userId });
-                }}
-              >
-                Unfollow
-              </Button>
-            ) : (
-              <Button
-                disabled={isFollowingLoading}
-                variant='gradient'
-                fullWidth
-                onClick={() => {
-                  follow({ followerId: userId });
-                }}
-              >
-                Follow
-              </Button>
-            )}
+            <AuthWrapper>
+              {data.hasFollowed ? (
+                <Button
+                  disabled={
+                    isUnfollowingLoading || session?.user.username === username
+                  }
+                  variant='gradient-inverse'
+                  fullWidth
+                  onClick={() => {
+                    if (!session) return;
+                    unfollow({ unfollowerUsername: username });
+                  }}
+                >
+                  Unfollow
+                </Button>
+              ) : (
+                <Button
+                  disabled={
+                    isFollowingLoading || session?.user.username === username
+                  }
+                  variant='gradient'
+                  fullWidth
+                  onClick={() => {
+                    if (!session) return;
+                    follow({ followerUsername: username });
+                  }}
+                >
+                  Follow
+                </Button>
+              )}
+            </AuthWrapper>
 
             <StatsCard followersCount={data.user._count.followings} />
           </div>

@@ -18,27 +18,22 @@ const UserPage = ({ username }: Props) => {
     'user.username-featured',
     { username },
   ]);
-  console.log(user);
 
   return (
-    <div>
-      {user && (
-        <UserPageLayout user={user}>
-          <div className='space-y-4'>
-            <h3 className='text-3xl text-white'>Featured Post</h3>
-            {user.posts.length === 0 && (
-              <p className='text-lg'>
-                {user.username} hasn&apos;t featured any posts on their profile.
-                Check back later, or perhaps give them a friendly nudge. 😇
-              </p>
-            )}
-            {user.posts.map((p) => (
-              <PostCard {...p} key={p.id} username={user.username} />
-            ))}
-          </div>
-        </UserPageLayout>
-      )}
-    </div>
+    <UserPageLayout>
+      <div className='space-y-4'>
+        <h3 className='text-3xl text-white'>Featured Post</h3>
+        {user?.posts.length === 0 && (
+          <p className='text-lg'>
+            {user?.username} hasn&apos;t featured any posts on their profile.
+            Check back later, or perhaps give them a friendly nudge. 😇
+          </p>
+        )}
+        {user?.posts.map((p) => (
+          <PostCard {...p} key={p.id} username={user.username} />
+        ))}
+      </div>
+    </UserPageLayout>
   );
 };
 

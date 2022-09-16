@@ -26,6 +26,7 @@ export const GroupListItem = ({
                 width={75}
                 height={75}
                 className='rounded-full'
+                alt={`group-${name}-image`}
               />
             </div>
             <div>

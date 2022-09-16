@@ -27,6 +27,7 @@ export function Progressbar({
       router.events.off('routeChangeComplete', routeChangeEnd);
       router.events.off('routeChangeError', routeChangeEnd);
     };
+    // eslint-disable-next-line
   }, [router]);
 
   const routeChangeStart = (

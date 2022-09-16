@@ -105,7 +105,7 @@ const UserEditPage = ({ username }: { username: string }) => {
             </div>
           </header>
           <div className='user-body md:mx-6'>
-            <form onSubmit={handleSubmit(onSubmit)} className='mt-12 space-y-4'>
+            <form onSubmit={handleSubmit(onSubmit)} className='mt-12 space-y-8'>
               <Input
                 label='FULL NAME'
                 error={errors.fullName?.message}
@@ -144,7 +144,7 @@ const UserEditPage = ({ username }: { username: string }) => {
                 <Button variant='gradient' type='submit'>
                   Save
                 </Button>
-                <Button variant='outline' onClick={() => alert('?')}>
+                <Button variant='outline' onClick={() => push(`/@${username}`)}>
                   Cancle
                 </Button>
               </div>

@@ -4,9 +4,16 @@ import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { BiBook, BiBookBookmark, BiHistory } from 'react-icons/bi';
 
-export const UserPageAction = ({ username }: { username: string }) => {
-  const { pathname, asPath } = useRouter();
-  const { data: session } = useSession();
+import { trpc } from '@/utils/trpc';
+
+export const UserPageAction = () => {
+  const { pathname, asPath, query } = useRouter();
+  const usernameQuery = query['@username'] as string;
+  const username = usernameQuery?.split('@')[1];
+  const session = useSession();
+  const { data } = trpc.useQuery(['auth.me', { postId: undefined }], {
+    enabled: session.status === 'authenticated',
+  });
   return (
     <div className='mt-0.5 mb-12 rounded md:-mt-11 lg:-mt-12 lg:w-min lg:text-lg'>
       <div className='flex justify-between gap-4 bg-[#172B40] md:bg-[#1f364d] lg:gap-6'>
@@ -50,7 +57,7 @@ export const UserPageAction = ({ username }: { username: string }) => {
             </a>
           </Link>
         </div>
-        {session && session.user.username === username && (
+        {data && data.user.username === username && (
           <>
             {' '}
             <div

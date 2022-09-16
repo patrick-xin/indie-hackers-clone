@@ -38,14 +38,24 @@ const SignInPage = ({ providers }: Props) => {
           <div className='space-y-4 bg-[#1E364D] p-4'>
             <div className='flex items-center gap-2'>
               <div>
-                <Image src='/shop.png' width={60} height={60} />
+                <Image
+                  src='/shop.png'
+                  width={60}
+                  height={60}
+                  alt='shop-image'
+                />
               </div>
 
               <p>Connect with other indie hackers running online businesses.</p>
             </div>
             <div className='flex items-center gap-2'>
               <div>
-                <Image src='/chat-boxes.png' width={60} height={60} />
+                <Image
+                  src='/chat-boxes.png'
+                  width={60}
+                  height={60}
+                  alt='chat-image'
+                />
               </div>
 
               <p>
@@ -54,7 +64,12 @@ const SignInPage = ({ providers }: Props) => {
             </div>
             <div className='flex items-center gap-2'>
               <div>
-                <Image src='/newsletter.png' width={50} height={50} />
+                <Image
+                  src='/newsletter.png'
+                  width={50}
+                  height={50}
+                  alt='newsletter-image'
+                />
               </div>
 
               <p>Get the best new stories from founders in your inbox.</p>

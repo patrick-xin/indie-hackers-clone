@@ -158,76 +158,70 @@ const UserHistoryPage = () => {
   ]);
 
   return (
-    <div>
-      {data && (
-        <UserPageLayout user={data.user}>
-          {feed?.length === 0 ? (
-            <div>No activities yet</div>
-          ) : (
-            <>
-              <div className='mb-6 flex gap-0.5'>
-                <button
-                  onClick={() => {
-                    setSelectedPosts(!selectedPosts);
-                  }}
-                  className={cn(
-                    'inline-flex items-center gap-2 rounded  px-3 py-2 hover:bg-[#274059]',
-                    {
-                      'bg-[#274059]': !selectedPosts,
-                      'bg-[#172E43]': selectedPosts,
-                    }
-                  )}
-                >
-                  <span>
-                    {selectedPosts ? (
-                      <Checkbox className='h-5 w-5 text-brand-blue' />
-                    ) : (
-                      <EyeOff className='h-5 w-5' />
-                    )}
-                  </span>
-                  <span className={cn({ 'text-white': selectedPosts })}>
-                    Posts
-                  </span>
-                </button>
-                <button
-                  onClick={() => {
-                    setSelectedComments(!selectedComments);
-                  }}
-                  className={cn(
-                    'inline-flex items-center gap-2 rounded  px-3 py-2 hover:bg-[#274059]',
-                    {
-                      'bg-[#274059]': !selectedComments,
-                      'bg-[#172E43]': selectedComments,
-                    }
-                  )}
-                >
-                  <span>
-                    {selectedComments ? (
-                      <Checkbox className='h-5 w-5 text-brand-blue' />
-                    ) : (
-                      <EyeOff className='h-5 w-5' />
-                    )}
-                  </span>
-                  <span className={cn({ 'text-white': selectedComments })}>
-                    Comments
-                  </span>
-                </button>
-              </div>
-              <div className='space-y-4'>{content}</div>
-              <Button
-                className='my-6'
-                onClick={() => {
-                  setPage((p) => p + 1);
-                }}
-                variant='gradient'
-              >
-                load more
-              </Button>
-            </>
-          )}
-        </UserPageLayout>
+    <UserPageLayout>
+      {feed?.length === 0 ? (
+        <div>No activities yet</div>
+      ) : (
+        <>
+          <div className='mb-6 flex gap-0.5'>
+            <button
+              onClick={() => {
+                setSelectedPosts(!selectedPosts);
+              }}
+              className={cn(
+                'inline-flex items-center gap-2 rounded  px-3 py-2 hover:bg-[#274059]',
+                {
+                  'bg-[#274059]': !selectedPosts,
+                  'bg-[#172E43]': selectedPosts,
+                }
+              )}
+            >
+              <span>
+                {selectedPosts ? (
+                  <Checkbox className='h-5 w-5 text-brand-blue' />
+                ) : (
+                  <EyeOff className='h-5 w-5' />
+                )}
+              </span>
+              <span className={cn({ 'text-white': selectedPosts })}>Posts</span>
+            </button>
+            <button
+              onClick={() => {
+                setSelectedComments(!selectedComments);
+              }}
+              className={cn(
+                'inline-flex items-center gap-2 rounded  px-3 py-2 hover:bg-[#274059]',
+                {
+                  'bg-[#274059]': !selectedComments,
+                  'bg-[#172E43]': selectedComments,
+                }
+              )}
+            >
+              <span>
+                {selectedComments ? (
+                  <Checkbox className='h-5 w-5 text-brand-blue' />
+                ) : (
+                  <EyeOff className='h-5 w-5' />
+                )}
+              </span>
+              <span className={cn({ 'text-white': selectedComments })}>
+                Comments
+              </span>
+            </button>
+          </div>
+          <div className='space-y-4'>{content}</div>
+          <Button
+            className='my-6'
+            onClick={() => {
+              setPage((p) => p + 1);
+            }}
+            variant='gradient'
+          >
+            load more
+          </Button>
+        </>
       )}
-    </div>
+    </UserPageLayout>
   );
 };
 

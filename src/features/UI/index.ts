@@ -13,4 +13,5 @@ export { Input } from './Input';
 export { ButtonLink } from './links/ButtonLink';
 export { Logo } from './Logo';
 export { Progressbar } from './NProgress';
+export { Select } from './Select';
 export { Tooltip } from './Tooltip';

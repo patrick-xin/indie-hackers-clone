@@ -1,6 +1,5 @@
 import React from 'react';
 
-import { UserProfile } from '@/features/post/types';
 import {
   UserPageHeader,
   UserPageSidebar,
@@ -11,24 +10,18 @@ import { Footer, Header } from '../UI';
 
 export const UserPageLayout: React.FC<{
   children: React.ReactNode;
-  user: UserProfile;
-}> = ({ children, user }) => {
+}> = ({ children }) => {
   return (
     <div>
       <Header />
       <main className='p-4 md:p-0'>
         <div className='user-content'>
-          <UserPageHeader
-            image={user.image}
-            username={user.username}
-            detail={user.profile}
-            createdAt={user.createdAt}
-          />
+          <UserPageHeader />
           <div className='user-body z-100 md:mx-6'>
-            <UserPageAction username={user.username} />
+            <UserPageAction />
             {children}
           </div>
-          <UserPageSidebar username={user.username} userId={user.id} />
+          <UserPageSidebar />
         </div>
       </main>
       <Footer />

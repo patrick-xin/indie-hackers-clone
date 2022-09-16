@@ -1,7 +1,9 @@
 import cn from 'clsx';
+import { useRouter } from 'next/router';
 import { signIn, useSession } from 'next-auth/react';
 import { ImSpinner8 } from 'react-icons/im';
 import { IoIosMenu, IoIosSearch } from 'react-icons/io';
+import { Search } from 'tabler-icons-react';
 
 import { Logo } from '@/features/UI/Logo';
 import { ProfileMenuDropdown } from '@/features/user/components';
@@ -13,9 +15,11 @@ type Props = {
 
 export const Header = ({ isTransparent = false }: Props) => {
   const session = useSession();
+  const { push } = useRouter();
   const { data } = trpc.useQuery(['auth.me', { postId: undefined }], {
-    enabled: Boolean(session),
+    enabled: session.status === 'authenticated',
   });
+
   const renderUserStatus = () => {
     if (session.status === 'loading') {
       return <ImSpinner8 className='h-4 w-4 animate-spin' />;
@@ -50,8 +54,13 @@ export const Header = ({ isTransparent = false }: Props) => {
       <div className='hidden items-center gap-2 font-black text-white sm:flex sm:gap-4'>
         <Logo />
       </div>
-
-      {renderUserStatus()}
+      <div className='flex items-center gap-4'>
+        <Search
+          className='cursor-pointer hover:text-white'
+          onClick={() => push('/search')}
+        />
+        {renderUserStatus()}
+      </div>
     </div>
   );
 };
