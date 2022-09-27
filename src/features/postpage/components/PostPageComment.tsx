@@ -3,10 +3,11 @@ import { CommentOnUser } from '@/features/post/types';
 import { trpc } from '@/utils/trpc';
 
 type Props = {
-  rootComments;
+  rootComments: CommentOnUser[] | undefined;
   postId: string;
   commentsByParentId: { [key: string]: CommentOnUser[] };
   hasScrolled: boolean;
+  username: string;
 };
 
 export const PostPageComment = ({
@@ -14,6 +15,7 @@ export const PostPageComment = ({
   postId,
   commentsByParentId,
   hasScrolled,
+  username,
 }: Props) => {
   const utils = trpc.useContext();
   const { mutate: createComment } = trpc.useMutation('comment.create', {
@@ -22,12 +24,16 @@ export const PostPageComment = ({
     },
   });
   return (
-    <div className='not-prose text-lg font-normal text-brand-text'>
+    <div
+      className='not-prose text-lg font-normal text-brand-text'
+      id='post-comments'
+    >
       <CommentForm
         hasScrolled={hasScrolled}
         onSubmit={(content) => createComment({ content, postId })}
         initialValue=''
         buttonLabel='post comment'
+        username={username}
       />
       {rootComments && (
         <CommentList

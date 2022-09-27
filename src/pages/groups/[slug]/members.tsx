@@ -7,7 +7,7 @@ import { GROUP_MEMBER_COUNT } from '@/lib/constants';
 
 import { GroupPageLayout } from '@/features/layout/GroupPage';
 import { Button, Flex } from '@/features/UI';
-import { AvatarPopover } from '@/features/user/components';
+import { AvatarPopover } from '@/features/user/auth/components';
 import { trpc } from '@/utils/trpc';
 
 const GroupMembersPage = () => {

@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { add, compareAsc, format } from 'date-fns';
 import { useRouter } from 'next/router';
 import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -7,10 +8,11 @@ import z from 'zod';
 
 import { UserPageLayout } from '@/features/layout/UserPage';
 import { Alert, Button, ConfirmModal, CustomToast, Input } from '@/features/UI';
+import { useMe } from '@/features/user/auth/api';
 import { trpc } from '@/utils/trpc';
 
 const UserPage = () => {
-  const { data } = trpc.useQuery(['auth.me', { postId: undefined }]);
+  const { data } = useMe({ postId: undefined });
 
   return (
     <div>
@@ -20,7 +22,10 @@ const UserPage = () => {
         </div>
         {data && (
           <div className='space-y-4'>
-            <ChangeUsername username={data.user.username} />
+            <ChangeUsername
+              username={data.user.username}
+              usernameUpdatedAt={data.user.usernameUpdatedAt}
+            />
             <DeleteAccount username={data.user.username} />
           </div>
         )}
@@ -31,7 +36,13 @@ const UserPage = () => {
 
 export default UserPage;
 
-const ChangeUsername = ({ username }: { username: string }) => {
+const ChangeUsername = ({
+  username,
+  usernameUpdatedAt,
+}: {
+  username: string;
+  usernameUpdatedAt: Date | null;
+}) => {
   const router = useRouter();
   const schema = z
     .object({
@@ -70,7 +81,6 @@ const ChangeUsername = ({ username }: { username: string }) => {
   const {
     register,
     handleSubmit,
-    setFocus,
     formState: { errors },
   } = useForm<Field>({
     resolver: zodResolver(schema),
@@ -82,9 +92,13 @@ const ChangeUsername = ({ username }: { username: string }) => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
-    if (showInput) setFocus('username');
-  }, [setFocus, showInput]);
+    setErrorMessage('');
+  }, []);
   const utils = trpc.useContext();
+  const nextUpdateDate = usernameUpdatedAt
+    ? add(usernameUpdatedAt, { months: 2 })
+    : new Date();
+  const canChangeUsername = compareAsc(new Date(), nextUpdateDate) !== -1;
 
   return (
     <>
@@ -102,44 +116,63 @@ const ChangeUsername = ({ username }: { username: string }) => {
         </div>
       ) : (
         <div className='border-2 border-[#1f364d] p-6'>
-          <form className='space-y-4' onSubmit={handleSubmit(onSubmit)}>
-            <Input label='Curent Username' value={username} disabled />
-            <Input
-              error={errorMessage ? errorMessage : undefined}
-              label='New Username'
-              placeholder='Enter new username'
-              {...register('username')}
-            />
-            <p className='text-red-500'>{errors.username?.message}</p>
-            {errorMessage ? (
-              <p className='text-red-500'>{errorMessage}</p>
-            ) : null}
-            <Input
-              error={errors.repeatUsername?.message}
-              label='Repeat New Username'
-              placeholder='Type your new username again'
-              {...register('repeatUsername')}
-            />
-            <p className='text-red-500'>{errors.repeatUsername?.message}</p>
-            <p className='text-lg text-yellow-500'>
-              You can only change your username once every 90 days, so choose
-              wisely!
-            </p>
-            <div className='flex items-center gap-3'>
-              <Button variant='gradient' type='submit'>
-                Change Username
-              </Button>
-              <Button
-                variant='outline'
-                onClick={() => {
-                  setShowInpunt(false);
-                  setErrorMessage(null);
-                }}
-              >
-                Cancle
-              </Button>
+          {canChangeUsername ? (
+            <form className='space-y-4' onSubmit={handleSubmit(onSubmit)}>
+              <Input label='Curent Username' value={username} disabled />
+
+              <Input
+                disabled={!canChangeUsername}
+                error={errorMessage ? errorMessage : undefined}
+                label='New Username'
+                placeholder='Enter new username'
+                {...register('username')}
+              />
+              <p className='text-red-500'>{errors.username?.message}</p>
+              {errorMessage ? (
+                <p className='text-red-500'>{errorMessage}</p>
+              ) : null}
+              <Input
+                disabled={!canChangeUsername}
+                error={errors.repeatUsername?.message}
+                label='Repeat New Username'
+                placeholder='Type your new username again'
+                {...register('repeatUsername')}
+              />
+              <p className='text-red-500'>{errors.repeatUsername?.message}</p>
+
+              <p className='text-lg text-yellow-500'>
+                You can only change your username once every 90 days, so choose
+                wisely!
+              </p>
+
+              <div className='flex items-center gap-3'>
+                <Button
+                  variant='gradient'
+                  type='submit'
+                  disabled={!canChangeUsername}
+                >
+                  Change Username
+                </Button>
+                <Button
+                  variant='outline'
+                  onClick={() => {
+                    setShowInpunt(false);
+                    setErrorMessage(null);
+                  }}
+                >
+                  Cancle
+                </Button>
+              </div>
+            </form>
+          ) : (
+            <div className='space-y-4'>
+              <Input label='Curent Username' value={username} disabled />
+              <p className='text-lg text-yellow-500'>
+                You can change your username on{' '}
+                {format(nextUpdateDate, 'yyyy-MM-dd')}
+              </p>
             </div>
-          </form>
+          )}
         </div>
       )}
       <Toaster position='bottom-right' />

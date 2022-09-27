@@ -15,7 +15,9 @@ export function Progressbar({
 }) {
   let timer: NodeJS.Timeout | null = null;
   const router = useRouter();
+
   React.useEffect(() => {
+    if (router.pathname === '/search') return;
     if (options) {
       NProgress.configure(options);
     }

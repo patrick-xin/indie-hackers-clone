@@ -10,7 +10,13 @@ import { usePopper } from 'react-popper';
 
 import { MENU_LINKS, MenuLink } from '@/lib/constants';
 
-export const ProfileMenuDropdown = ({ user }: { user: User }) => {
+export const ProfileMenuDropdown = ({
+  user,
+  notificationsCounts,
+}: {
+  user: User;
+  notificationsCounts: number | undefined;
+}) => {
   const [referenceElement, setReferenceElement] =
     useState<null | HTMLButtonElement>(null);
   const [popperElement, setPopperElement] = useState<null | HTMLDivElement>(
@@ -26,14 +32,20 @@ export const ProfileMenuDropdown = ({ user }: { user: User }) => {
       },
     ],
   });
+
   return (
     <Popover>
       <Popover.Button
         ref={setReferenceElement}
-        className='rounded-lg p-1 focus:outline-none focus:ring-1 focus:ring-[#b6cce2]'
+        className='rounded-full bg-[#2c455e] p-2 focus:outline-none focus:ring-1 focus:ring-[#b6cce2]'
       >
         <div className='flex items-center gap-2'>
-          <div>{user.username}</div>
+          {notificationsCounts && notificationsCounts > 0 ? (
+            <div className='flex h-6 w-6 items-center justify-center rounded-full bg-brand-blue text-sm text-white'>
+              {notificationsCounts}
+            </div>
+          ) : null}
+
           <Image
             src={user.image}
             className='rounded-full'

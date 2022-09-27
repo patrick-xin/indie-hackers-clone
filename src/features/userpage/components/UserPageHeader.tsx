@@ -1,24 +1,13 @@
 import { formatDistance } from 'date-fns';
 import Image from 'next/future/image';
 import { useRouter } from 'next/router';
-import { useSession } from 'next-auth/react';
 import { Edit } from 'tabler-icons-react';
 
-import { IconButton } from '@/features/UI';
-import { trpc } from '@/utils/trpc';
+import { IconButton, Separator } from '@/features/UI';
+import { useGetUserInfo } from '@/features/user/unauth/api';
 
 export const UserPageHeader = () => {
-  const { query } = useRouter();
-  const usernameQuery = query && (query['@username'] as string);
-  const username = usernameQuery?.split('@')[1] as string;
-
-  const { data: user } = trpc.useQuery(['user.username', { username }], {
-    enabled: Boolean(query) && Boolean(username),
-  });
-
-  const { data: session } = useSession();
-
-  const isOwner = session?.user.username === username;
+  const { data: user, isOwner } = useGetUserInfo();
   const { push } = useRouter();
 
   return (
@@ -38,7 +27,7 @@ export const UserPageHeader = () => {
         <div>
           <div className='flex items-center gap-4'>
             <h3 className='py-4 text-center text-2xl text-gray-100 md:text-left md:text-3xl'>
-              {username}
+              {user?.username}
               {user?.profile?.fullName && (
                 <span className='mx-4 text-brand-text'>
                   {user.profile.fullName}
@@ -50,7 +39,7 @@ export const UserPageHeader = () => {
                 size='medium'
                 rounded='large'
                 variant='gradient'
-                onClick={() => push(`/@${username}/edit`)}
+                onClick={() => push(`/@${user?.username}/edit`)}
                 icon={<Edit />}
               />
             )}
@@ -78,8 +67,4 @@ export const UserPageHeader = () => {
       </div>
     </header>
   );
-};
-
-const Separator = () => {
-  return <span className='mx-1.5'>·</span>;
 };

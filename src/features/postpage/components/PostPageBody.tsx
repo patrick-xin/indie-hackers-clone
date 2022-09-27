@@ -1,7 +1,7 @@
 import { Post } from '@prisma/client';
 import ReactMarkdown from 'react-markdown';
 
-import { LinkContent } from '@/features/postpage/sections/components/LinkContent';
+import { LinkContent } from '@/features/postpage/components/LinkContent';
 
 type Props = {
   post: Post;

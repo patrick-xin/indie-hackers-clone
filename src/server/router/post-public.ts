@@ -1,5 +1,4 @@
 import { Prisma } from '@prisma/client';
-import { TRPCError } from '@trpc/server';
 import {
   addDays,
   endOfMonth,
@@ -58,7 +57,7 @@ export const publicPostRouter = createRouter()
   .query('by-slug', {
     input: z.object({ username: z.string(), slug: z.string() }),
     async resolve({ ctx, input: { username, slug } }) {
-      const user = await ctx.prisma.user.findUnique({
+      const user = await ctx.prisma.user.findUniqueOrThrow({
         where: {
           username,
         },
@@ -66,7 +65,7 @@ export const publicPostRouter = createRouter()
           posts: {
             where: { slug },
             include: {
-              author: { select: { username: true, image: true } },
+              author: { select: { username: true, image: true, id: true } },
               comments: {
                 include: { user: { select: { username: true, image: true } } },
               },
@@ -77,11 +76,7 @@ export const publicPostRouter = createRouter()
           },
         },
       });
-      const post = user?.posts[0];
-
-      if (!post) {
-        throw new TRPCError({ code: 'NOT_FOUND' });
-      }
+      const post = user.posts[0];
 
       return post;
     },
@@ -403,23 +398,41 @@ export const publicPostRouter = createRouter()
   .query('search', {
     input: z.object({
       query: z.string(),
+      order: z.enum(['recent', 'popular', 'oldest', 'discussed']),
     }),
-    async resolve({ ctx, input: { query } }) {
-      const comments = await ctx.prisma.comment.findMany({
-        where: { content: { contains: query } },
+    async resolve({ ctx, input: { query, order } }) {
+      const orderBy = () => {
+        const _orderDesc = 'desc' as Prisma.SortOrder;
+        const _orderAsc = 'asc' as Prisma.SortOrder;
+        if (order === 'recent') return { createdAt: _orderDesc };
+        if (order === 'oldest') return { createdAt: _orderAsc };
+        if (order === 'popular') return { likes: { _count: _orderDesc } };
+        if (order === 'discussed')
+          return { post: { comments: { _count: _orderDesc } } };
+        return { comments: { _count: order } };
+      };
+      const posts = await ctx.prisma.post.findMany({
+        where: {
+          content: { contains: query },
+          AND: { title: { contains: query } },
+        },
         take: 10,
+        orderBy: orderBy(),
         include: {
-          user: { select: { username: true, image: true } },
-          post: {
-            include: {
-              _count: { select: { comments: true, likes: true } },
-              author: { select: { username: true } },
-            },
+          author: { select: { username: true, image: true } },
+          _count: { select: { comments: true, likes: true } },
+          comments: {
+            where: { content: { contains: query } },
+            take: 1,
+            orderBy: { createdAt: 'desc' },
           },
         },
       });
-      const commentsCount = await ctx.prisma.comment.aggregate({
-        where: { content: { contains: query } },
+      const postsCount = await ctx.prisma.post.aggregate({
+        where: {
+          content: { contains: query },
+          OR: { title: { contains: query } },
+        },
         _count: true,
       });
       const groups = await ctx.prisma.group.findMany({
@@ -440,8 +453,8 @@ export const publicPostRouter = createRouter()
         _count: true,
       });
       return {
-        comments,
-        commentsCount,
+        posts,
+        postsCount,
         groups,
         groupsCount,
         users,
@@ -468,22 +481,25 @@ export const publicPostRouter = createRouter()
       };
       const _page = page ? page - 1 : 1;
       const pageCount = 10;
-      const comments = await ctx.prisma.comment.findMany({
-        where: { content: { contains: query } },
+      const posts = await ctx.prisma.post.findMany({
+        where: {
+          content: { contains: query },
+          AND: { title: { contains: query } },
+        },
         skip: _page * pageCount,
         take: pageCount,
         orderBy: orderBy(),
         include: {
-          user: { select: { username: true, image: true } },
-          post: {
-            include: {
-              _count: { select: { comments: true, likes: true } },
-              author: { select: { username: true } },
-            },
+          author: { select: { username: true, image: true } },
+          _count: { select: { comments: true, likes: true } },
+          comments: {
+            where: { content: { contains: query } },
+            take: 1,
+            orderBy: { createdAt: 'desc' },
           },
         },
       });
-      return comments;
+      return posts;
     },
   })
   .query('search-groups', {

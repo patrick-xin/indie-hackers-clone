@@ -1,15 +1,20 @@
+import { createSSGHelpers } from '@trpc/react/ssg';
+import { TRPCError } from '@trpc/server';
 import cn from 'clsx';
 import { format } from 'date-fns';
 import { AnimatePresence, motion } from 'framer-motion';
+import { GetServerSidePropsContext } from 'next';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
 import { useMemo, useState } from 'react';
+import superjson from 'superjson';
 import { Checkbox, EyeOff } from 'tabler-icons-react';
 
 import { FeedItemLoaders } from '@/features/homepage/sections';
 import { UserPageLayout } from '@/features/layout/UserPage';
 import { Combined } from '@/features/post/types';
 import { Button } from '@/features/UI';
+import { appRouter } from '@/server/router';
+import { createContext } from '@/server/router/context';
 import { trpc } from '@/utils/trpc';
 
 const container = {
@@ -23,10 +28,8 @@ const container = {
   },
 };
 
-const UserHistoryPage = () => {
+const UserHistoryPage = ({ username }: { username: string }) => {
   const [page, setPage] = useState(0);
-  const { asPath } = useRouter();
-  const username = asPath.split('/')[1].slice(1) as string;
 
   const { data, isLoading } = trpc.useQuery(
     [
@@ -38,7 +41,6 @@ const UserHistoryPage = () => {
       },
     ],
     {
-      enabled: Boolean(username),
       keepPreviousData: true,
       refetchOnMount: false,
       refetchOnWindowFocus: false,
@@ -83,9 +85,13 @@ const UserHistoryPage = () => {
             >
               {comments.map((c) => (
                 <UserFeedComment
-                  {...c}
-                  username={data?.user.username}
+                  commentId={c.id}
                   key={c.id}
+                  content={c.content}
+                  createdAt={c.createdAt}
+                  slug={c.post.slug}
+                  username={c.post.author.username}
+                  title={c.post.title}
                 />
               ))}
             </motion.div>
@@ -135,11 +141,12 @@ const UserHistoryPage = () => {
               if (f.type === 'comment')
                 return (
                   <UserFeedComment
+                    commentId={f.id}
                     key={f.id}
                     content={f.content}
                     createdAt={f.createdAt}
                     slug={f.post.slug}
-                    username={data?.user.username}
+                    username={f.post.author.username}
                     title={f.post.title}
                   />
                 );
@@ -225,7 +232,21 @@ const UserHistoryPage = () => {
   );
 };
 
-const UserFeedComment = ({ title, content, createdAt, username, slug }) => {
+const UserFeedComment = ({
+  title,
+  content,
+  createdAt,
+  username,
+  slug,
+  commentId,
+}: {
+  title: string;
+  content: string;
+  createdAt: Date;
+  username: string;
+  slug: string;
+  commentId: string;
+}) => {
   return (
     <div>
       <header className='flex gap-2'>
@@ -236,9 +257,14 @@ const UserFeedComment = ({ title, content, createdAt, username, slug }) => {
         </Link>
 
         <span>
-          {' '}
-          replied to a comment in{' '}
-          <span className='hover:underline hover:decoration-brand-blue'>
+          replied to a
+          <span className='text-white decoration-2 underline-offset-4 hover:underline hover:decoration-brand-blue'>
+            <Link href={`/@${username}/${slug}#${commentId}`}>
+              <a> comment</a>
+            </Link>
+          </span>
+          <span> in </span>
+          <span className='text-white decoration-2 underline-offset-4 hover:underline hover:decoration-brand-blue'>
             <Link href={`/@${username}/${slug}`}>
               <a>{title}</a>
             </Link>
@@ -255,7 +281,7 @@ const UserFeedComment = ({ title, content, createdAt, username, slug }) => {
 
 const UserFeedPost = ({ title, content, createdAt, username, slug }) => {
   return (
-    <div>
+    <div className=''>
       <header className='flex gap-2'>
         <Link href='/'>
           <a className='uppercase text-brand-blue hover:underline hover:decoration-brand-blue'>
@@ -264,13 +290,13 @@ const UserFeedPost = ({ title, content, createdAt, username, slug }) => {
         </Link>
 
         <Link href={`/@${username}/${slug}`}>
-          <a className='hover:underline hover:decoration-brand-text'>
+          <a className='decoration-2 underline-offset-4 hover:underline hover:decoration-brand-text'>
             created a post
           </a>
         </Link>
       </header>
 
-      <div className='user-feed relative mt-6 space-y-4 bg-[#172E43] p-4'>
+      <div className='user-feed relative z-10 mt-6 space-y-4 bg-[#172E43] p-4'>
         <h3 className='text-2xl text-gray-100'>
           <Link href={`/@${username}/${slug}`}>
             <a className='hover:underline hover:decoration-gray-100'>{title}</a>
@@ -283,3 +309,40 @@ const UserFeedPost = ({ title, content, createdAt, username, slug }) => {
 };
 
 export default UserHistoryPage;
+
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const ssg = createSSGHelpers({
+    router: appRouter,
+    ctx: await createContext(),
+    transformer: superjson,
+  });
+
+  const usernameParam = context.params?.['@username'] as string;
+  const username = usernameParam.split('@')[1];
+
+  try {
+    await ssg.fetchQuery('user.username-history', {
+      username,
+      page: 0,
+      pageCount: 2,
+    });
+  } catch (error) {
+    if (error instanceof TRPCError) {
+      if (error.code === 'INTERNAL_SERVER_ERROR') {
+        return {
+          redirect: {
+            destination: '/404',
+            permanent: false,
+          },
+        };
+      }
+    }
+  }
+
+  return {
+    props: {
+      trpcState: ssg.dehydrate(),
+      username,
+    },
+  };
+}

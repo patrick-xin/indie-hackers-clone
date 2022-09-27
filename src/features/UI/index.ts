@@ -14,4 +14,5 @@ export { ButtonLink } from './links/ButtonLink';
 export { Logo } from './Logo';
 export { Progressbar } from './NProgress';
 export { Select } from './Select';
+export { Separator } from './Seperator';
 export { Tooltip } from './Tooltip';

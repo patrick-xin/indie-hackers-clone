@@ -1,19 +1,15 @@
 import { Check } from 'tabler-icons-react';
 
 import { UserPageLayout } from '@/features/layout/UserPage';
+import { useReadAllNotifications } from '@/features/notification/api';
 import { NotificationList } from '@/features/notification/components';
 import { Button } from '@/features/UI';
-import { trpc } from '@/utils/trpc';
+import { useMe } from '@/features/user/auth/api';
 
 const UserPage = () => {
-  const { data } = trpc.useQuery(['auth.me', { postId: undefined }]);
+  const { data } = useMe({ postId: undefined });
+  const { readAllNotifications, isLoading } = useReadAllNotifications();
 
-  const utils = trpc.useContext();
-  const { mutate } = trpc.useMutation('auth.read-notification-all', {
-    onSuccess: () => {
-      utils.invalidateQueries('auth.me');
-    },
-  });
   return (
     <UserPageLayout>
       <div className='mb-8 flex gap-4'>
@@ -23,7 +19,12 @@ const UserPage = () => {
             : `${data?.notificationsCounts} Unread Notifications`}
         </h3>
         {data?.notificationsCounts !== 0 && (
-          <Button variant='outline' icon={<Check />} onClick={() => mutate()}>
+          <Button
+            disabled={isLoading}
+            variant='outline'
+            icon={<Check />}
+            onClick={() => readAllNotifications()}
+          >
             Mark All Read
           </Button>
         )}

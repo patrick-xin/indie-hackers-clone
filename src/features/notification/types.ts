@@ -6,6 +6,7 @@ export interface IMessage {
   post: {
     title: string;
     slug: string;
+    author: string;
   };
 }
 

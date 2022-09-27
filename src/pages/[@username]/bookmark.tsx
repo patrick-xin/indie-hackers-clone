@@ -5,19 +5,16 @@ import superjson from 'superjson';
 
 import { UserPageLayout } from '@/features/layout/UserPage';
 import { BookmarkCard } from '@/features/post/components';
+import { useGetUserBookmarks } from '@/features/user/unauth/api';
 import { appRouter } from '@/server/router';
 import { createContext } from '@/server/router/context';
-import { trpc } from '@/utils/trpc';
 
 type Props = {
   username: string;
 };
 
 const UserPage = ({ username }: Props) => {
-  const { data: user } = trpc.useQuery([
-    'user.username-bookmark',
-    { username },
-  ]);
+  const { data: user } = useGetUserBookmarks({ username });
 
   return (
     <UserPageLayout>
@@ -50,20 +47,13 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   const username = usernameParam.split('@')[1];
 
   try {
-    await ssg.prefetchQuery('user.username-bookmark', { username });
+    await ssg.fetchQuery('user.username-bookmark', { username });
   } catch (error) {
     if (error instanceof TRPCError) {
-      if (error.code === 'NOT_FOUND')
-        return {
-          redirect: {
-            destination: '/404',
-            permanent: false,
-          },
-        };
       if (error.code === 'INTERNAL_SERVER_ERROR') {
         return {
           redirect: {
-            destination: '/500',
+            destination: '/404',
             permanent: false,
           },
         };

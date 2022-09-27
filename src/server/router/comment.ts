@@ -33,10 +33,22 @@ export const commentRouter = createRouter()
     }),
     async resolve({ ctx, input: { content, postId, parentId } }) {
       try {
-        const post = await ctx.prisma.post.findUnique({
+        const post = await ctx.prisma.post.findUniqueOrThrow({
           where: { id: postId },
-          include: { author: { select: { id: true } } },
+          include: { author: { select: { id: true, username: true } } },
         });
+        if (post.author.id === ctx.session?.user.userId) {
+          const comment = await ctx.prisma.comment.create({
+            data: {
+              content,
+              parentId,
+              postId,
+              userId: ctx.session?.user.userId as string,
+            },
+          });
+
+          return comment;
+        }
         const comment = await ctx.prisma.comment.create({
           data: {
             content,
@@ -48,12 +60,52 @@ export const commentRouter = createRouter()
                 notificationType: 'COMMENT',
                 message: {
                   commentedBy: ctx.session?.user.username,
-                  post: { slug: post?.slug, title: post?.title },
+                  post: {
+                    slug: post.slug,
+                    title: post.title,
+                    author: post.author.username,
+                  },
                 },
-                user: { connect: { id: post?.author.id } },
+                user: { connect: { id: post.author.id } },
               },
             },
           },
+        });
+
+        return comment;
+      } catch (error) {
+        throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });
+      }
+    },
+  })
+  .mutation('update', {
+    input: z.object({
+      commentId: z.string(),
+      content: z.string(),
+    }),
+    async resolve({ ctx, input: { commentId, content } }) {
+      try {
+        const comment = await ctx.prisma.comment.update({
+          where: { id: commentId },
+          data: {
+            content,
+          },
+        });
+
+        return comment;
+      } catch (error) {
+        throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });
+      }
+    },
+  })
+  .mutation('delete', {
+    input: z.object({
+      commentId: z.string(),
+    }),
+    async resolve({ ctx, input: { commentId } }) {
+      try {
+        const comment = await ctx.prisma.comment.delete({
+          where: { id: commentId },
         });
 
         return comment;

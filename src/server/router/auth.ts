@@ -43,10 +43,11 @@ export const authRouter = createRouter()
 
       const notifications = (await ctx.prisma.notification.findMany({
         where: { user: { username: ctx.session?.user.username } },
+        orderBy: { createdAt: 'desc' },
       })) as INotification[];
 
       if (postId) {
-        const post = await ctx.prisma.post.findUnique({
+        const post = await ctx.prisma.post.findUniqueOrThrow({
           where: { id: postId },
           include: {
             markedBy: { select: { username: true } },
@@ -55,12 +56,18 @@ export const authRouter = createRouter()
         });
 
         const canBookmark =
-          post?.markedBy.map((m) => m.username).indexOf(username as string) ??
+          post.markedBy.map((m) => m.username).indexOf(username as string) ??
           -1;
         const canLike =
-          post?.likes.map((m) => m.user.username).indexOf(username as string) ??
+          post.likes.map((m) => m.user.username).indexOf(username as string) ??
           -1;
-        return { user, canLike, canBookmark, notifications };
+        return {
+          user,
+          canLike,
+          canBookmark,
+          notifications,
+          isFeaturedPost: post.isFeatured,
+        };
       }
 
       return { user, notifications, notificationsCounts: notifications.length };
@@ -120,6 +127,7 @@ export const authRouter = createRouter()
         where: { id: ctx.session?.user.userId },
         data: {
           username,
+          usernameUpdatedAt: new Date(),
         },
       });
 
@@ -165,6 +173,44 @@ export const authRouter = createRouter()
                 },
               },
             },
+          },
+        });
+      } catch (error) {
+        throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });
+      }
+    },
+  })
+  .mutation('pin-featured-post', {
+    input: z.object({
+      postId: z.string(),
+    }),
+    async resolve({ ctx, input: { postId } }) {
+      try {
+        await ctx.prisma.post.update({
+          where: {
+            id: postId,
+          },
+          data: {
+            isFeatured: true,
+          },
+        });
+      } catch (error) {
+        throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });
+      }
+    },
+  })
+  .mutation('unpin-featured-post', {
+    input: z.object({
+      postId: z.string(),
+    }),
+    async resolve({ ctx, input: { postId } }) {
+      try {
+        await ctx.prisma.post.update({
+          where: {
+            id: postId,
+          },
+          data: {
+            isFeatured: false,
           },
         });
       } catch (error) {

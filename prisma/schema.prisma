@@ -49,29 +49,34 @@ model Session {
 }
 
 model User {
-    id            String         @id @default(cuid())
-    name          String?
-    email         String?        @unique
-    emailVerified DateTime?
-    image         String
-    username      String         @unique
-    accounts      Account[]
-    sessions      Session[]
-    profile       Profile?
-    createdAt     DateTime       @default(now())
-    interest      Category[]
-    notification  Notification[]
-    followers     Follows[]      @relation("follower")
-    followings    Follows[]      @relation("following")
-    feed          Feed[]
-    comment       Comment[]
-    posts         Post[]
-    postLikes     PostLike[]
-    commentLikes  CommentLike[]
-    groups        Group[]
-    role          Role           @default(viewer)
-    group         Group[]        @relation("moderator")
-    bookmarks     Post[]         @relation("bookmark")
+    id                      String         @id @default(cuid())
+    name                    String?
+    email                   String?        @unique
+    emailVerified           DateTime?
+    image                   String
+    username                String         @unique
+    accounts                Account[]
+    sessions                Session[]
+    profile                 Profile?
+    createdAt               DateTime       @default(now())
+    usernameUpdatedAt       DateTime?
+    interest                Category[]
+    notification            Notification[]
+    followers               Follows[]      @relation("follower")
+    followings              Follows[]      @relation("following")
+    feed                    Feed[]
+    comment                 Comment[]
+    posts                   Post[]
+    postLikes               PostLike[]
+    commentLikes            CommentLike[]
+    groups                  Group[]
+    role                    Role           @default(viewer)
+    group                   Group[]        @relation("moderator")
+    bookmarks               Post[]         @relation("bookmark")
+    notificationOfFollowers Boolean        @default(true)
+    notificationOfPost      Boolean        @default(true)
+    report                  UserReport?    @relation(fields: [reportId], references: [id])
+    reportId                String?
 }
 
 enum Role {
@@ -111,28 +116,42 @@ model VerificationToken {
 }
 
 model Post {
-    id          String     @id @default(cuid())
+    id          String      @id @default(cuid())
     slug        String
     title       String
-    view_count  Int        @default(value: 0)
-    createdAt   DateTime   @default(now())
-    publishedAt DateTime   @default(now())
-    updatedAt   DateTime   @updatedAt
-    isPublished Boolean    @default(false)
+    view_count  Int         @default(value: 0)
+    createdAt   DateTime    @default(now())
+    publishedAt DateTime    @default(now())
+    updatedAt   DateTime    @updatedAt
+    isPublished Boolean     @default(false)
     comments    Comment[]
     likes       PostLike[]
-    author      User       @relation(fields: [authorId], references: [id])
+    author      User        @relation(fields: [authorId], references: [id])
     authorId    String
     content     String
     category    Category[]
     categoryId  String?
     feed        Feed[]
     status      PostStatus
-    postType    PostType   @default(ARTICLE)
-    isFeatured  Boolean    @default(false)
-    group       Group?     @relation(fields: [groupId], references: [id])
+    postType    PostType    @default(ARTICLE)
+    isFeatured  Boolean     @default(false)
+    group       Group?      @relation(fields: [groupId], references: [id])
     groupId     String?
-    markedBy    User[]     @relation("bookmark")
+    markedBy    User[]      @relation("bookmark")
+    report      PostReport? @relation(fields: [reportId], references: [id])
+    reportId    String?
+}
+
+model PostReport {
+    id     String @id @default(cuid())
+    post   Post[]
+    reason String
+}
+
+model UserReport {
+    id     String @id @default(cuid())
+    user   User[]
+    reason String
 }
 
 enum PostStatus {
@@ -159,6 +178,7 @@ model Comment {
     post         Post          @relation(fields: [postId], references: [id])
     postId       String
     createdAt    DateTime      @default(now())
+    updatedAt    DateTime      @default(now())
     content      String
     user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
     userId       String

@@ -288,4 +288,25 @@ export const privatePostRouter = createRouter()
 
       return updatedPost;
     },
+  })
+  .mutation('report', {
+    input: z.object({
+      id: z.string(),
+      reason: z.string(),
+    }),
+    async resolve({ ctx, input: { id, reason } }) {
+      const post = await ctx.prisma.post.update({
+        where: {
+          id,
+        },
+        data: {
+          report: {
+            create: {
+              reason,
+            },
+          },
+        },
+      });
+      return post;
+    },
   });

@@ -6,7 +6,7 @@ import { IoIosMenu, IoIosSearch } from 'react-icons/io';
 import { Search } from 'tabler-icons-react';
 
 import { Logo } from '@/features/UI/Logo';
-import { ProfileMenuDropdown } from '@/features/user/components';
+import { ProfileMenuDropdown } from '@/features/user/auth/components';
 import { trpc } from '@/utils/trpc';
 
 type Props = {
@@ -24,7 +24,12 @@ export const Header = ({ isTransparent = false }: Props) => {
     if (session.status === 'loading') {
       return <ImSpinner8 className='h-4 w-4 animate-spin' />;
     } else if (session.status === 'authenticated' && data && data.user) {
-      return <ProfileMenuDropdown user={data.user} />;
+      return (
+        <ProfileMenuDropdown
+          user={data.user}
+          notificationsCounts={data.notificationsCounts}
+        />
+      );
     } else {
       return <LoginRegister />;
     }
@@ -56,7 +61,7 @@ export const Header = ({ isTransparent = false }: Props) => {
       </div>
       <div className='flex items-center gap-4'>
         <Search
-          className='cursor-pointer hover:text-white'
+          className='h-5 w-5 cursor-pointer hover:text-white'
           onClick={() => push('/search')}
         />
         {renderUserStatus()}

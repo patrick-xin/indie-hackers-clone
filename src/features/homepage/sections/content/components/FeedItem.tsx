@@ -5,7 +5,7 @@ import Image from 'next/future/image';
 import Link from 'next/link';
 import { BiChevronUp, BiComment } from 'react-icons/bi';
 
-import { AvatarPopover } from '@/features/user/components';
+import { AvatarPopover } from '@/features/user/auth/components';
 import { trpc } from '@/utils/trpc';
 
 type Props = {
@@ -43,6 +43,7 @@ export const FeedItem = ({ post }: Props) => {
         />
         <div className='hidden items-center p-0.5 sm:flex'>
           <Comments
+            slug={post.slug}
             count={post._count.comments}
             postType={post.postType}
             content={post.content}
@@ -114,29 +115,41 @@ const Comments = ({
   postType,
   content,
   username,
+  slug,
 }: {
   count: number;
   postType: 'LINK' | 'ARTICLE';
   content: string;
   username: string | null;
+  slug: string;
 }) => {
   const linkContent = postType === 'LINK' && JSON.parse(content);
 
   return (
-    <div className='flex items-center gap-2'>
-      <div className='rounded hover:bg-[#1E364D] hover:text-white sm:p-1'>
-        {postType === 'LINK' ? (
-          <a href={linkContent.ogUrl} rel='nofollow noreferrer' target='_blank'>
-            {linkContent.ogUrl}
-          </a>
-        ) : (
-          <div>{username && username}</div>
-        )}
-      </div>
-      <div className='rounded text-[#63809c] hover:bg-[#1E364D] hover:text-gray-400 sm:p-1'>
-        <div className='text-sm group-hover:text-white'>· {count} comments</div>
-      </div>
-    </div>
+    <Link href={`/@${username}/${slug}#post-comments`}>
+      <a>
+        <div className='flex items-center gap-2'>
+          <div className='rounded hover:bg-[#1E364D] hover:text-white sm:p-1'>
+            {postType === 'LINK' ? (
+              <a
+                href={linkContent.ogUrl}
+                rel='nofollow noreferrer'
+                target='_blank'
+              >
+                {linkContent.ogUrl}
+              </a>
+            ) : (
+              <div>{username && username}</div>
+            )}
+          </div>
+          <div className='rounded text-[#63809c] hover:bg-[#1E364D] hover:text-gray-400 sm:p-1'>
+            <div className='text-sm group-hover:text-white'>
+              · {count} comments
+            </div>
+          </div>
+        </div>
+      </a>
+    </Link>
   );
 };
 

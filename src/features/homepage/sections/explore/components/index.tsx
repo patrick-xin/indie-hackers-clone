@@ -4,6 +4,7 @@ import { IoClose } from 'react-icons/io5';
 
 import { TOPICKS } from '@/_mocks_/data';
 import { ButtonLink } from '@/features/UI';
+import { XIcon } from '@/features/UI/svg';
 
 export const ExploreSection = () => {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -44,13 +45,7 @@ export const ExploreSection = () => {
                 onClick={() => setShow(true)}
                 className='transition-all ease-linear hover:rotate-90'
               >
-                <svg
-                  xmlns='http://www.w3.org/2000/svg'
-                  viewBox='0 0 24 24'
-                  className='h-4 w-4 fill-current text-white hover:text-brand-blue'
-                >
-                  <path d='M24 9h-9v-9h-6v9h-9v6h9v9h6v-9h9z' />
-                </svg>
+                <XIcon className='h-4 w-4 text-white hover:text-brand-blue' />
               </button>
             </div>
           </div>

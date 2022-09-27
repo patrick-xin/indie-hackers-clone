@@ -9,7 +9,8 @@ import { usePopper } from 'react-popper';
 
 import { Button } from '@/features/UI';
 import { AuthWrapper } from '@/features/UI/AuthWrapper';
-import { trpc } from '@/utils/trpc';
+import { useFollowUser, useUnFollowUser } from '@/features/user/auth/api';
+import { useGetUserFollows } from '@/features/user/unauth/api';
 
 type Props = {
   user: Pick<User, 'image' | 'username'>;
@@ -17,26 +18,11 @@ type Props = {
 };
 
 export const AvatarPopover = ({ user, size = 'normal' }: Props) => {
-  const utils = trpc.useContext();
-  const { data } = trpc.useQuery([
-    'user.username-follows',
-    { username: user.username },
-  ]);
   const { data: session } = useSession();
-  const { mutate: follow, isLoading: isFollowingLoading } = trpc.useMutation(
-    'user.follow',
-    {
-      onSuccess: async () => {
-        utils.invalidateQueries(['user.username-follows']);
-      },
-    }
-  );
-  const { mutate: unfollow, isLoading: isUnfollowingLoading } =
-    trpc.useMutation('user.unfollow', {
-      onSuccess: async () => {
-        utils.invalidateQueries(['user.username-follows']);
-      },
-    });
+  const { data } = useGetUserFollows({ username: user.username });
+  const { follow, isFollowingLoading } = useFollowUser();
+  const { unfollow, isUnfollowingLoading } = useUnFollowUser();
+
   const [referenceElement, setReferenceElement] =
     useState<null | HTMLButtonElement>(null);
   const [popperElement, setPopperElement] = useState<null | HTMLDivElement>(
@@ -64,6 +50,7 @@ export const AvatarPopover = ({ user, size = 'normal' }: Props) => {
       </Popover.Button>
 
       <Popover.Panel
+        className='z-999'
         ref={setPopperElement}
         style={styles.popper}
         {...attributes.popper}
@@ -76,7 +63,7 @@ export const AvatarPopover = ({ user, size = 'normal' }: Props) => {
                   <Image
                     priority
                     src={user.image ?? '/avatat.webp'}
-                    className='rounded-full'
+                    className='z-auto rounded-full'
                     width={60}
                     height={60}
                     alt='user-avatar'

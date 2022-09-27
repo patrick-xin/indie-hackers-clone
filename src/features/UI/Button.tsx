@@ -26,6 +26,7 @@ const roundedClassnames = {
 // TODO extract more buttons
 const variantClassnames = {
   primary: 'bg-brand-blue',
+  danger: 'bg-red-500/80 text-red-500',
   link: 'text-base sm:text-lg border-b-3 hover:border-b-3 hover:text-white',
   underline:
     'border-b border-[#4799eb] rounded-none hover:bg-[#4799eb] hover:rounded',

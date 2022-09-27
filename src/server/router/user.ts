@@ -18,10 +18,8 @@ export const userRouter = createRouter()
           },
           include: {
             _count: { select: { comment: true, postLikes: true } },
-
             followers: true,
             followings: true,
-
             profile: {
               select: {
                 bio: true,
@@ -107,19 +105,22 @@ export const userRouter = createRouter()
               take: pageCount,
               orderBy: { createdAt: 'desc' },
               include: {
-                post: { select: { slug: true, id: true, title: true } },
+                post: {
+                  select: {
+                    slug: true,
+                    id: true,
+                    title: true,
+                    author: { select: { username: true, id: true } },
+                  },
+                },
               },
             },
             posts: {
               skip: page * pageCount,
               take: pageCount,
               orderBy: { createdAt: 'desc' },
-              select: {
-                title: true,
-                slug: true,
-                publishedAt: true,
-                content: true,
-                id: true,
+              include: {
+                author: { select: { username: true, id: true } },
               },
             },
           },

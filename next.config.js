@@ -8,7 +8,6 @@ const nextConfig = {
   eslint: {
     dirs: ['src'],
   },
-  experimental: { images: { allowFutureImage: true } },
   images: {
     domains: ['avatars.githubusercontent.com', 'cloudflare-ipfs.com'],
   },

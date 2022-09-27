@@ -35,7 +35,7 @@ export const PostFeeds = ({
         ) : posts.length === 0 ? (
           <Alert
             className='absolute top-0 left-0'
-            message='No more posts.'
+            message='No one created a post yet!'
             type='warning'
           />
         ) : (

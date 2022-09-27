@@ -44,6 +44,7 @@ module.exports = {
       },
       zIndex: {
         100: '100',
+        999: '999',
       },
       typography: ({ theme }) => ({
         brand: {

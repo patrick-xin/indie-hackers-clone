@@ -11,8 +11,9 @@ import {
   PostPageComment,
   PostPageFooter,
   PostPageHeader,
-} from '@/features/postpage';
-import { PostPageBody } from '@/features/postpage/sections/components/PostPageBody';
+  PostPageReportModal,
+} from '@/features/postpage/components';
+import { PostPageBody } from '@/features/postpage/components/PostPageBody';
 import { FullScreenLoader } from '@/features/UI';
 import { appRouter } from '@/server/router';
 import { createContext } from '@/server/router/context';
@@ -42,28 +43,39 @@ const UserPostPage = ({ username, slug }: Props) => {
   }, [post]);
   const [hasScrolled, setScrolled] = useState(false);
   const rootComments = post && commentsByParentId['null'];
+  const [openModal, setOpenModal] = useState(false);
+
   if (isLoading || !post) return <FullScreenLoader />;
   return (
-    <div className='post-page max-w-full md:px-8'>
-      <PostPageHeader post={post} />
-      <div className='post-page-main flex flex-col'>
-        <PostPageBody post={post} />
-        <PostPageFooter post={post} />
-        <PostPageComment
-          rootComments={rootComments}
+    <>
+      <div className='post-page max-w-full md:px-8'>
+        <PostPageHeader post={post} />
+        <div className='post-page-main flex flex-col'>
+          <PostPageBody post={post} />
+          <PostPageFooter post={post} />
+          <PostPageComment
+            rootComments={rootComments}
+            postId={post.id}
+            commentsByParentId={commentsByParentId}
+            hasScrolled={hasScrolled}
+            username={post.author.username}
+          />
+        </div>
+        <PostPageAction
           postId={post.id}
-          commentsByParentId={commentsByParentId}
-          hasScrolled={hasScrolled}
+          likes={post._count.likes}
+          comments={post._count.comments}
+          bookmarks={post._count.markedBy}
+          setScrolled={() => setScrolled(true)}
+          openModal={() => setOpenModal(true)}
         />
       </div>
-      <PostPageAction
+      <PostPageReportModal
         postId={post.id}
-        likes={post._count.likes}
-        comments={post._count.comments}
-        bookmarks={post._count.markedBy}
-        setScrolled={() => setScrolled(true)}
+        openModal={openModal}
+        setOpenModal={() => setOpenModal(!openModal)}
       />
-    </div>
+    </>
   );
 };
 

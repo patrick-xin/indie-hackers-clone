@@ -9,16 +9,16 @@ import { X } from 'tabler-icons-react';
 import z from 'zod';
 
 import { Button, Footer, Header, IconButton, Input } from '@/features/UI';
-import { LocationSearchBox } from '@/features/user/components';
+import { LocationSearchBox } from '@/features/user/auth/components';
 import { BirthdaySelect } from '@/features/userpage/components/BirthdaySelect';
 import { authOptions } from '@/pages/api/auth/[...nextauth]';
 import { trpc } from '@/utils/trpc';
 
 const BioSchema = z.object({
-  fullName: z.string(),
-  twitter: z.string().url(),
-  publicEmail: z.string().email(),
-  bio: z.string(),
+  fullName: z.string().optional(),
+  twitter: z.string().url().optional(),
+  publicEmail: z.string().email().optional(),
+  bio: z.string().optional(),
 });
 export type BioSchemaField = z.infer<typeof BioSchema>;
 

@@ -64,3 +64,13 @@
 .post-page-main {
   grid-area: main;
 }
+
+.post-page-comments::before {
+  @apply hidden;
+  border-left: 2px dotted transparent;
+  content: '';
+  left: 11px;
+  height: calc(100% - 45px - 11px);
+  position: absolute;
+  top: 45px;
+}

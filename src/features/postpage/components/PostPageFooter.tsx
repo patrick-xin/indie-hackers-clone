@@ -2,7 +2,7 @@ import { format } from 'date-fns';
 
 import { PostAuthor } from '@/features/post/components';
 import { PostOnUser } from '@/features/post/types';
-import { PostPageInlineAction } from '@/features/postpage/sections/components/PostPageAction';
+import { PostPageInlineAction } from '@/features/postpage/components/PostPageAction';
 
 type Props = {
   post: PostOnUser;

@@ -68,6 +68,7 @@ type PostType = {
   title: string;
   publishedAt: Date;
   content: string;
+  author: { username: string; id: string };
 };
 
 type CommentType = {
@@ -83,6 +84,7 @@ type CommentType = {
     id: string;
     slug: string;
     title: string;
+    author: { username: string; id: string };
   };
 };
 
