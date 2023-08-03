@@ -6,6 +6,8 @@ import ogs from 'open-graph-scraper';
 import slugify from 'slugify';
 import z from 'zod';
 
+import { openai } from '@/utils/openai';
+
 import { createRouter } from './context';
 
 export const privatePostRouter = createRouter()
@@ -80,7 +82,7 @@ export const privatePostRouter = createRouter()
         });
         return post.id;
       } catch (error) {
-        console.error(error);
+        throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });
       }
     },
   })
@@ -105,7 +107,6 @@ export const privatePostRouter = createRouter()
             where: {
               id,
             },
-
             data: {
               content,
               title,
@@ -134,28 +135,45 @@ export const privatePostRouter = createRouter()
           });
           return savedPost;
         }
-      } catch (error: any) {
-        if (error.error) {
-          throw new trpc.TRPCError({
-            code: 'INTERNAL_SERVER_ERROR',
-            message: 'Invalid URL',
-            // optional: pass the original error to retain stack trace
-          });
-        } else {
-          throw new trpc.TRPCError({
-            code: 'INTERNAL_SERVER_ERROR',
-            message: 'An unexpected error occurred, please try again later.',
-            // optional: pass the original error to retain stack trace
-          });
-        }
+      } catch (error) {
+        throw new trpc.TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Invalid URL',
+        });
+      }
+    },
+  })
+  .mutation('format', {
+    input: z.object({
+      content: z.string(),
+    }),
+    async resolve({ ctx, input: { content } }) {
+      try {
+        const response = await openai.createCompletion({
+          model: 'text-davinci-003',
+          prompt: `Correct this to standard English: ${content}`,
+          temperature: 0,
+          max_tokens: 60,
+          top_p: 1.0,
+          frequency_penalty: 0.0,
+          presence_penalty: 0.0,
+        });
+        const data = response.data.choices[0].text;
+
+        return { data };
+      } catch (error) {
+        throw new trpc.TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Invalid URL',
+        });
       }
     },
   })
   .mutation('publish', {
     input: z.object({
       id: z.string(),
-      title: z.string(),
-      content: z.string(),
+      title: z.string().optional(),
+      content: z.string().optional(),
     }),
     async resolve({ ctx, input: { id, title, content } }) {
       const savedPost = ctx.prisma.post.update({
@@ -166,6 +184,22 @@ export const privatePostRouter = createRouter()
           title,
           content,
           status: 'PUBLISHED',
+        },
+      });
+      return savedPost;
+    },
+  })
+  .mutation('unpublish', {
+    input: z.object({
+      id: z.string(),
+    }),
+    async resolve({ ctx, input: { id } }) {
+      const savedPost = ctx.prisma.post.update({
+        where: {
+          id,
+        },
+        data: {
+          status: 'DRAFT',
         },
       });
       return savedPost;
@@ -190,20 +224,37 @@ export const privatePostRouter = createRouter()
       const posts = await ctx.prisma.post.findMany({
         skip: page * pageCount,
         take: pageCount,
-
         where: {
           authorId: ctx.session?.user.userId,
         },
         orderBy: {
           createdAt: 'desc',
         },
-        include: { _count: { select: { comments: true } }, author: true },
+        include: {
+          _count: { select: { comments: true, likes: true } },
+          author: true,
+        },
       });
       return {
         posts,
         hasMore: posts.length !== 0,
         totalCount: totalCount._count,
       };
+    },
+  })
+  .query('draft', {
+    input: z.object({
+      id: z.string(),
+    }),
+    async resolve({ ctx, input: { id } }) {
+      const post = await ctx.prisma.post.findFirstOrThrow({
+        where: {
+          id,
+          AND: { status: 'DRAFT' },
+        },
+        include: { author: { select: { image: true, username: true } } },
+      });
+      return post;
     },
   })
   .mutation('upvote', {
@@ -260,7 +311,7 @@ export const privatePostRouter = createRouter()
       id: z.string(),
     }),
     async resolve({ ctx, input: { id } }) {
-      const updatedPost = ctx.prisma.post.update({
+      const updatedPost = await ctx.prisma.post.update({
         where: {
           id,
         },
@@ -277,7 +328,7 @@ export const privatePostRouter = createRouter()
       id: z.string(),
     }),
     async resolve({ ctx, input: { id } }) {
-      const updatedPost = ctx.prisma.post.update({
+      const updatedPost = await ctx.prisma.post.update({
         where: {
           id,
         },

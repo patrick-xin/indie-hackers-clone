@@ -12,6 +12,10 @@ const createUser = () => {
     image: faker.internet.avatar(),
     name: faker.name.firstName(),
     role: 'viewer',
+    notificationOfFollowers: true,
+    reportId: '',
+    usernameUpdatedAt: new Date(),
+    notificationOfPost: true,
   };
   return user;
 };

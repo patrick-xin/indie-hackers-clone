@@ -7,6 +7,8 @@ import { ChevronsLeft } from 'tabler-icons-react';
 import { DASHBOARD_NAV_LINKS } from '@/lib/constants';
 
 import { ButtonLink, Flex, Logo } from '@/features/UI';
+import { useMe } from '@/features/user/auth/api';
+import { ProfileMenuDropdown } from '@/features/user/auth/components';
 
 export const MainNav = ({
   onClose,
@@ -16,6 +18,7 @@ export const MainNav = ({
   shown: boolean;
 }) => {
   const router = useRouter();
+  const { data } = useMe({});
 
   return (
     <AnimatePresence>
@@ -53,7 +56,7 @@ export const MainNav = ({
                   ))}
                 </ul>
 
-                <ul className='mb-52 space-y-1 py-8'>
+                <ul className='space-y-1 py-8'>
                   {DASHBOARD_NAV_LINKS['bottom'].map((link) => (
                     <MainNavLink
                       key={link.label}
@@ -65,6 +68,15 @@ export const MainNav = ({
                     />
                   ))}
                 </ul>
+                <div className='mb-32 flex justify-center'>
+                  {data && (
+                    <ProfileMenuDropdown
+                      arrow='bottom'
+                      user={data.user}
+                      notificationsCounts={data.notificationsCounts}
+                    />
+                  )}
+                </div>
               </div>
             </div>
           </div>

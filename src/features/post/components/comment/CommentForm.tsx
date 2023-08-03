@@ -2,8 +2,9 @@ import { useSession } from 'next-auth/react';
 import React, { useEffect, useRef, useState } from 'react';
 
 import { InstructionPopover } from '@/features/post/components/InstructionPopover';
-import { Button, Flex, Input } from '@/features/UI';
+import { Button, Flex } from '@/features/UI';
 import { AuthWrapper } from '@/features/UI/AuthWrapper';
+import { TextArea } from '@/features/UI/Input';
 
 type Props = {
   onSubmit: (_content: string) => void;
@@ -26,7 +27,7 @@ export const CommentForm = ({
 }: Props) => {
   const [content, setContent] = useState(initialValue);
   const { data: session } = useSession();
-  const inputRef = useRef<HTMLInputElement | null>(null);
+  const inputRef = useRef<HTMLTextAreaElement | null>(null);
   useEffect(() => {
     if (!inputRef.current) return;
     if (hasScrolled) {
@@ -45,12 +46,11 @@ export const CommentForm = ({
         }}
       >
         <div className='space-y-4'>
-          <Input
+          <TextArea
             placeholder={`Say something nice to ${username}`}
             ref={inputRef}
             transparent
             className='min-h-[20vh] w-full border-[1px] border-brand-text'
-            textarea
             value={content}
             onChange={(e) => setContent(e.target.value)}
           />

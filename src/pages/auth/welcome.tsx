@@ -18,12 +18,13 @@ const categories = [
 
 const WelcomePage = () => {
   const router = useRouter();
-
+  const utils = trpc.useContext();
   const { mutate: saveProfile, isLoading } = trpc.useMutation(
     ['user.edit-username'],
     {
       onSuccess: () => {
         router.push('/');
+        utils.invalidateQueries('auth.me');
       },
     }
   );

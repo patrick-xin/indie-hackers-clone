@@ -83,7 +83,7 @@ const SignInPage = ({ providers }: Props) => {
           {Object.values(providers).map((provider) => (
             <div key={provider.name}>
               <button
-                className={`flex h-10 w-10 items-center justify-center rounded-full p-2.5 transition-colors ease-linear hover:bg-opacity-80 ${
+                className={`flex h-10 w-10 items-center justify-center rounded-full p-2.5 transition-colors ease-linear hover:opacity-80 ${
                   buttonMap[provider.name].bg
                 }`}
                 onClick={() => {
@@ -97,6 +97,7 @@ const SignInPage = ({ providers }: Props) => {
                   src={buttonMap[provider.name].imgSrc}
                   width={24}
                   height={24}
+                  alt='sign-in'
                 />
               </button>
             </div>

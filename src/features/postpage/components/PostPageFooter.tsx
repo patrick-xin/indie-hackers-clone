@@ -19,11 +19,13 @@ export const PostPageFooter = ({ post }: Props) => {
           {format(post.publishedAt, 'MMMM dd, yyyy')}
         </span>
       </div>
-      <PostPageInlineAction
-        postId={post.id}
-        likes={post._count.likes}
-        bookmarks={post._count.markedBy}
-      />
+      {post._count && (
+        <PostPageInlineAction
+          postId={post.id}
+          likes={post._count?.likes}
+          bookmarks={post._count?.markedBy}
+        />
+      )}
     </div>
   );
 };

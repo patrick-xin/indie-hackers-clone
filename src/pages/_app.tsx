@@ -1,6 +1,7 @@
 import { withTRPC } from '@trpc/next';
 import { NextPage } from 'next';
 import { AppProps } from 'next/app';
+import { Session } from 'next-auth';
 import { SessionProvider } from 'next-auth/react';
 import { ReactElement, ReactNode } from 'react';
 import superjson from 'superjson';
@@ -18,6 +19,9 @@ type NextPageWithLayout = NextPage & {
 
 type AppPropsWithLayout = AppProps & {
   Component: NextPageWithLayout;
+  pageProps: {
+    session: Session;
+  };
 };
 
 const MyApp = ({

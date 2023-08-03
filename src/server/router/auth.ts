@@ -1,3 +1,4 @@
+import { Prisma } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 import z from 'zod';
 
@@ -28,6 +29,16 @@ export const authRouter = createRouter()
       const user = await ctx.prisma.user.findUniqueOrThrow({
         where: { username },
         include: {
+          _count: {
+            select: {
+              posts: true,
+              comment: true,
+              groups: true,
+              bookmarks: true,
+              followers: true,
+              followings: true,
+            },
+          },
           profile: {
             select: {
               bio: true,
@@ -61,12 +72,14 @@ export const authRouter = createRouter()
         const canLike =
           post.likes.map((m) => m.user.username).indexOf(username as string) ??
           -1;
+        const postStatus = post.status;
         return {
           user,
           canLike,
           canBookmark,
           notifications,
           isFeaturedPost: post.isFeatured,
+          postStatus,
         };
       }
 
@@ -74,25 +87,76 @@ export const authRouter = createRouter()
     },
   })
   .query('bookmarks', {
-    // input: z.object({}),
-    async resolve({ ctx }) {
+    input: z.object({
+      order: z.enum(['title', 'creation', 'default']),
+    }),
+    async resolve({ ctx, input: { order } }) {
       const username = ctx.session?.user.username;
-      const bookmarks = await ctx.prisma.user.findUniqueOrThrow({
+      const orderBy = () => {
+        const _order = 'asc' as Prisma.SortOrder;
+        if (order === 'title') return { title: _order };
+        if (order === 'creation') return { createdAt: _order };
+        if (order === 'default') return undefined;
+        //if (query === 'comments') return { title: 'asc' };
+        return undefined;
+      };
+
+      const user = await ctx.prisma.user.findUniqueOrThrow({
         where: { username },
         select: {
           bookmarks: {
+            orderBy: orderBy(),
             select: {
               title: true,
               slug: true,
               postType: true,
               id: true,
               author: { select: { username: true } },
+              markedCreatedAt: true,
             },
           },
         },
       });
 
-      return bookmarks;
+      return user.bookmarks;
+    },
+  })
+  .query('comments', {
+    input: z.object({
+      order: z.enum(['creation', 'default']),
+    }),
+    async resolve({ ctx, input: { order } }) {
+      const username = ctx.session?.user.username;
+      const orderBy = () => {
+        const _order = 'asc' as Prisma.SortOrder;
+
+        if (order === 'creation') return { createdAt: _order };
+        if (order === 'default') return undefined;
+
+        return undefined;
+      };
+
+      const user = await ctx.prisma.user.findUniqueOrThrow({
+        where: { username },
+        select: {
+          comment: {
+            orderBy: orderBy(),
+            select: {
+              post: {
+                select: {
+                  slug: true,
+                  title: true,
+                  author: { select: { username: true } },
+                },
+              },
+              content: true,
+              id: true,
+            },
+          },
+        },
+      });
+
+      return user.comment;
     },
   })
   .mutation('read-notification-by-id', {

@@ -22,6 +22,7 @@ module.exports = {
   rules: {
     'no-unused-vars': 'off',
     'no-console': 'warn',
+    '@typescript-eslint/no-non-null-assertion': 'off',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
     'react/display-name': 'off',
     'react/jsx-curly-brace-presence': [
@@ -40,9 +41,10 @@ module.exports = {
         caughtErrorsIgnorePattern: '^_',
       },
     ],
-    '@typescript-eslint/no-explicit-any': 'warn',
+    '@typescript-eslint/no-explicit-any': 'error',
     '@typescript-eslint/no-empty-interface': 'off',
     'unused-imports/no-unused-imports': 'error',
+    '@typescript-eslint/ban-ts-comment': 'off',
     'unused-imports/no-unused-vars': [
       'warn',
       {

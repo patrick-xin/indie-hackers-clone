@@ -34,7 +34,7 @@ export const PostPageReportModal = ({
   const [selected, setSelected] = useState(PostReportOptions[0]);
 
   return (
-    <ConfirmModal open={openModal} onClose={() => setOpenModal(false)}>
+    <ConfirmModal open={openModal} onClose={setOpenModal}>
       <Alert message={<p>Report post</p>} type='warning' />
       <form
         className='space-y-8'
@@ -95,7 +95,7 @@ export const PostPageReportModal = ({
             type='button'
             variant='outline'
             onClick={() => {
-              setOpenModal(false);
+              setOpenModal();
             }}
           >
             Cancle

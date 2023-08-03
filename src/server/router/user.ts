@@ -136,7 +136,7 @@ export const userRouter = createRouter()
           createdAt: p.createdAt,
           type: 'comment',
         }));
-
+        // @ts-ignore
         const result = [...posts, ...comments].sort(
           (a, b) => Number(b.createdAt) - Number(a.createdAt)
         ) as Combined[];

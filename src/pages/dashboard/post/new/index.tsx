@@ -30,10 +30,11 @@ import {
 import { BasicLayout } from '@/features/layout/Basic';
 import { Flex, Input } from '@/features/UI';
 import { Button } from '@/features/UI/Button';
+import { TextArea } from '@/features/UI/Input';
 
 const PostCreatePage = () => {
   const [title, setTitle] = useState('');
-  const { _ref, commandController } = useTextAreaMarkdownEditor({
+  const { ref, commandController } = useTextAreaMarkdownEditor({
     commandMap: {
       bold: bold,
       italic: italic,
@@ -193,7 +194,8 @@ const PostCreatePage = () => {
             </Flex>
             {/* Textarea */}
             {writingMode && (
-              <Input
+              <TextArea
+                ref={ref}
                 placeholder='Write content here...'
                 textarea
                 onChange={(e) => setValue(e.target.value)}

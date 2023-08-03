@@ -17,7 +17,6 @@ export function Progressbar({
   const router = useRouter();
 
   React.useEffect(() => {
-    if (router.pathname === '/search') return;
     if (options) {
       NProgress.configure(options);
     }

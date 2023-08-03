@@ -1,7 +1,6 @@
 import cn from 'clsx';
 import { useRouter } from 'next/router';
 import { queryTypes, useQueryState } from 'next-usequerystate';
-import React from 'react';
 import { Loader } from 'tabler-icons-react';
 import { useDebounce } from 'usehooks-ts';
 import z from 'zod';
@@ -41,6 +40,7 @@ const SearchPage = () => {
   const displayValue =
     orders.filter((o) => o.key === order)[0]?.value ?? 'Best Match';
   const debouncedSearch = useDebounce<string>(search ?? '', 1500);
+
   const { data, isLoading } = trpc.useQuery(
     [
       'public-posts.search',

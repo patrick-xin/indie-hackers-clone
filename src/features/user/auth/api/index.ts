@@ -2,7 +2,7 @@ import { useSession } from 'next-auth/react';
 
 import { trpc } from '@/utils/trpc';
 
-const useMe = ({ postId }: { postId: string | undefined }) => {
+const useMe = ({ postId }: { postId?: string | undefined }) => {
   const { data: session } = useSession();
   const { data, isLoading, isError } = trpc.useQuery(['auth.me', { postId }], {
     enabled: Boolean(session),

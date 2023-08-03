@@ -1,5 +1,6 @@
 import { Popover } from '@headlessui/react';
 import { User } from '@prisma/client';
+import cn from 'clsx';
 import Image from 'next/future/image';
 import Link from 'next/link';
 import { signOut, useSession } from 'next-auth/react';
@@ -13,9 +14,11 @@ import { MENU_LINKS, MenuLink } from '@/lib/constants';
 export const ProfileMenuDropdown = ({
   user,
   notificationsCounts,
+  arrow = 'top',
 }: {
   user: User;
   notificationsCounts: number | undefined;
+  arrow?: 'top' | 'bottom';
 }) => {
   const [referenceElement, setReferenceElement] =
     useState<null | HTMLButtonElement>(null);
@@ -65,7 +68,10 @@ export const ProfileMenuDropdown = ({
         <div
           ref={setArrowElement}
           style={styles.arrow}
-          className='triangle top-2 h-3 w-3'
+          className={cn({
+            'triangle top-2 h-3 w-3': arrow === 'top',
+            'triangle-bottom bottom-2 h-3 w-3': arrow === 'bottom',
+          })}
         />
         <div className='relative mx-2 my-4 w-56 rounded bg-[#274059] py-1'>
           {/* <div className='h-3 w-3 absolute transform rotate-45 bg-[#274059] -top-1.5 left-2/3' /> */}
@@ -73,7 +79,7 @@ export const ProfileMenuDropdown = ({
             <ProfileMenuLink {...link} key={link.title} />
           ))}
           <div className='group py-2 px-3 hover:bg-[#2B4763]'>
-            <Link href='dashboard'>
+            <Link href='/dashboard'>
               <a className='inline-block w-full'>
                 <div className='flex items-center gap-4'>
                   <div className='group-hover:text-brand-blue'>

@@ -9,6 +9,7 @@ import { X } from 'tabler-icons-react';
 import z from 'zod';
 
 import { Button, Footer, Header, IconButton, Input } from '@/features/UI';
+import { TextArea } from '@/features/UI/Input';
 import { LocationSearchBox } from '@/features/user/auth/components';
 import { BirthdaySelect } from '@/features/userpage/components/BirthdaySelect';
 import { authOptions } from '@/pages/api/auth/[...nextauth]';
@@ -131,9 +132,8 @@ const UserEditPage = ({ username }: { username: string }) => {
                 {...register('publicEmail')}
               />
               <p className='text-red-500'>{errors.publicEmail?.message}</p>
-              <Input
+              <TextArea
                 error={errors.bio?.message}
-                textarea
                 rows={6}
                 label='BIO'
                 description="Say a few words about who you are, what you're working on, or why you're here!"

@@ -2,6 +2,7 @@ import { faker } from '@faker-js/faker';
 import { Post, User } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 import cuid from 'cuid';
+import z from 'zod';
 
 import { createRouter } from './context';
 
@@ -9,23 +10,31 @@ const random = Math.floor(Math.random() * 60);
 
 export const adminRouter = createRouter()
   .query('users', {
-    async resolve({ ctx }) {
+    input: z.object({
+      query: z.object({ page: z.number(), pageCount: z.number() }),
+    }),
+    async resolve({
+      ctx,
+      input: {
+        query: { page, pageCount },
+      },
+    }) {
+      const totalCount = await ctx.prisma.user.aggregate({
+        _count: true,
+      });
       const users = await ctx.prisma.user.findMany({
+        skip: page * pageCount,
+        take: pageCount,
         include: {
-          _count: { select: { comment: true, postLikes: true } },
-
-          // image: true,
-          // followers: true,
-          // following: true,
-          // profile: {
-          //   select: {
-          //     about: true,
-          //   },
-          // },
+          _count: { select: { posts: true } },
         },
       });
 
-      return users;
+      return {
+        users,
+        totalCount: totalCount._count,
+        pageCount: Math.ceil(totalCount._count / pageCount),
+      };
     },
   })
   .query('posts', {
@@ -70,6 +79,11 @@ export const adminRouter = createRouter()
           id: cuid(),
           image: faker.internet.avatar(),
           name: faker.name.firstName(),
+          notificationOfFollowers: false,
+          notificationOfPost: false,
+          usernameUpdatedAt: new Date(),
+          reportId: '',
+          role: 'admin',
         };
         return user;
       };
@@ -103,6 +117,9 @@ export const adminRouter = createRouter()
           categoryId: 'cl5l5fdvz1437ca0wnt355w2t',
           postType: 'ARTICLE',
           isFeatured: false,
+          groupId: '',
+          markedCreatedAt: new Date(),
+          reportId: '',
         };
 
         return post;

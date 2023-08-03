@@ -1,4 +1,4 @@
-import { Comment, Post, Prisma, Profile, User } from '@prisma/client';
+import { Comment, Post, Profile, User } from '@prisma/client';
 
 export type CommentOnUser = Comment & {
   user: Pick<User, 'username' | 'image'>;
@@ -6,7 +6,7 @@ export type CommentOnUser = Comment & {
 
 export type PostOnUser = Post & {
   author: Pick<User, 'username' | 'image'>;
-  _count: {
+  _count?: {
     comments: number;
     likes: number;
     markedBy: number;
@@ -30,36 +30,36 @@ export type UnionToType<U extends Record<string, unknown>> = {
     : never;
 };
 
-type ValueOf<T> = T[keyof T];
-type PickByValue<T, V extends T[keyof T]> = {
-  [K in Exclude<
-    keyof T,
-    ValueOf<{ [P in keyof T]: T[P] extends V ? never : P }>
-  >]: T[K];
-};
-type KeyOfValue<T, V extends T[keyof T]> = keyof PickByValue<T, V>;
-type PickValueByKey<T, K> = K extends keyof T ? T[K] : never;
+// type ValueOf<T> = T[keyof T];
+// type PickByValue<T, V extends T[keyof T]> = {
+//   [K in Exclude<
+//     keyof T,
+//     ValueOf<{ [P in keyof T]: T[P] extends V ? never : P }>
+//   >]: T[K];
+// };
+// type KeyOfValue<T, V extends T[keyof T]> = keyof PickByValue<T, V>;
+// type PickValueByKey<T, K> = K extends keyof T ? T[K] : never;
 
-interface ModelMap {
-  Post: Post;
-  User: User;
-  Profile: Profile;
-}
-interface SelectMap {
-  Post: Prisma.PostSelect;
-  User: Prisma.UserSelect;
-  Profile: Prisma.ProfileSelect;
-}
-interface PayloadMap<S extends string | number | symbol> {
-  Post: Prisma.PostGetPayload<{ select: { [K in S]: true } }>;
-  User: Prisma.UserGetPayload<{ select: { [K in S]: true } }>;
-  Profile: Prisma.ProfileGetPayload<{ select: { [K in S]: true } }>;
-}
-type FullModelType<
-  M extends ValueOf<ModelMap>,
-  N = KeyOfValue<ModelMap, M>,
-  S = Required<PickValueByKey<SelectMap, N>>
-> = PickValueByKey<PayloadMap<keyof S>, N>;
+// interface ModelMap {
+//   Post: Post;
+//   User: User;
+//   Profile: Profile;
+// }
+// interface SelectMap {
+//   Post: Prisma.PostSelect;
+//   User: Prisma.UserSelect;
+//   Profile: Prisma.ProfileSelect;
+// }
+// interface PayloadMap<S extends string | number | symbol> {
+//   Post: Prisma.PostGetPayload<{ select: { [K in S]: true } }>;
+//   User: Prisma.UserGetPayload<{ select: { [K in S]: true } }>;
+//   Profile: Prisma.ProfileGetPayload<{ select: { [K in S]: true } }>;
+// }
+// type FullModelType<
+//   M extends ValueOf<ModelMap>,
+//   N = KeyOfValue<ModelMap, M>,
+//   S = Required<PickValueByKey<SelectMap, N>>
+// > = PickValueByKey<PayloadMap<keyof S>, N>;
 
 type PostType = {
   type: string;

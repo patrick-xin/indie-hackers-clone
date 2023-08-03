@@ -17,11 +17,14 @@ export const LinkContent = ({ post }: Props) => {
         <div className='flex flex-col gap-6 sm:flex-row'>
           {linkContent.ogImage ? (
             <div className='flex items-center justify-center rounded'>
-              <img
-                className='h-full max-h-[200px] w-full rounded sm:w-[140px] md:h-[140px]'
-                src={linkContent.ogImage?.url}
-                alt={`${linkContent?.ogTitle}-image`}
-              />
+              <picture>
+                <source srcSet={linkContent.ogImage?.url} type='image/webp' />
+                <img
+                  className='h-full max-h-[200px] w-full rounded sm:w-[140px] md:h-[140px]'
+                  src={linkContent.ogImage?.url}
+                  alt={`${linkContent?.ogTitle}-image`}
+                />
+              </picture>
             </div>
           ) : (
             <Flex className='justify-end'>

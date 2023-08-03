@@ -1,16 +1,16 @@
 import { formatDistance } from 'date-fns';
 import { motion } from 'framer-motion';
 import Image from 'next/future/image';
-import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 import { ChevronUp } from 'tabler-icons-react';
 
 import { container } from '@/lib/animation';
 
+import { useComment } from '@/features/post/components/comment/api';
 import { CommentForm } from '@/features/post/components/comment/CommentForm';
 import { CommentOnUser } from '@/features/post/types';
 import { Alert, Button, ConfirmModal, Flex, Separator } from '@/features/UI';
-import { trpc } from '@/utils/trpc';
+import { useMe } from '@/features/user/auth/api';
 
 export const PostComment = ({
   comment,
@@ -21,34 +21,15 @@ export const PostComment = ({
   postId: string;
   commentsByParentId: { [key: string]: CommentOnUser[] };
 }) => {
-  const utils = trpc.useContext();
-  const { data: session } = useSession();
-  const { data: user } = trpc.useQuery(['auth.me', { postId }], {
-    enabled: Boolean(session),
-  });
-
+  const { data: user } = useMe({});
   const isCommentOwner = comment.userId === user?.user.id;
   const [showContent, setShowContent] = useState(true);
   const [showReplyForm, setShowReplyForm] = useState(false);
   const childComments = commentsByParentId[comment.id] ?? [];
-  const { mutate: createComment } = trpc.useMutation('comment.create', {
-    onSuccess: () => {
-      utils.invalidateQueries(['public-posts.by-slug']);
-      setShowReplyForm(false);
-    },
-  });
-  const { mutate: updateComment } = trpc.useMutation('comment.update', {
-    onSuccess: () => {
-      utils.invalidateQueries(['public-posts.by-slug']);
-      setShowReplyForm(false);
-    },
-  });
-  const { mutate: deleteComment } = trpc.useMutation('comment.delete', {
-    onSuccess: () => {
-      utils.invalidateQueries(['public-posts.by-slug']);
-      setShowReplyForm(false);
-    },
-  });
+  const { createComment, updateComment, deleteComment } = useComment(() =>
+    setShowReplyForm(false)
+  );
+
   const [openModal, setOpenModal] = useState(false);
   return (
     <>

@@ -23,7 +23,7 @@
 }
 @layer utilities {
   .form-input {
-    @apply bg-transparent appearance-none relative block w-full text-base focus:ring-0 focus:outline-none focus:border-none;
+    @apply bg-transparent appearance-none relative block w-full text-base focus:ring-0 focus:outline-none focus:border-brand-blue;
   }
 }
 
@@ -33,6 +33,14 @@
   border-style: solid;
   border-width: 0 8px 10px 8px;
   border-color: transparent transparent #274059 transparent;
+}
+
+.triangle-bottom {
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 10px 8px 0 8px;
+  border-color: #274059 transparent transparent transparent;
 }
 
 .left-tran {

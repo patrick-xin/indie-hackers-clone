@@ -88,6 +88,8 @@ const createPost = () => {
     postType: 'ARTICLE',
     isFeatured: false,
     groupId: 'cl7pcvbjv0121qp0w7myi6g0v',
+    markedCreatedAt: new Date(),
+    reportId: '',
   };
 
   return post;

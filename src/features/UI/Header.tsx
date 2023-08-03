@@ -1,13 +1,12 @@
 import cn from 'clsx';
-import { useRouter } from 'next/router';
+import Link from 'next/link';
 import { signIn, useSession } from 'next-auth/react';
 import { ImSpinner8 } from 'react-icons/im';
 import { IoIosMenu, IoIosSearch } from 'react-icons/io';
-import { Search } from 'tabler-icons-react';
 
 import { Logo } from '@/features/UI/Logo';
+import { useMe } from '@/features/user/auth/api';
 import { ProfileMenuDropdown } from '@/features/user/auth/components';
-import { trpc } from '@/utils/trpc';
 
 type Props = {
   isTransparent?: boolean;
@@ -15,10 +14,7 @@ type Props = {
 
 export const Header = ({ isTransparent = false }: Props) => {
   const session = useSession();
-  const { push } = useRouter();
-  const { data } = trpc.useQuery(['auth.me', { postId: undefined }], {
-    enabled: session.status === 'authenticated',
-  });
+  const { data } = useMe({});
 
   const renderUserStatus = () => {
     if (session.status === 'loading') {
@@ -59,11 +55,14 @@ export const Header = ({ isTransparent = false }: Props) => {
       <div className='hidden items-center gap-2 font-black text-white sm:flex sm:gap-4'>
         <Logo />
       </div>
+
       <div className='flex items-center gap-4'>
-        <Search
-          className='h-5 w-5 cursor-pointer hover:text-white'
-          onClick={() => push('/search')}
-        />
+        <Link href='/result'>
+          <a>
+            <IoIosSearch className='h-5 w-5 cursor-pointer hover:text-white' />
+          </a>
+        </Link>
+
         {renderUserStatus()}
       </div>
     </div>

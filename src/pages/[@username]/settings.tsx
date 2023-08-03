@@ -20,7 +20,7 @@ const UserPage = () => {
         <div className='mb-8'>
           <h3 className='text-3xl text-white'>Account</h3>
         </div>
-        {data && (
+        {data && data.user && (
           <div className='space-y-4'>
             <ChangeUsername
               username={data.user.username}

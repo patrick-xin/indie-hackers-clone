@@ -35,7 +35,7 @@ export const GroupListItem = ({
             </div>
           </div>
 
-          <div className='rounded-2xl bg-[#4799eb] bg-opacity-10 px-1.5 py-1 text-[#4799eb] group-hover:invisible'>
+          <div className='rounded-2xl bg-[#4799eb]/10 px-1.5 py-1 text-[#4799eb] group-hover:invisible'>
             +{ratio}%
           </div>
         </div>

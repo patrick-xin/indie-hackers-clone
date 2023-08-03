@@ -33,7 +33,12 @@ export const GroupsResult = ({
         {groups?.map((group) => (
           <div key={group.id} className='flex gap-3'>
             <div className='p-2 pr-1'>
-              <Image src={group.image} height={60} width={60} />
+              <Image
+                src={group.image}
+                height={60}
+                width={60}
+                alt={group.name}
+              />
             </div>
             <Link href={`/groups/${group.slug}`}>
               <a className='flex-1 space-y-2 rounded p-2 hover:bg-[#1E364D]'>

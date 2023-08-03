@@ -1,19 +1,16 @@
 import cn from 'clsx';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useSession } from 'next-auth/react';
 import { BiBook, BiBookBookmark, BiHistory } from 'react-icons/bi';
 
-import { trpc } from '@/utils/trpc';
+import { useMe } from '@/features/user/auth/api';
 
 export const UserPageAction = () => {
   const { pathname, asPath, query } = useRouter();
   const usernameQuery = query['@username'] as string;
   const username = usernameQuery?.split('@')[1];
-  const session = useSession();
-  const { data } = trpc.useQuery(['auth.me', { postId: undefined }], {
-    enabled: session.status === 'authenticated',
-  });
+
+  const { data } = useMe({});
   return (
     <div className='mt-0.5 mb-12 rounded md:-mt-11 lg:-mt-12 lg:w-min lg:text-lg'>
       <div className='flex justify-between gap-4 bg-[#172B40] md:bg-[#1f364d] lg:gap-6'>

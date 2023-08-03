@@ -1,3 +1,7 @@
+import { useRouter } from 'next/router';
+import { useEffect } from 'react';
+
+import { useMe } from '@/features/user/auth/api';
 import { trpc } from '@/utils/trpc';
 
 const useUpvotePost = () => {
@@ -55,6 +59,7 @@ const useRemovePostFromBookmark = () => {
       onSuccess: () => {
         utils.invalidateQueries('public-posts.by-slug');
         utils.invalidateQueries('auth.me');
+        utils.invalidateQueries('auth.bookmarks');
       },
     }
   );
@@ -84,9 +89,38 @@ const useReportPost = () => {
   };
 };
 
+const useGetDraftPost = () => {
+  const { query, push } = useRouter();
+  const id = query.id as string;
+  const {
+    data: post,
+    isLoading,
+    error,
+  } = trpc.useQuery(['private-posts.draft', { id }], {
+    enabled: Boolean(query) && Boolean(id),
+  });
+
+  const { data: user } = useMe({});
+
+  useEffect(() => {
+    if (error?.data?.code === 'UNAUTHORIZED') push('/');
+    if (error?.data?.code === 'INTERNAL_SERVER_ERROR') push('/404');
+    if (post && user) {
+      const canEdit = post.authorId === user.user.id;
+      if (!canEdit) push('/');
+    }
+  }, [error, post, user, push]);
+  return {
+    post,
+    isLoading,
+    error,
+  };
+};
+
 export {
   useAddPostToBookmark,
   useCancleUpvotePost,
+  useGetDraftPost,
   useRemovePostFromBookmark,
   useReportPost,
   useUpvotePost,

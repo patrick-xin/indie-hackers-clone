@@ -35,6 +35,7 @@ import { prisma } from '@/lib/prisma';
 import { DashboardLayout } from '@/features/layout/Dashboard';
 import { Flex, Input } from '@/features/UI';
 import { Button } from '@/features/UI/Button';
+import { TextArea } from '@/features/UI/Input';
 import { authOptions } from '@/pages/api/auth/[...nextauth]';
 import { trpc } from '@/utils/trpc';
 
@@ -44,11 +45,9 @@ const PostCreatePage = () => {
   const type = query.type as string;
 
   const [title, setTitle] = useState('');
-  const [content, setContent] = React.useState('');
-  const [linkContent, setLinkContent] = React.useState('');
-  const [selectedTab, setSelectedTab] = React.useState<'write' | 'preview'>(
-    'write'
-  );
+  const [content, setContent] = useState('');
+  const [linkContent, setLinkContent] = useState('');
+  const [selectedTab, setSelectedTab] = useState<'write' | 'preview'>('write');
   const writingMode = selectedTab === 'write';
   const previewMode = selectedTab === 'preview';
   const { data: post } = trpc.useQuery(['private-posts.by-id', { id }], {
@@ -59,6 +58,8 @@ const PostCreatePage = () => {
       push('/dashboard/post');
     },
   });
+  const { mutate: formatPost } = trpc.useMutation('private-posts.format', {});
+
   useEffect(() => {
     if (post) {
       setTitle(post.title);
@@ -233,13 +234,12 @@ const PostCreatePage = () => {
                 </Flex>
                 {/* Textarea */}
                 {writingMode && (
-                  <Input
+                  <TextArea
                     ref={ref}
                     placeholder='Write content here...'
-                    textarea
                     value={content}
                     onChange={(e) => setContent(e.target.value)}
-                    className='min-h-[60vh] w-full rounded p-2 text-2xl shadow'
+                    className='min-h-[60vh] w-full rounded p-2 text-3xl shadow'
                   />
                 )}
                 {previewMode && (
@@ -250,7 +250,17 @@ const PostCreatePage = () => {
                   </div>
                 )}
               </div>
-              <Button type='submit'>save</Button>
+              <div className='flex gap-4'>
+                <Button type='submit'>save</Button>
+                <Button
+                  type='button'
+                  onClick={() => {
+                    formatPost({ content });
+                  }}
+                >
+                  correct
+                </Button>
+              </div>
             </>
           )}
           {type === 'link' && (
